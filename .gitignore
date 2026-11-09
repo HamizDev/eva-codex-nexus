@@ -1,0 +1,47 @@
+# User data / account and project secrets
+workbench/data/
+workbench/tests/sandbox/
+**/.env
+**/.env.*
+!**/.env.example
+**/auth.json
+**/credentials.json
+**/secrets.json
+**/.ssh/
+**/.codex/
+*.pem
+*.p12
+*.pfx
+*.key
+
+# Dependencies, logs and local build outputs
+node_modules/
+**/node_modules/
+*.log
+.npm/
+.coverage/
+coverage/
+dist/
+.cache/
+.verification/
+.DS_Store
+Thumbs.db
+*.zip
+*.7z
+*.mp4
+*.mov
+
+# Optional audio: require separate distribution permission.
+workbench/public/media/audio-unit02-fluid/voice.wav
+
+# Editor and scratch
+.vscode/
+.idea/
+*.swp
+*.bak
+
+# Font binaries must not be included in public artifacts
+*.woff
+*.woff2
+*.ttf
+*.otf

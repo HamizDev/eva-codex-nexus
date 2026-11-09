@@ -1,0 +1,27 @@
+/* v0.0.1 - DSH-inspired restrained workbench accents, not a DSH host plugin. */
+.eva-system-clock{display:inline-block!important;font:10px/1.2 var(--code);letter-spacing:1.2px;font-variant-numeric:tabular-nums;color:var(--muted);white-space:nowrap;margin-left:auto}
+.message .eva-md-heading{font-weight:650;line-height:1.35;margin:18px 0 8px;color:var(--text)}
+.message h2.eva-md-heading{font-size:18px}.message h3.eva-md-heading{font-size:15px}.message h4.eva-md-heading{font-size:14px}
+.message .eva-md-paragraph,.message .eva-md-quote{font-size:14px;line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere;margin:6px 0 10px}
+.message .eva-md-list{margin:8px 0 12px;padding-left:27px;line-height:1.8}.message .eva-md-list li{margin:3px 0;overflow-wrap:anywhere}
+.message .eva-md-quote{padding:6px 13px;border-left:3px solid var(--accent);color:var(--muted);background:color-mix(in srgb,var(--raised) 72%,transparent)}
+.message .eva-md-inline-code{font:12px/1.7 var(--code);padding:1px 4px;border-radius:4px;background:var(--raised);color:var(--text)}
+.message .eva-md-link{color:var(--blue);text-decoration:underline;text-underline-offset:3px}
+.message .eva-md-table-wrap{width:100%;overflow-x:auto;margin:12px 0}
+.message .eva-md-table{border-collapse:collapse;min-width:320px;width:100%;font:12px/1.65 var(--ui)}
+.message .eva-md-table th,.message .eva-md-table td{border:1px solid var(--border);padding:7px 10px;text-align:left;vertical-align:top}
+.message .eva-md-table th{background:var(--raised)}
+.message pre{white-space:pre;overflow-x:auto;max-width:100%}
+@media(max-width:700px){.eva-system-clock{display:none!important}}
+@media(prefers-reduced-motion:reduce){.scan-beam{animation:none!important}.protocol-reconstruction{display:none!important}}
+/* DSH palette-inspired semantic accents; unit00 stylesheet continues to own Rei-specific widgets. */
+html[data-eva-theme="asuka"]{--accent:#ff354d;--purple:#ff354d;--pink:#ff8290;--blue:#8dc358;--text:#fff1e7;--muted:#b3a294;--border:#3f292d}
+html[data-eva-theme="asuka"] .new-task{background:#5b1c28;color:#fff1e7;border:1px solid #b3324a}
+html[data-eva-theme="asuka"] .new-task:hover{background:#812438}
+html[data-eva-theme="asuka"] .new-task span{color:#ffe0d9}
+html[data-eva-theme="asuka"] .composer #send{background:#ff354d;border-color:#ff354d;color:#fff}
+html[data-eva-theme="asuka"] .composer #send:hover{background:#ee2344;border-color:#ee2344}
+html[data-eva-theme="asuka"] .project.active,html[data-eva-theme="asuka"] .thread.active{box-shadow:inset 3px 0 #ff354d}
+html[data-eva-theme="asuka"] .inspector-tabs .selected{color:#ff8290;border-color:#ff354d}
+html[data-eva-theme="asuka"] .message-role{color:#ff8290}
+html[data-eva-theme="rei"] .eva-system-clock{color:#476173}

@@ -1,0 +1,63 @@
+/* REI / UNIT-00 preview: self-contained palette overrides of the unit-02 workbench.
+   Original character art can later be added as locally replaceable, licensed media. */
+html[data-eva-theme="rei"]{
+ color-scheme:light;--bg:#f2f7fb;--panel:#edf4fa;--raised:#e2eef7;--border:#b7cbdc;
+ --accent:#236c9d;--purple:#326f9f;--pink:#4b83ae;--blue:#2974a6;
+ --text:#243748;--muted:#647f94;
+ background:#f2f7fb;
+}
+html[data-eva-theme="rei"] body,html[data-eva-theme="rei"] main{background:#f2f7fb;color:var(--text)}
+html[data-eva-theme="rei"] body:before{border-left-color:#518bb3;border-right-color:#518bb3;background:repeating-linear-gradient(135deg,#a3c7e2 0 6px,#eff6fb 6px 13px) left 2px top 160px/8px calc(100% - 220px) no-repeat,repeating-linear-gradient(45deg,#a3c7e2 0 6px,#eff6fb 6px 13px) right 2px top 160px/8px calc(100% - 220px) no-repeat}
+html[data-eva-theme="rei"] button{color:#2c5775;border-color:#b3cadb}
+html[data-eva-theme="rei"] button:hover{background:#dceef9;border-color:#4c83ad}
+html[data-eva-theme="rei"] button:focus-visible{outline-color:#18659a}
+html[data-eva-theme="rei"] .sidebar{background:linear-gradient(150deg,#d9eaf6 0,#eaf5fb 190px,#f7fbfd 430px);border-color:#aec9dc}
+html[data-eva-theme="rei"] .sidebar .identity strong,html[data-eva-theme="rei"] .system-id b,html[data-eva-theme="rei"] .empty h2,html[data-eva-theme="rei"] h1{color:#244761}
+html[data-eva-theme="rei"] .identity small,html[data-eva-theme="rei"] .section-label,html[data-eva-theme="rei"] .private-patch small{color:#617f94}
+html[data-eva-theme="rei"] .new-task,html[data-eva-theme="rei"] .primary,html[data-eva-theme="rei"] .composer #send{color:white;background:#357cae;border-color:#286c9e}
+html[data-eva-theme="rei"] .new-task:hover,html[data-eva-theme="rei"] .primary:hover,html[data-eva-theme="rei"] .composer #send:hover{background:#286c9e;border-color:#1d5989}
+html[data-eva-theme="rei"] .new-task span{color:#f7faff}
+html[data-eva-theme="rei"] .project,html[data-eva-theme="rei"] .thread{color:#425e72}
+html[data-eva-theme="rei"] .project.active,html[data-eva-theme="rei"] .thread.active{color:#19547a;background:#d6e8f5;box-shadow:inset 3px 0 #347da9}
+html[data-eva-theme="rei"] .private-patch{color:#326a96;border-color:#bdd2df}
+html[data-eva-theme="rei"] .pilot-number{color:#2f77aa}
+html[data-eva-theme="rei"] .account{color:#557184;border-color:#bdd2df}
+html[data-eva-theme="rei"] header{background:#e9f3f9;border-bottom-color:#b6cede}
+html[data-eva-theme="rei"] header:after{background:repeating-linear-gradient(125deg,#4d99c2 0 9px,#e9f3f9 9px 18px)}
+html[data-eva-theme="rei"] .system-clearance,html[data-eva-theme="rei"] .system-clearance b,html[data-eva-theme="rei"] .connection{color:#32698f}
+html[data-eva-theme="rei"] .session-bar{background:#f2f7fb;border-bottom-color:#bdd1df}
+html[data-eva-theme="rei"] .breadcrumb,html[data-eva-theme="rei"] .breadcrumb b,html[data-eva-theme="rei"] .session-right button{color:#55768d}
+html[data-eva-theme="rei"] .tag{background:#e1f1fa;color:#2f6d96;border-color:#8fb8d3}
+html[data-eva-theme="rei"] .empty p,html[data-eva-theme="rei"] .eyebrow,html[data-eva-theme="rei"] .message-role{color:#357ca4}
+html[data-eva-theme="rei"] .suggestions button,html[data-eva-theme="rei"] .suggestions button+button{background:#f4faff;border-color:#b8d2e5;color:#2b5775}
+html[data-eva-theme="rei"] .suggestions button>small{color:#4f83a8}
+html[data-eva-theme="rei"] .suggestions button:hover{background:#e1f1fb}
+html[data-eva-theme="rei"] .messages{scrollbar-color:#9bb9cf transparent}
+html[data-eva-theme="rei"] .message{border-color:#c2d7e5}
+html[data-eva-theme="rei"] .message .text,html[data-eva-theme="rei"] .message.user .message-role{color:#304f64}
+html[data-eva-theme="rei"] .has-session .message{background:#f5fafeed}
+html[data-eva-theme="rei"] .message pre,html[data-eva-theme="rei"] pre{background:#e8f2f9;color:#2a4052;border-color:#b6cbdc}
+html[data-eva-theme="rei"] .code-label{background:#dbeaf5;border-color:#b1cbdc;color:#346e98}
+html[data-eva-theme="rei"] .composer,html[data-eva-theme="rei"] .empty-session .composer{background:#f7fbff;border:1px solid #9fc1d9;border-top:2px solid #428bbb;box-shadow:0 12px 30px #7ca5bf20}
+html[data-eva-theme="rei"] .composer textarea{color:#243e52}
+html[data-eva-theme="rei"] .composer textarea::placeholder,html[data-eva-theme="rei"] .composer small{color:#6f8ba0}
+html[data-eva-theme="rei"] .composer select,html[data-eva-theme="rei"] #threadSearch,html[data-eva-theme="rei"] #fileFilter{color:#284d69;background:#f7fbff;border-color:#abc9dd}
+html[data-eva-theme="rei"] .inspector{background:#eaf4fb;border-color:#b0cada}
+html[data-eva-theme="rei"] .inspector-heading,html[data-eva-theme="rei"] .decoder-top,html[data-eva-theme="rei"] .task-progress{color:#416f91}
+html[data-eva-theme="rei"] .tool{background:#f6fbfe;border-color:#b7d0df}
+html[data-eva-theme="rei"] .inspector-tabs .selected{color:#287aaa;border-bottom-color:#287aaa}
+html[data-eva-theme="rei"] footer{background:#e9f4fa;border-color:#b0cadb;border-bottom:3px solid #347ba9;color:#587489}
+html[data-eva-theme="rei"] footer span:first-child{color:#296f9c}
+html[data-eva-theme="rei"] footer i{background:#347ba9}
+html[data-eva-theme="rei"] footer:before{background:repeating-linear-gradient(120deg,#4c9bd0 0 5px,#e9f4fa 5px 10px)}
+html[data-eva-theme="rei"] dialog{background:#f6fbff;border-color:#95b8d0;border-top:3px solid #3988bc;color:#243e52}
+html[data-eva-theme="rei"] dialog small{color:#46789d}
+html[data-eva-theme="rei"] dialog input[type=checkbox],html[data-eva-theme="rei"] .setting input[type=range]{accent-color:#287db0}
+html[data-eva-theme="rei"] #notice{background:#e0f1fc;color:#2c5c80}
+html[data-eva-theme="rei"] #replayIntro{background:#dfedf8;border-color:#8fb6cf;color:#285b7f}
+html[data-eva-theme="rei"] #replayIntro:hover{background:#cfdfef}
+html[data-eva-theme="rei"] #artworkLight{filter:hue-rotate(168deg);opacity:.35}
+html[data-eva-theme="rei"] .codex-node:before{border-color:#387ea244;border-top-color:#287db0}
+html[data-eva-theme="rei"] .scan-beam{background:linear-gradient(transparent,#3387c019,transparent)}
+html[data-eva-theme="rei"] .scan-beam:after{background:#317db166;box-shadow:0 0 5px #317db166}
+@media(prefers-reduced-motion:reduce){html[data-eva-theme="rei"] *,html[data-eva-theme="asuka"] *{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important}}

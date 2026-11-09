@@ -1,0 +1,17 @@
+{
+  "name": "eva-codex-nexus",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "setup": "npm --prefix workbench ci",
+    "test": "node --test workbench/tests/*.test.cjs",
+    "manifest": "node scripts/generate-manifest.cjs",
+    "verify": "node scripts/check-release.cjs",
+    "verify:public": "node scripts/check-release.cjs --public"
+  },
+  "license": "MIT"
+}

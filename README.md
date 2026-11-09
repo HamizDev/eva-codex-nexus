@@ -42,6 +42,7 @@ npm run verify:public
 - Git 操作不提供强推或危险回滚；插件需要本机 Codex CLI 支持相应命令。
 - 暂无安装器、自动更新和 macOS/Linux 完整支持。
 
+
 ## 中文社区维护约定
 
 - GitHub 仓库描述、README、更新日志、Issue 与 Release 公告优先使用简体中文；保留 API、命令、路径、技术术语和第三方授权文本的原文。
