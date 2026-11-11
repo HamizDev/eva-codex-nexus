@@ -111,8 +111,8 @@ test("恢复脚本同时处理 CDP 清理和注入器进程", () => {
 test("package 版本与皮肤版本一致", () => {
   const pkg = JSON.parse(read("package.json"));
   const injector = read("codex-skin/injector.mjs");
-  assert.equal(pkg.version, "0.3.1");
-  assert.match(injector, /export const SKIN_VERSION = "0\.3\.1"/);
+  assert.equal(pkg.version, "0.3.2");
+  assert.match(injector, /export const SKIN_VERSION = "0\.3\.2"/);
 });
 
 test("项目版权以 HamizDev 为主并保留必要上游声明", () => {

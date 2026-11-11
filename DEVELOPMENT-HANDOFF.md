@@ -1,4 +1,4 @@
-# EVA Codex Nexus · v0.3.1 开发交接
+# EVA Codex Nexus · v0.3.2 开发交接
 
 基线日期 2026-11-11。当前默认形态为**官方 Codex Desktop + EVA 皮肤**；旧的独立工作台保留为备用入口，不再作为默认启动方式。
 
@@ -14,6 +14,7 @@
 - CSS 与装饰层由 `Page.addScriptToEvaluateOnNewDocument` 和 `Page.loadEventFired` 维持，watcher 在页面重载和应用内 driver 切换时重新应用；
 - 应用内切换条直接更新 `html[data-eva-skin]`，写入 `localStorage`，并由 watcher 同步 `driver.txt`；`Start-EVA.cmd asuka|rei` 使用一次性 token 显式覆盖，不会覆盖之后的页面内选择；
 - 用户气泡通过 `--color-text-user-message` 和 `.rich-text-user-turn` 双层覆盖保证对比度；内置浏览器打开时只适配右侧 Codex 外壳，并对 `PILOT` 切换条自动收起，关闭浏览器后恢复；
+- 右上角摘要面板通过 `.group/summary-panel` 和稳定的 `thread-summary-panel-*` 数据槽位适配标题、分组线、文件行与缩略图，不改面板布局或文件操作逻辑；
 - `Restore-EVA.ps1` 清理启动层、样式、覆盖层、dataset 标记，并在校验 PID/命令行后停止注入器；
 - 不修改 WindowsApps、`app.asar`、签名、认证、Base URL、API Key 或 Codex 协议。
 

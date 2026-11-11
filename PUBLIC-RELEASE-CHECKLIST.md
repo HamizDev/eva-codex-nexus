@@ -1,6 +1,6 @@
-# v0.3.1 公开源码验收清单
+# v0.3.2 公开源码验收清单
 
-- [x] 根 / workbench package 与 lockfile 均为 v0.3.1
+- [x] 根 / workbench package 与 lockfile 均为 v0.3.2
 - [x] README、CHANGELOG、上游来源与素材声明更新
 - [x] 主题跟随系统、Markdown、状态提示测试纳入 `npm test`
 - [x] 官方 Codex 皮肤启动器、CDP 目标校验、Asuka/Rei 注入和恢复测试纳入 `npm run test:skin`
@@ -19,6 +19,7 @@
 - [x] Asuka/Rei 用户气泡内层 Markdown 最终计算颜色均为高对比度
 - [x] 内置浏览器标签、导航、地址栏、导入横幅和工具卡片适配验证通过
 - [x] 浏览器打开时切换条自动收起，关闭后恢复可见和可点击
+- [x] 摘要面板标题、分组线、文件行、缩略图与操作状态在 Asuka/Rei 下验证通过
 - [x] 根许可以 `HamizDev` 为主版权人，纯参考上游条目已清理
 - [x] `--remove` 同时清理启动层、启动样式与皮肤节点
 - [ ] 新设备 Windows 10 / 11 启动与 Codex CLI 真实联调

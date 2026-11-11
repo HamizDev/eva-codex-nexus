@@ -444,6 +444,136 @@ html[data-eva-skin] header [role="tab"][aria-selected="true"] {
   box-shadow: inset 0 -2px 0 var(--eva-accent) !important;
 }
 
+html[data-eva-skin] [role="dialog"]:has([class~="group/summary-panel"]) {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html[data-eva-skin] [class~="group/summary-panel"] {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--eva-accent-strong) 9%, transparent),
+      transparent 92px
+    ),
+    var(--eva-panel) !important;
+  border: 1px solid var(--eva-border-strong) !important;
+  border-radius: 14px !important;
+  color: var(--eva-text) !important;
+  box-shadow:
+    inset 3px 0 0 var(--eva-accent-strong),
+    inset 0 1px 0 color-mix(in srgb, var(--eva-accent) 36%, transparent),
+    0 18px 46px var(--eva-shadow) !important;
+}
+
+html[data-eva-skin] [class~="group/summary-panel"] section > header {
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--eva-accent-strong) 12%, var(--eva-panel)),
+      var(--eva-panel) 74%
+    ) !important;
+  color: var(--eva-text-strong) !important;
+}
+
+html[data-eva-skin] [class~="group/summary-panel"] section > header::before {
+  background: var(--eva-panel) !important;
+}
+
+html[data-eva-skin] [class~="group/summary-panel"] [class~="group/section-toggle"] {
+  color: var(--eva-text-strong) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.025em !important;
+}
+
+html[data-eva-skin] [class~="group/summary-panel"] [class~="group/section-toggle"]:hover,
+html[data-eva-skin] [class~="group/summary-panel"] [class~="group/section-toggle"]:focus-visible {
+  color: var(--eva-accent) !important;
+}
+
+html[data-eva-skin] [class~="group/summary-panel"] header button:focus-visible {
+  outline-color: var(--eva-accent) !important;
+}
+
+html[data-eva-skin] [class~="group/summary-panel"] [data-slot="thread-summary-panel-icon-button"] {
+  color: var(--eva-muted) !important;
+}
+
+html[data-eva-skin] [class~="group/summary-panel"] [data-slot="thread-summary-panel-icon-button"]:hover,
+html[data-eva-skin] [class~="group/summary-panel"] [data-slot="thread-summary-panel-icon-button"][data-state="open"] {
+  background: color-mix(in srgb, var(--eva-accent) 15%, transparent) !important;
+  color: var(--eva-accent) !important;
+}
+
+html[data-eva-skin] [class~="group/summary-panel"] section[role="presentation"]::after {
+  right: 18px !important;
+  left: 18px !important;
+  height: 1px !important;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--eva-border-strong) 12%,
+    var(--eva-accent-strong) 50%,
+    var(--eva-border-strong) 88%,
+    transparent
+  ) !important;
+  box-shadow: 0 0 7px color-mix(in srgb, var(--eva-accent) 24%, transparent);
+  opacity: 0.9 !important;
+}
+
+html[data-eva-skin] [class~="group/summary-panel"] [data-slot="thread-summary-panel-item-button"] {
+  border-radius: 8px !important;
+  color: var(--eva-text) !important;
+}
+
+html[data-eva-skin] [class~="group/summary-panel"] [data-slot="thread-summary-panel-item-button"]::before {
+  border: 1px solid transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html[data-eva-skin] [class~="group/summary-panel"] [data-slot="thread-summary-panel-item-button"]:hover {
+  color: var(--eva-text-strong) !important;
+}
+
+html[data-eva-skin] [class~="group/summary-panel"] [data-slot="thread-summary-panel-item-button"]:hover::before,
+html[data-eva-skin] [class~="group/summary-panel"] [data-slot="thread-summary-panel-item-button"]:focus-visible::before {
+  border-color: var(--eva-border) !important;
+  background: color-mix(
+    in srgb,
+    var(--eva-accent) 11%,
+    var(--eva-panel-raised)
+  ) !important;
+  box-shadow: inset 2px 0 0 var(--eva-accent-strong) !important;
+}
+
+html[data-eva-skin] [class~="group/summary-panel"] [data-slot="thread-summary-panel-item-label"],
+html[data-eva-skin] [class~="group/summary-panel"] [data-slot="thread-summary-panel-item-label"] * {
+  color: inherit !important;
+}
+
+html[data-eva-skin] [class~="group/summary-panel"] [data-slot="thread-summary-panel-item-leading"] {
+  width: 20px !important;
+  height: 20px !important;
+  border-radius: 5px !important;
+  color: var(--eva-accent) !important;
+}
+
+html[data-eva-skin] [class~="group/summary-panel"] [data-slot="thread-summary-panel-item-leading"] img {
+  border-color: var(--eva-border-strong) !important;
+  border-radius: 4px !important;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--eva-accent) 24%, transparent);
+}
+
+html[data-eva-skin] [class~="group/summary-panel"] [class*="text-text/40"] {
+  color: color-mix(
+    in srgb,
+    var(--eva-text) 72%,
+    var(--eva-muted)
+  ) !important;
+}
+
 html[data-eva-skin] .bg-composer-primary {
   background-color: var(--eva-accent) !important;
   color: var(--eva-bg) !important;

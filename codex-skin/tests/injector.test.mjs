@@ -63,7 +63,7 @@ test("主题与 payload 版本稳定且可切换", () => {
   assert.equal(isDriver("asuka"), true);
   assert.equal(isDriver("rei"), true);
   assert.equal(isDriver("system"), false);
-  assert.equal(SKIN_VERSION, "0.3.1");
+  assert.equal(SKIN_VERSION, "0.3.2");
   const asuka = loadPayload("asuka");
   const rei = loadPayload("rei");
   assert.equal(asuka.driver, "asuka");
@@ -274,6 +274,11 @@ test("皮肤 CSS 使用稳定选择器并禁用远程资源", () => {
     "[data-testid=\"browser-profile-import-nux-banner\"]",
     ".bg-neutral-soft-alpha",
     "[role=\"tab\"][aria-selected=\"true\"]",
+    "[class~=\"group/summary-panel\"]",
+    "[data-slot=\"thread-summary-panel-item-button\"]",
+    "[data-slot=\"thread-summary-panel-item-leading\"]",
+    "[data-slot=\"thread-summary-panel-icon-button\"]",
+    "section[role=\"presentation\"]::after",
     ".bg-composer-primary",
     "#eva-codex-skin-overlay",
     "#eva-codex-skin-overlay .eva-driver-switch",
@@ -337,6 +342,10 @@ test("选择器合同保留稳定锚点", () => {
   assert.equal(selectors.selectors.browserAddressInput, "[data-browser-sidebar-address-input]");
   assert.equal(selectors.selectors.browserImportBanner, "[data-testid=\"browser-profile-import-nux-banner\"]");
   assert.equal(selectors.selectors.browserToolCard, ".bg-neutral-soft-alpha");
+  assert.equal(selectors.selectors.summaryPanel, "[class~=\"group/summary-panel\"]");
+  assert.equal(selectors.selectors.summaryPanelItem, "[data-slot=\"thread-summary-panel-item-button\"]");
+  assert.equal(selectors.selectors.summaryPanelLeading, "[data-slot=\"thread-summary-panel-item-leading\"]");
+  assert.equal(selectors.selectors.summaryPanelIconButton, "[data-slot=\"thread-summary-panel-icon-button\"]");
   assert.equal(selectors.selectors.composerPrimary, ".bg-composer-primary");
   assert.match(selectors.selectors.changeSummaryPill, /rounded-3xl/);
   assert.match(selectors.selectors.queuedRail, /排队消息操作/);
