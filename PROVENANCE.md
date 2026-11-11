@@ -10,6 +10,8 @@
 
 DSH 启动媒体由 `Import-DSH-Boot.ps1` 从用户本机的 `dsh-plugin-eva-theme` 仓库导入到 `%LOCALAPPDATA%\EVACodexSkin\dsh-boot`，导入时按 DSH `assets/manifest.json` 校验字节数和 SHA-256。公开仓库只包含导入器、自有 CSS 和说明，不包含 DSH 的 GIF、角色头像、语音或音乐。受控验证来源为 DSH commit `f8b96381ceda724c58e79ec375e0dfe08d244349`（v0.51.2）。
 
+README 顶部 NERV 标志取自 DSH EVA Theme 的 `assets/svg/nerv-logo.svg`，本地副本 SHA-256 为 `C517C9BC95B38017912AD42F0D7CB0770A0ED15298A881BAF2AAE484185A18AC`。该图形只用于同人主题展示，不随项目代码的 MIT 许可重新授权。
+
 备用启动链仍为：Start-EVA-Workbench.cmd → workbench/start.ps1 → Node server.cjs → 官方 codex app-server；前端为网页、Canvas 和 Three.js。两条链都没有打包或调用原交接包的 DragonCodexBoot.cs/WPF 启动器、上游 MP4 或快捷方式替换工具。
 
 Dragon Codex Boot：https://github.com/yushua0808-cpu/dragon-codex-boot 。2026-11-04 核对上游为 MIT，许可证全文在 licenses/DragonCodexBoot-MIT.txt。保留参考来源和许可，不自动将其用于整个工作台。

@@ -1,7 +1,23 @@
+<div align="center">
+
+<img src="codex-skin/assets/nerv-logo.svg" width="84" alt="NERV 标志" />
+
 # EVA Codex Nexus
 
-> 给**官方 Codex 客户端**换上一层 EVA 皮肤，而不是另做一个 Codex 工作台。
-> **当前版本：v0.3.2（开发预览）**。非官方项目，与 OpenAI、Studio Khara、Gainax 及相关权利方均无关联。
+**选择你的驾驶员，给原生 Codex 换一层 EVA 外壳。**
+
+为**官方 Codex 桌面客户端**打造的 EVA 双角色皮肤，不是另做一个 Codex 工作台。<br />
+明日香的红与黑，绫波丽的白与蓝；侧栏、项目、会话、输入框、审批与快捷键仍保持 Codex 原生。
+
+[![Release](https://img.shields.io/badge/release-v0.3.2-b62026)](https://github.com/HamizDev/eva-codex-nexus/tree/v0.3.2) [![License](https://img.shields.io/badge/code-MIT-176b91)](LICENSE) [![Platform](https://img.shields.io/badge/platform-Windows-236c9d)](#环境要求)
+
+[**下载最新版本**](https://github.com/HamizDev/eva-codex-nexus/archive/refs/tags/v0.3.2.zip) · [使用流程](#使用流程) · [启动动画](#dsh-启动动画) · [更新日志](CHANGELOG.md) · [问题反馈](https://github.com/HamizDev/eva-codex-nexus/issues)
+
+`eva-codex-nexus` · 当前版本 **v0.3.2（开发预览）**
+
+</div>
+
+> 非官方项目，与 OpenAI、Studio Khara、Gainax 及相关权利方均无关联。
 
 从 v0.1.0 开始，默认入口启动的是**你电脑上已安装的官方 Codex**。侧栏、项目、会话、输入框、审批、菜单和快捷键仍然是 Codex 原生的，只额外叠加 EVA 的配色、线框和装饰层。v0.2.0 增加了无控制台启动、官方 Codex 图标的桌面快捷方式，以及可选的 DSH 启动动画本地资源包；v0.2.1 修复了 Windows PowerShell 5.1 下 CDP 目标列表误判、导致启动器拒绝注入的问题；v0.2.2 补齐了侧栏悬浮说明、改动汇总卡片、文件变更提示、用户气泡和发送按钮的面板配色；v0.3.0 增加应用内明日香/绫波丽切换、排队消息导轨适配，并完成真实窗口缩放验证；v0.3.1 修复用户消息气泡对比度，适配内置浏览器的标签、导航、地址栏、导入横幅和工具卡片，并在浏览器打开时自动收起驾驶员切换条；v0.3.2 适配右上角摘要面板的标题、分组线、文件行、缩略图和操作状态。现有独立工作台保留为备用入口，不再抢占默认启动方式。
 
@@ -149,6 +165,6 @@ workbench/               # 旧独立工作台，保留
 
 ## 素材与许可
 
-代码采用 MIT，主版权署名为 `HamizDev`；原工作台底座 `Iris-change/eva-codex-workbench` 的原始版权通知继续保留。公开包只包含抽象线框、编号和调色板，以及用于读取本地资源包的导入器与自有 CSS，不包含 DSH 角色 PNG、GIF、语音、音乐或动画片段。
+代码采用 MIT，主版权署名为 `HamizDev`；原工作台底座 `Iris-change/eva-codex-workbench` 的原始版权通知继续保留。公开包包含抽象线框、编号和调色板、用于读取本地资源包的导入器与自有 CSS，以及 README 顶部使用的 NERV 同人标识；不包含 DSH 角色 PNG、GIF、语音、音乐或动画片段。该 NERV 标识仅用于同人主题展示，不属于 MIT 覆盖范围。
 
 MIT 不覆盖 EVA 角色形象、NERV/EVA 商标、原作音乐或语音。素材边界见 `ASSETS.md`、`ASSET-TODO.md` 和 `codex-skin/assets/README.md`；第三方参考见 `THIRD_PARTY_NOTICES.md`。

@@ -20,13 +20,13 @@
     },
     {
       "path": "ASSET-TODO.md",
-      "bytes": 1367,
-      "sha256": "a0acba7050537d4c499ee2d89ab35cd18639d39ede5ecf557df259b3c8f7b124"
+      "bytes": 1415,
+      "sha256": "d68cda9f9fe7c51bc9515250c8df1cc0048b439b7339841f3ee5b045c3e64c3d"
     },
     {
       "path": "ASSETS.md",
-      "bytes": 1464,
-      "sha256": "38f709503b0091271b7d3a224dee1e0101ab30822e595c4d2423f43f9bd0f93b"
+      "bytes": 1830,
+      "sha256": "c5c6786b2d87d2a1d793e86486ae320dd9922aef0b892899d49c54c6ff3a8b69"
     },
     {
       "path": "CHANGELOG.md",
@@ -75,13 +75,13 @@
     },
     {
       "path": "LICENSE-STATUS.md",
-      "bytes": 886,
-      "sha256": "886e45308ee930ae9892f495bf0644d618f77ed7a543c18bb41da41891175950"
+      "bytes": 1058,
+      "sha256": "1153ce4708743db22c176fcdfdd704f08ea58a5849a9dcb80d4d091aee3f9434"
     },
     {
       "path": "PROVENANCE.md",
-      "bytes": 2171,
-      "sha256": "df4599a1cd00828f1710a2e206dd1ae625f86180edd77230f80c5393f7bc1fa8"
+      "bytes": 2432,
+      "sha256": "fc4367dc68a5645338082d0334b2716863364f04ff9d547b41e9ba2980470f63"
     },
     {
       "path": "PUBLIC-RELEASE-CHECKLIST.md",
@@ -90,8 +90,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 10815,
-      "sha256": "749a1e6d438a4c072666fa8a1f8f9f7824c00759af42179e07c7a22c6f99036e"
+      "bytes": 11814,
+      "sha256": "63e18169629e2e507875311c3372ff263ac285d80d10213e5628ff59d12428f8"
     },
     {
       "path": "Restore-EVA.cmd",
@@ -120,8 +120,8 @@
     },
     {
       "path": "THIRD_PARTY_NOTICES.md",
-      "bytes": 1616,
-      "sha256": "460b6ffce75f4992ac47a39698d5a827028a5349f8411c1be3703194bf8b3507"
+      "bytes": 1802,
+      "sha256": "2f7757627ddbacfee05f93033f51cd0659167f451e2a9653f9322180430e55b7"
     },
     {
       "path": "UPSTREAM.md",
@@ -172,6 +172,11 @@
       "path": "codex-skin/assets/linework.svg",
       "bytes": 416,
       "sha256": "6d98f8132bcf5f12778e194349fc58158871a3dc01a5bd20a421fb4250dea608"
+    },
+    {
+      "path": "codex-skin/assets/nerv-logo.svg",
+      "bytes": 21120,
+      "sha256": "c517c9bc95b38017912ad42f0d7cb0770a0ed15298a881baf2aae484185a18ac"
     },
     {
       "path": "codex-skin/assets/rei-mark.svg",

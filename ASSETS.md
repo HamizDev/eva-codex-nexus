@@ -4,7 +4,9 @@
 
 当前工作台现存的部分 NERV 风格 SVG 为此前预览底座继承；公开展示前应再次核对相应品牌标志与原创作品的授权边界，必要时替换为原创的中性符号。
 
-`workbench/public/media/pilot/` 和 `workbench/public/media/eva/` 放置旧工作台的示意图。官方 Codex 皮肤公开包只使用 `codex-skin/assets/` 中的抽象编号、线框、启动扫描、调色板和 DSH 风格 CSS；这些文件不含角色插画、语音或音乐。DSH 启动包由用户从本地仓库导入，导入器与许可边界见 [DSH-BOOT.md](DSH-BOOT.md)。
+README 顶部的 `codex-skin/assets/nerv-logo.svg` 取自 DSH EVA Theme 公开仓库的同人素材，SHA-256 为 `C517C9BC95B38017912AD42F0D7CB0770A0ED15298A881BAF2AAE484185A18AC`。它只用于主题标识展示，不属于本项目 MIT 代码许可；EVA/NERV 相关图形、商标与角色权利仍归相关权利方。
+
+`workbench/public/media/pilot/` 和 `workbench/public/media/eva/` 放置旧工作台的示意图。官方 Codex 皮肤公开包使用 `codex-skin/assets/` 中的抽象编号、线框、启动扫描、调色板和 DSH 风格 CSS；除 README 顶部的 NERV 同人标志外，这些文件不含角色插画、语音或音乐。DSH 启动包由用户从本地仓库导入，导入器与许可边界见 [DSH-BOOT.md](DSH-BOOT.md)。
 
 后续如更换两名驾驶员的正式插画、动态素材或音轨，请记录：来源 URL、版权所有者、文件版本、许可证 / 单独授权、SHA-256，并在独立 NOTICE 中登记。**设计参考 DSH 的代码许可证不等于继承其音乐授权。**
 

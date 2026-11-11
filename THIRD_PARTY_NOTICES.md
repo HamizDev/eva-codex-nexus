@@ -5,6 +5,7 @@ This is a community, unofficial project; no OpenAI or EVANGELION affiliation is 
 | Component | Source | License in this package |
 |---|---|---|
 | DSH EVA Theme (design reference; no character assets copied) | https://github.com/seaison/dsh-plugin-eva-theme | MIT, `licenses/DSH-EVA-MIT.txt` |
+| NERV header emblem | https://github.com/seaison/dsh-plugin-eva-theme/blob/main/assets/svg/nerv-logo.svg | EVA/NERV visual identity; not relicensed by this project's MIT code license |
 | Dragon Codex Boot (startup design reference, no WPF binary) | https://github.com/yushua0808-cpu/dragon-codex-boot | MIT, `licenses/DragonCodexBoot-MIT.txt` |
 | Three.js (bundled JS) | https://github.com/mrdoob/three.js | MIT, `workbench/public/vendor/THREE-LICENSE.txt` |
 | html-to-image (bundled JS) | https://github.com/bubkoo/html-to-image | MIT, `workbench/public/vendor/HTML-TO-IMAGE-LICENSE.txt` |
