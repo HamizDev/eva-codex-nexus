@@ -7,7 +7,7 @@ function isPrivate(rel){
  const norm=rel.replaceAll('\\','/'),parts=norm.split('/'),name=parts.at(-1);
  return parts.some(part=>blockedNames.has(part))||blockedExts.has(path.extname(name).toLowerCase())||
  /^\.env(?:\.|$)/i.test(name)||/^(?:auth|credentials|secrets)\.json$/i.test(name)||
- norm==='workbench/public/media/audio-unit02-fluid/voice.wav'||name==='Thumbs.db'||name==='.DS_Store';
+ name==='Thumbs.db'||name==='.DS_Store';
 }
 function files(dir=root,base=''){
  const result=[];

@@ -14,8 +14,8 @@ npm run manifest
 npm run verify:public
 ```
 
-提交 Bug 时注明系统、Node.js 和 Codex CLI 版本、复现步骤以及脱敏日志。请勿上传个人登录凭据、完整聊天记录或私有项目资料。
+提交 Bug 时注明系统、Node.js 和官方 Codex Desktop 版本、复现步骤以及脱敏日志。请勿上传个人登录凭据、完整聊天记录或私有项目资料。
 
 ## 素材与署名
 
-请保留 `LICENSE`、`UPSTREAM.md` 与第三方声明中的原作者署名。EVA 角色、商标、音乐、动画等素材不因本仓库使用 MIT 协议就自动获得再分发权；新素材需记录来源和授权情况。
+请保留 `LICENSE`、`PROVENANCE.md` 与第三方声明中的必要署名。EVA 角色、商标、音乐、动画等素材不因本仓库使用 MIT 协议就自动获得再分发权；新素材需记录来源和授权情况。

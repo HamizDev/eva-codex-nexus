@@ -65,6 +65,7 @@
 
 #eva-codex-skin-boot[data-phase="gif"] .eva-dsh-gif-layer,
 #eva-codex-skin-boot[data-phase="emergency"] .eva-dsh-alert-layer,
+#eva-codex-skin-boot[data-phase="select"] .eva-dsh-select-layer,
 #eva-codex-skin-boot[data-phase="sync"] .eva-dsh-console-layer {
   opacity: 1;
   visibility: visible;
@@ -140,6 +141,208 @@
   color: #a99591;
   font: 9px/1.5 "Bahnschrift", monospace;
   letter-spacing: 0.12em;
+}
+
+#eva-codex-skin-boot .eva-dsh-select-layer {
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: clamp(12px, 2.4vh, 24px);
+  padding: clamp(16px, 3vh, 30px) clamp(20px, 4vw, 64px) clamp(12px, 2.4vh, 24px);
+  pointer-events: auto;
+  background:
+    radial-gradient(circle at 30% 50%, var(--dsh-grid), transparent 42%),
+    repeating-linear-gradient(0deg, transparent 0 31px, var(--dsh-grid) 32px),
+    var(--dsh-surface);
+}
+
+#eva-codex-skin-boot .eva-dsh-select-grid {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.88fr) minmax(340px, 1.12fr);
+  gap: clamp(14px, 2.8vw, 44px);
+  min-height: 0;
+}
+
+#eva-codex-skin-boot .eva-dsh-select-bay {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  pointer-events: auto;
+  border: 1px solid var(--dsh-line);
+  background:
+    repeating-linear-gradient(90deg, transparent 0 47px, var(--dsh-grid) 48px),
+    repeating-linear-gradient(0deg, transparent 0 47px, var(--dsh-grid) 48px),
+    color-mix(in srgb, var(--dsh-panel) 88%, transparent);
+  transition: border-color 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
+}
+
+#eva-codex-skin-boot .eva-dsh-select-bay::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(72%, 330px);
+  aspect-ratio: 1;
+  border: 1px solid var(--dsh-line);
+  border-radius: 50%;
+  outline: 1px dashed var(--dsh-line);
+  outline-offset: 22px;
+  transform: translate(-50%, -50%);
+}
+
+#eva-codex-skin-boot .eva-dsh-select-bay.is-over,
+#eva-codex-skin-boot .eva-dsh-select-bay[data-loaded="true"] {
+  border-color: var(--dsh-accent);
+  background-color: color-mix(in srgb, var(--dsh-accent) 8%, var(--dsh-panel));
+  box-shadow: inset 0 0 80px color-mix(in srgb, var(--dsh-accent) 16%, transparent);
+}
+
+#eva-codex-skin-boot .eva-dsh-select-bay .eva-dsh-plug {
+  width: min(48%, 205px);
+  max-height: 72%;
+}
+
+#eva-codex-skin-boot .eva-dsh-select-bay.is-over .eva-dsh-plug {
+  filter:
+    drop-shadow(0 0 22px color-mix(in srgb, var(--dsh-accent) 54%, transparent))
+    saturate(1.1);
+}
+
+#eva-codex-skin-boot .eva-dsh-pilot-select {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 12px;
+  min-width: 0;
+  min-height: 0;
+}
+
+#eva-codex-skin-boot .eva-dsh-pilot-cards {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 12px;
+  min-height: 0;
+}
+
+#eva-codex-skin-boot .eva-dsh-pilot-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(92px, 34%) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(10px, 2vw, 24px);
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  padding: clamp(10px, 2vh, 18px);
+  color: var(--dsh-ink);
+  text-align: left;
+  pointer-events: auto;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--dsh-panel-2) 88%, transparent), var(--dsh-panel));
+  border: 1px solid var(--dsh-line);
+  border-radius: 0;
+  cursor: grab;
+  font: inherit;
+  transition: border-color 140ms ease, background-color 140ms ease, transform 140ms ease;
+}
+
+#eva-codex-skin-boot .eva-dsh-pilot-card[data-dsh-pilot="asuka"] {
+  --dsh-accent: #f13a50;
+  --dsh-line: rgba(241, 58, 80, 0.34);
+}
+
+#eva-codex-skin-boot .eva-dsh-pilot-card[data-dsh-pilot="rei"] {
+  --dsh-accent: #1873a2;
+  --dsh-line: rgba(24, 115, 162, 0.33);
+}
+
+#eva-codex-skin-boot .eva-dsh-pilot-card::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: var(--dsh-accent);
+  opacity: 0;
+  transition: opacity 140ms ease;
+}
+
+#eva-codex-skin-boot .eva-dsh-pilot-card:hover,
+#eva-codex-skin-boot .eva-dsh-pilot-card:focus-visible,
+#eva-codex-skin-boot .eva-dsh-pilot-card[aria-pressed="true"] {
+  border-color: var(--dsh-accent);
+  background-color: color-mix(in srgb, var(--dsh-accent) 8%, var(--dsh-panel));
+  outline: none;
+  transform: translateX(-3px);
+}
+
+#eva-codex-skin-boot .eva-dsh-pilot-card:hover::after,
+#eva-codex-skin-boot .eva-dsh-pilot-card:focus-visible::after,
+#eva-codex-skin-boot .eva-dsh-pilot-card[aria-pressed="true"]::after {
+  opacity: 1;
+}
+
+#eva-codex-skin-boot .eva-dsh-pilot-card.is-dragging {
+  opacity: 0.48;
+  cursor: grabbing;
+}
+
+#eva-codex-skin-boot .eva-dsh-pilot-card-face {
+  width: 100%;
+  height: min(18vh, 132px);
+  background: var(--dsh-accent);
+  mask: var(--dsh-avatar) center / contain no-repeat;
+  -webkit-mask: var(--dsh-avatar) center / contain no-repeat;
+  opacity: 0.92;
+}
+
+#eva-codex-skin-boot .eva-dsh-pilot-card-copy {
+  display: grid;
+  min-width: 0;
+  align-content: center;
+}
+
+#eva-codex-skin-boot .eva-dsh-pilot-card-copy b {
+  color: var(--dsh-accent);
+  font: 800 clamp(34px, 5vw, 64px)/0.9 "Bahnschrift", sans-serif;
+}
+
+#eva-codex-skin-boot .eva-dsh-pilot-card-copy strong {
+  margin-top: 8px;
+  color: var(--dsh-ink);
+  font: 600 clamp(20px, 2.7vw, 34px)/1.2 "Microsoft YaHei UI", sans-serif;
+  letter-spacing: 0.08em;
+}
+
+#eva-codex-skin-boot .eva-dsh-pilot-card-copy small {
+  margin-top: 5px;
+  color: var(--dsh-dim);
+  font: 600 9px/1.4 "Bahnschrift", monospace;
+  letter-spacing: 0.16em;
+}
+
+#eva-codex-skin-boot .eva-dsh-pilot-card-drag {
+  position: absolute;
+  right: 12px;
+  bottom: 9px;
+  color: var(--dsh-dim);
+  font: 7px/1.4 "Bahnschrift", monospace;
+  letter-spacing: 0.12em;
+}
+
+#eva-codex-skin-boot .eva-dsh-select-hint {
+  margin: 0;
+  padding: 10px 12px;
+  color: var(--dsh-dim);
+  border: 1px solid var(--dsh-line);
+  font: 9px/1.65 "Microsoft YaHei UI", monospace;
+}
+
+#eva-codex-skin-boot .eva-dsh-select-hint b {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--dsh-accent);
+  font-weight: 600;
+  letter-spacing: 0.1em;
 }
 
 #eva-codex-skin-boot .eva-dsh-console-layer {
@@ -610,6 +813,10 @@
     grid-template-columns: minmax(170px, 0.72fr) minmax(320px, 1.28fr);
     gap: 12px;
   }
+  #eva-codex-skin-boot .eva-dsh-select-grid {
+    grid-template-columns: minmax(170px, 0.72fr) minmax(300px, 1.28fr);
+    gap: 12px;
+  }
   #eva-codex-skin-boot .eva-dsh-head-code,
   #eva-codex-skin-boot .eva-dsh-magi {
     display: none;
@@ -624,9 +831,39 @@
     gap: 8px;
     padding: 12px;
   }
+  #eva-codex-skin-boot .eva-dsh-select-layer {
+    gap: 8px;
+    padding: 12px;
+  }
   #eva-codex-skin-boot .eva-dsh-grid {
     grid-template-columns: 0.72fr 1.28fr;
     gap: 8px;
+  }
+  #eva-codex-skin-boot .eva-dsh-select-grid {
+    grid-template-columns: 0.72fr 1.28fr;
+    gap: 8px;
+  }
+  #eva-codex-skin-boot .eva-dsh-pilot-cards {
+    gap: 7px;
+  }
+  #eva-codex-skin-boot .eva-dsh-pilot-card {
+    grid-template-columns: 72px minmax(0, 1fr);
+    padding: 7px;
+  }
+  #eva-codex-skin-boot .eva-dsh-pilot-card-face {
+    height: 72px;
+  }
+  #eva-codex-skin-boot .eva-dsh-pilot-card-copy b {
+    font-size: 28px;
+  }
+  #eva-codex-skin-boot .eva-dsh-pilot-card-copy strong {
+    margin-top: 3px;
+    font-size: 16px;
+  }
+  #eva-codex-skin-boot .eva-dsh-pilot-card-copy small,
+  #eva-codex-skin-boot .eva-dsh-pilot-card-drag,
+  #eva-codex-skin-boot .eva-dsh-select-hint {
+    display: none;
   }
   #eva-codex-skin-boot .eva-dsh-bay-label,
   #eva-codex-skin-boot .eva-dsh-bay-lock {
@@ -681,11 +918,59 @@
   }
 }
 
+@media (max-width: 700px) {
+  #eva-codex-skin-boot .eva-dsh-select-grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(150px, 0.85fr) minmax(0, 1.15fr);
+  }
+  #eva-codex-skin-boot .eva-dsh-select-bay .eva-dsh-plug {
+    width: min(28%, 130px);
+    max-height: 78%;
+  }
+  #eva-codex-skin-boot .eva-dsh-pilot-cards {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
+  }
+  #eva-codex-skin-boot .eva-dsh-pilot-card {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(70px, 1fr) auto;
+    justify-items: center;
+    gap: 6px;
+    padding: 10px;
+    text-align: center;
+  }
+  #eva-codex-skin-boot .eva-dsh-pilot-card-face {
+    width: min(100%, 170px);
+    height: 100%;
+    max-height: 130px;
+  }
+  #eva-codex-skin-boot .eva-dsh-pilot-card-copy {
+    justify-items: center;
+  }
+  #eva-codex-skin-boot .eva-dsh-pilot-card-copy b {
+    font-size: clamp(30px, 8vw, 52px);
+  }
+  #eva-codex-skin-boot .eva-dsh-pilot-card-copy strong {
+    font-size: clamp(16px, 4vw, 24px);
+  }
+}
+
 @media (max-height: 520px) {
   #eva-codex-skin-boot .eva-dsh-console-layer {
     gap: 7px;
     padding-top: 10px;
     padding-bottom: 9px;
+  }
+  #eva-codex-skin-boot .eva-dsh-select-layer {
+    gap: 7px;
+    padding-top: 10px;
+    padding-bottom: 9px;
+  }
+  #eva-codex-skin-boot .eva-dsh-pilot-card-face {
+    height: 72px;
+  }
+  #eva-codex-skin-boot .eva-dsh-select-hint {
+    display: none;
   }
   #eva-codex-skin-boot .eva-dsh-head {
     padding-top: 8px;

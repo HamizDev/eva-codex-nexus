@@ -63,7 +63,7 @@ test("主题与 payload 版本稳定且可切换", () => {
   assert.equal(isDriver("asuka"), true);
   assert.equal(isDriver("rei"), true);
   assert.equal(isDriver("system"), false);
-  assert.equal(SKIN_VERSION, "0.4.0");
+  assert.equal(SKIN_VERSION, "0.4.1");
   const asuka = loadPayload("asuka");
   const rei = loadPayload("rei");
   assert.equal(asuka.driver, "asuka");
@@ -88,8 +88,10 @@ test("主题与 payload 版本稳定且可切换", () => {
   assert.match(asuka.source, /data-local-conversation-final-assistant/);
   assert.match(asuka.source, /isTaskRunning/);
   assert.match(asuka.source, /scheduleCompletionCheck/);
+  assert.match(asuka.source, /createCompletionGate/);
+  assert.match(asuka.source, /data-sidebar-indicator="working"/);
+  assert.match(asuka.source, /data-loading-indicator/);
   assert.match(asuka.source, /seenApprovals/);
-  assert.match(asuka.source, /seenCompletions/);
   assert.match(asuka.source, /pending|排队消息操作/);
   const activeDriver = buildActiveDriverExpression();
   assert.match(activeDriver, /dataset\?\.evaSkin/);
@@ -129,6 +131,7 @@ test("首次启动动画只播放一次并可跳过", () => {
     "EVANGELION UNIT-02",
     "Escape",
     "localStorage",
+    "pagehide",
     "eva-codex-skin-options-v1",
     "bootOptions.boot === false",
     "requestAnimationFrame",
@@ -148,6 +151,7 @@ test("首次启动动画只播放一次并可跳过", () => {
 
   const early = buildEarlySource("void 0", "rev-1", boot);
   assert.ok(early.includes("eva-codex-skin-boot-launch"));
+  assert.ok(early.includes('if (location.href === "app://-/index.html")'));
   assert.ok(
     early.indexOf("eva-codex-skin-boot-launch") <
       early.indexOf("__EVA_CODEX_SKIN_EARLY_GENERATION__"),
@@ -254,7 +258,19 @@ test("DSH 启动包按清单校验并生成本地启动序列", () => {
       "dataset.phase",
       "NERV",
       "eva-dsh-alert-layer",
+      "eva-dsh-select-layer",
+      "data-dsh-pilot",
+      "data-dsh-dropzone",
+      "chooseDriver",
+      "pickVoices",
+      ".eva-dsh-console-layer .eva-dsh-head strong",
+      ".eva-dsh-sync-copy h2",
+      "setPhase(\"select\")",
+      "syncMsByDriver",
       "DSH BOOT 9.9.9",
+      "GOD'S IN HIS HEAVEN",
+      "syncVoiceStarted",
+      "pagehide",
       "app-ready",
       "prefers-reduced-motion",
       "eva-codex-skin-options-v1",
@@ -380,14 +396,50 @@ test("皮肤 CSS 使用稳定选择器并禁用远程资源", () => {
     "#eva-codex-skin-boot",
     ".eva-dsh-gif",
     ".eva-dsh-alert-layer",
+    ".eva-dsh-select-layer",
+    ".eva-dsh-select-bay",
+    ".eva-dsh-pilot-card",
+    ".eva-dsh-select-bay.is-over",
     ".eva-dsh-pilot-face",
     ".eva-dsh-ring-meter",
+    "@media (max-width: 700px)",
     "@media (prefers-reduced-motion: reduce)",
   ]) {
     assert.ok(dshBootCss.includes(fragment), `missing DSH boot CSS contract: ${fragment}`);
   }
+  assert.match(
+    dshBootCss,
+    /\.eva-dsh-select-layer\s*\{[\s\S]*?pointer-events:\s*auto;/i,
+  );
+  assert.match(
+    dshBootCss,
+    /\.eva-dsh-select-bay\s*\{[\s\S]*?pointer-events:\s*auto;/i,
+  );
   assert.ok(!dshBootCss.includes("@import"));
   assert.ok(!/url\(\s*https?:/i.test(dshBootCss));
+});
+
+test("应用内切换驾驶员不会启动开机动画", () => {
+  const source = buildInstallSource({
+    driver: "asuka",
+    css: "html{background:#000}",
+    linework: "data:image/svg+xml;base64,AA==",
+    mark: "data:image/svg+xml;base64,AA==",
+  });
+  assert.match(source, /setDriver/);
+  assert.doesNotMatch(source, /eva-dsh-select-layer/);
+  assert.doesNotMatch(source, /data-dsh-dropzone/);
+  assert.doesNotMatch(source, /eva-codex-skin-boot-launch/);
+});
+
+test("启动层等待 Codex 主页面出现后再注入", () => {
+  const source = fs.readFileSync(path.join(root, "injector.mjs"), "utf8");
+  const applyStart = source.indexOf("async function applyOnce");
+  const probeIndex = source.indexOf("const probe = await waitForCodexProbe", applyStart);
+  const bootIndex = source.indexOf("await session.evaluate(current.bootSource)", applyStart);
+  assert.ok(applyStart >= 0);
+  assert.ok(probeIndex > applyStart);
+  assert.ok(bootIndex > probeIndex);
 });
 
 test("内置浏览器打开时重新定位设置入口且不隐藏设置面板", () => {
@@ -428,6 +480,18 @@ test("选择器合同保留稳定锚点", () => {
     "[data-local-conversation-final-assistant=\"true\"]",
   );
   assert.match(selectors.selectors.runStopButton, /aria-label="停止"/);
+  assert.equal(
+    selectors.selectors.runWorkingIndicator,
+    "[data-app-action-sidebar-thread-active=\"true\"][data-sidebar-indicator=\"working\"]",
+  );
+  assert.equal(
+    selectors.selectors.runLoadingIndicator,
+    "[data-app-action-sidebar-thread-active=\"true\"] [data-loading-indicator]",
+  );
+  assert.equal(
+    selectors.selectors.activeThread,
+    "[data-app-action-sidebar-thread-active=\"true\"][data-app-action-sidebar-thread-id]",
+  );
   assert.equal(
     selectors.selectors.approvalSurface,
     "[data-codex-approval-surface=\"true\"]",

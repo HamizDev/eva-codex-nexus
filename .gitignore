@@ -1,6 +1,4 @@
 # User data / account and project secrets
-workbench/data/
-workbench/tests/sandbox/
 **/.env
 **/.env.*
 !**/.env.example
@@ -30,9 +28,6 @@ Thumbs.db
 *.7z
 *.mp4
 *.mov
-
-# Optional audio: require separate distribution permission.
-workbench/public/media/audio-unit02-fluid/voice.wav
 
 # Editor and scratch
 .vscode/

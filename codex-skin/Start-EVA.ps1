@@ -13,7 +13,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-$SkinVersion = '0.4.0'
+$SkinVersion = '0.4.1'
 $PortExplicit = $PSBoundParameters.ContainsKey('Port')
 $StateRoot = Join-Path $env:LOCALAPPDATA 'EVACodexSkin'
 $StatePath = Join-Path $StateRoot 'state.json'
@@ -79,11 +79,11 @@ function Confirm-CodexRestart {
 
 function Get-NodeRuntime {
   $command = Get-Command node.exe -ErrorAction SilentlyContinue
-  if (-not $command) { throw '未找到 Node.js 20+。请先安装 Node.js，并确认 node --version 可用。' }
+  if (-not $command) { throw '未找到 Node.js 22+。请先安装 Node.js 22 或更高版本，并确认 node --version 可用。' }
   $version = (& $command.Source --version).TrimStart('v')
   $major = 0
   if (-not [int]::TryParse(($version -split '\.')[0], [ref]$major) -or $major -lt 22) {
-    throw "官方 Codex 皮肤需要 Node.js 22 或更高版本（内置 WebSocket），当前为 $version。旧工作台仍可使用 Node.js 20+。"
+    throw "官方 Codex 皮肤需要 Node.js 22 或更高版本（内置 WebSocket），当前为 $version。"
   }
   return [pscustomobject]@{ Path = $command.Source; Version = $version }
 }
@@ -299,6 +299,19 @@ function Stop-RecordedInjector {
   Write-Step "停止旧注入器 PID $($State.injectorPid)..."
   Stop-Process -Id ([int]$State.injectorPid) -ErrorAction Stop
   Wait-Process -Id ([int]$State.injectorPid) -Timeout 8 -ErrorAction SilentlyContinue
+}
+
+function Stop-StaleInjectors {
+  foreach ($process in @(Get-ProcessRows)) {
+    if ($process.Name -notin @('node.exe', 'node')) { continue }
+    $command = [string]$process.CommandLine
+    if (-not $command) { continue }
+    if ($command.IndexOf($InjectorPath, [StringComparison]::OrdinalIgnoreCase) -lt 0) { continue }
+    if ($command -notmatch '(?:^|\s)--watch(?:\s|$)') { continue }
+    Write-Step "停止残留注入器 PID $($process.ProcessId)..."
+    Stop-Process -Id ([int]$process.ProcessId) -ErrorAction SilentlyContinue
+    Wait-Process -Id ([int]$process.ProcessId) -Timeout 8 -ErrorAction SilentlyContinue
+  }
 }
 
 function Stop-Codex {
@@ -519,6 +532,7 @@ try {
   }
 
   Stop-RecordedInjector -State $saved
+  Stop-StaleInjectors
   $bootId = Get-CodexLaunchId -Install $install
   $forceToken = if ($Driver -in @('asuka', 'rei')) {
     [guid]::NewGuid().ToString('N')

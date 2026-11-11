@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "project": "eva-codex-nexus",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "files": [
     {
       "path": ".editorconfig",
@@ -15,53 +15,38 @@
     },
     {
       "path": ".gitignore",
-      "bytes": 641,
-      "sha256": "0fefb6f89e97c023f23761a5c1b59bbe24343285721dbfe8883294918d8b65c5"
+      "bytes": 487,
+      "sha256": "0419c1af69f28e60567d9ff8f6c565a1f5dd3538129c80113b963a43cd2ece13"
     },
     {
       "path": "ASSET-TODO.md",
-      "bytes": 1793,
-      "sha256": "92d5e8ea475ee6a8efb390d8c7521dd47ddd23dd45c397649d2ac850d92ef6e6"
+      "bytes": 1502,
+      "sha256": "6d834f1ccbc1a640af78510c7df236864da152d17771504bb612f67a51d90433"
     },
     {
       "path": "ASSETS.md",
-      "bytes": 2233,
-      "sha256": "00699316c194cbddc759544528f0d363b78863987795f9a30c4639c40c2d4ef6"
+      "bytes": 1506,
+      "sha256": "f6632eedabf53e0f653ad596ede8832dae09e03057a61a78b6cacc8c3a372276"
     },
     {
       "path": "CHANGELOG.md",
-      "bytes": 16519,
-      "sha256": "b80d3b66c4aadabc907862b552297c41c89889874899cf1907eac33282ac6373"
-    },
-    {
-      "path": "CODE-ORIGINS.md",
-      "bytes": 2608,
-      "sha256": "59e4b5ed73a36f35b700e762f301ca57a0d75c2dd619868ef2942ca075b3a56b"
+      "bytes": 18843,
+      "sha256": "324b5f472c627b6745fa31a82592337de0730b8794bef28c2b3249618d87006d"
     },
     {
       "path": "CONTRIBUTING.md",
-      "bytes": 937,
-      "sha256": "96529f011dee9ae4c2deb868744edabb2a7aff64146d9d81695f969cb79a46bc"
-    },
-    {
-      "path": "DEVELOPMENT-HANDOFF.md",
-      "bytes": 5816,
-      "sha256": "67411d678dc7256f3b548a379ad5732a3f286cc1d817a60076cb6f5cb7cc287b"
+      "bytes": 946,
+      "sha256": "fb77856ebabe9aad6aff73802dcff7d51236f76208eb58943290fa3ceda3b9e1"
     },
     {
       "path": "DSH-BOOT.md",
-      "bytes": 3973,
-      "sha256": "93d10260c98be255b1a7e36f8c26d9bbd35b4e9c319ccee571d7f93ce959800a"
+      "bytes": 5325,
+      "sha256": "097e314f3fe2396de677caea2bf242b0782534dba93bc57c386fe68ec79bc124"
     },
     {
       "path": "Import-DSH-Boot.cmd",
       "bytes": 277,
       "sha256": "f83ec61d258bd461e9281b97975115d4205a5f90a2a2caedaf081cce25c9555f"
-    },
-    {
-      "path": "Install-Dependencies.cmd",
-      "bytes": 163,
-      "sha256": "ccefe6317fec9785bc5bc3bec07e80d2d68783444555a95ddd9b7f9c0407f51d"
     },
     {
       "path": "Install-EVA-DesktopShortcut.cmd",
@@ -70,28 +55,28 @@
     },
     {
       "path": "LICENSE",
-      "bytes": 1143,
-      "sha256": "3e3f55cd48e34b141feaf297ac9a3eb4734001fc2a1a55054a7cfe51bc14c99f"
+      "bytes": 1065,
+      "sha256": "45316b27da964b87cae8bf0464cf58a41c2df8bdc522c1de9958f2e3a0ef4aae"
     },
     {
       "path": "LICENSE-STATUS.md",
-      "bytes": 1103,
-      "sha256": "119245958686aa24fabb4d647502cb31d0589d9d4a5af19d4e19a4556b35ae65"
+      "bytes": 782,
+      "sha256": "4f98863f912c311175f8ebe30ed0cc003b676d662a7323f75230a006580e6736"
     },
     {
       "path": "PROVENANCE.md",
-      "bytes": 2535,
-      "sha256": "1d18e87ced5ff9a985cead646da88c384c3e31ca9b0e1e8d46621f58c9fee295"
+      "bytes": 1761,
+      "sha256": "98fc2a3c73d8cee2d2c4996ad1e4c2ac78f58fe9fc5a448c9401f54efb446d1c"
     },
     {
       "path": "PUBLIC-RELEASE-CHECKLIST.md",
-      "bytes": 3249,
-      "sha256": "0b141ca853325c513db9382e5ffb8fa5a682a3e82b672844687b37e45dbcda50"
+      "bytes": 1060,
+      "sha256": "2afa1823a9512ac9617746ad6d87a7ee4845ab249be566e80a13903b75f7f6ba"
     },
     {
       "path": "README.md",
-      "bytes": 13793,
-      "sha256": "86ba12cb84cd3909e2f9cd44dabf72ab1f5ca60d368fc73df463e50f3a2cfc48"
+      "bytes": 14657,
+      "sha256": "a8460ee70965c423a9fc52329758fb3c65e656398c6388bc40fc49e844b77883"
     },
     {
       "path": "Restore-EVA.cmd",
@@ -102,11 +87,6 @@
       "path": "Start-EVA-Rei.cmd",
       "bytes": 59,
       "sha256": "593c7840346d71b6dc132317ca053f9ea01d8d4f3f3bda938cbe89386a986825"
-    },
-    {
-      "path": "Start-EVA-Workbench.cmd",
-      "bytes": 128,
-      "sha256": "06d91b6b30fd90cac06f3b41d8dc2be0b9528fcd5f2600338f7c7549c155e80d"
     },
     {
       "path": "Start-EVA.cmd",
@@ -120,13 +100,8 @@
     },
     {
       "path": "THIRD_PARTY_NOTICES.md",
-      "bytes": 1802,
-      "sha256": "2f7757627ddbacfee05f93033f51cd0659167f451e2a9653f9322180430e55b7"
-    },
-    {
-      "path": "UPSTREAM.md",
-      "bytes": 1612,
-      "sha256": "ad0275453989d17830c1aba63c840bb40dc6899760d6a71b61c90dab6b564ddc"
+      "bytes": 1172,
+      "sha256": "14d62ed9526fed0dc1c3c8b956804277802f5ccb9a8917df758ce38def37d7d9"
     },
     {
       "path": "codex-skin/Import-DSH-Boot.ps1",
@@ -140,13 +115,13 @@
     },
     {
       "path": "codex-skin/Start-EVA.ps1",
-      "bytes": 22915,
-      "sha256": "c205669e7b6697e309de5fcc1f3bc6c8aa93a5d26707a7999cbbfc7d4359ae67"
+      "bytes": 23544,
+      "sha256": "b607eef038647b32e84172d791cdc43b6943a0ecee6c8bc2e2e19df73740252e"
     },
     {
       "path": "codex-skin/assets/README.md",
-      "bytes": 1332,
-      "sha256": "6a87170263296328a0273db590e008d17470bfaf39faa31d91ffedb6d821975a"
+      "bytes": 1329,
+      "sha256": "3be8fba205e477af855dc972d1850eedd313a9092a79b178a135190f720dc5f5"
     },
     {
       "path": "codex-skin/assets/asuka-mark.svg",
@@ -160,8 +135,8 @@
     },
     {
       "path": "codex-skin/assets/dsh-boot.css",
-      "bytes": 17846,
-      "sha256": "b8efce1758f7d0ff08d918414cbddcbf2f8a4716431a99502b0f19a07c5a77eb"
+      "bytes": 25727,
+      "sha256": "b044a5a1269fce8324af98ee1afe9e3f6eeb4a5bab85fee4f36b3f0aac65d0d5"
     },
     {
       "path": "codex-skin/assets/eva-skin.css",
@@ -185,28 +160,33 @@
     },
     {
       "path": "codex-skin/assets/skin-ui.js",
-      "bytes": 24772,
-      "sha256": "d9ea5c47e612798463d7febb3e5eb34895d67df20d67423e6e24077ca2ba3df1"
+      "bytes": 30128,
+      "sha256": "514ea52499049381c6b36d75a7ea5c96e9560fdf4a01e74a6ddf64841867bf43"
     },
     {
       "path": "codex-skin/injector.mjs",
-      "bytes": 69510,
-      "sha256": "b074f59c0be4d0578dc487f5db15d8b65d0bdb020fc24316302d78b93641e148"
+      "bytes": 80644,
+      "sha256": "db11ff3e13ae1f2f93eddc28efbb2ee89e8269d535168543519c9a1328e10e5b"
     },
     {
       "path": "codex-skin/selectors.json",
-      "bytes": 3322,
-      "sha256": "5bd2483b5b6f4119be77a06f04569ad029881bc4c0fb7a11700952a3ea0a8d2e"
+      "bytes": 3648,
+      "sha256": "c02df8f1774f7fba72d529ed2bad33e2dde13efd34b1e558f4e51140d783c77a"
+    },
+    {
+      "path": "codex-skin/tests/activity-gate.test.mjs",
+      "bytes": 6728,
+      "sha256": "296100224ac4c67a96d9757eb4db640aeb1bc057c84fa1022d95bfba82a2dd2b"
     },
     {
       "path": "codex-skin/tests/injector.test.mjs",
-      "bytes": 19862,
-      "sha256": "794b782b95b31755f01793c8bacd2ad2a85614cf7dca459be69afaa576bd099a"
+      "bytes": 22193,
+      "sha256": "a00128253371f483d963795b6ee9fce0ff15335a366032db39d8a12033e13c1a"
     },
     {
       "path": "codex-skin/tests/launcher.test.mjs",
-      "bytes": 4879,
-      "sha256": "685c17fa068229cc8025f885c7df4c3a52c12d0adbf93677d60d442d48a2db5d"
+      "bytes": 5155,
+      "sha256": "b67997b71a18571ca16ab0ce6b055c777ad287cb0beef34fdff0d93a7d76d48c"
     },
     {
       "path": "licenses/DSH-EVA-MIT.txt",
@@ -214,14 +194,9 @@
       "sha256": "e52a3d7e414a55480ee59b8476babcc7dc6213f3eabb04b180e59e600225956e"
     },
     {
-      "path": "licenses/DragonCodexBoot-MIT.txt",
-      "bytes": 1087,
-      "sha256": "4ffc2131be78bd83127661a0f6a2994bc05df71bfd9b629beb585cced63e67b1"
-    },
-    {
       "path": "package.json",
-      "bytes": 539,
-      "sha256": "699f49154189c7c88eb90bba400908d73a0d39395f21630f86b9e733251419f8"
+      "bytes": 470,
+      "sha256": "47806e100a80ef55788ff1d8f5d1ba84d204d5b342c806cf902665d5dd39a388"
     },
     {
       "path": "scripts/Install-EVA-DesktopShortcut.ps1",
@@ -230,8 +205,8 @@
     },
     {
       "path": "scripts/check-release.cjs",
-      "bytes": 2795,
-      "sha256": "70395cfde6b4132f6c39818fa738c459be8a78d547ffa84fa04d4a7a53d2bfa2"
+      "bytes": 2844,
+      "sha256": "29a89ac55ed99ce124b102de36170f3841713a1df95e775720ce00fd2a1b52db"
     },
     {
       "path": "scripts/generate-manifest.cjs",
@@ -240,363 +215,8 @@
     },
     {
       "path": "scripts/release-utils.cjs",
-      "bytes": 1491,
-      "sha256": "b34ee371c90589884f464a40da759b2e546cf7fe0a04bac9fae39e7254b60ec8"
-    },
-    {
-      "path": "workbench/approval-decision.cjs",
-      "bytes": 355,
-      "sha256": "ab8a458e6f1de825e43efbc54a060ea942342a1249c4700b17fc3c7e83903e29"
-    },
-    {
-      "path": "workbench/attachments.cjs",
-      "bytes": 3027,
-      "sha256": "06f42bbe10907c14bf9cb9dcb04ff0e9876d94be4ab310b52cd431c309b66b40"
-    },
-    {
-      "path": "workbench/bridge.cjs",
-      "bytes": 3543,
-      "sha256": "c7f6bff2d384d777590e989b2048585b56a6f48eab88fc2a08a30e9dd72ad323"
-    },
-    {
-      "path": "workbench/git-service.cjs",
-      "bytes": 3683,
-      "sha256": "28f2b378780cdbdc94d827f2cb8c138e4e02cd65c8efb5a1784dc41224730167"
-    },
-    {
-      "path": "workbench/instance-id.cjs",
-      "bytes": 524,
-      "sha256": "36e5f3393d6925a661c62f57dd26fb35793e9eddcabd06339a7f326c0248e070"
-    },
-    {
-      "path": "workbench/model-options.cjs",
-      "bytes": 821,
-      "sha256": "9c3e760b9883e55c22e34e734bf24b273223702524e55f26b0bd032fac643aef"
-    },
-    {
-      "path": "workbench/package-lock.json",
-      "bytes": 1734,
-      "sha256": "7f3c9e7de5af409cd10d50defb7eb72f1f449719c0bf33aada6bc5b19d41aff7"
-    },
-    {
-      "path": "workbench/package.json",
-      "bytes": 332,
-      "sha256": "89998d47aafeca181ed19bca0b2eb74c8f1ffbf53c2694d39d95cac48266d4e7"
-    },
-    {
-      "path": "workbench/plugins.cjs",
-      "bytes": 2313,
-      "sha256": "4eda977bafa96a61fe409875dd38ba61f9a3ecdd727bf475ff14eb6c9d29a208"
-    },
-    {
-      "path": "workbench/public/app.js",
-      "bytes": 27923,
-      "sha256": "0a3377acc93fb1bde1e3a9a58e4122c99aef111e1082ef9bb7b561da43b2459f"
-    },
-    {
-      "path": "workbench/public/attachments-ui.js",
-      "bytes": 4402,
-      "sha256": "d7688d67360b99ca5fbaaa86be19345da10dfecf41fa26ca69ab613527e77e3d"
-    },
-    {
-      "path": "workbench/public/boot-atmosphere.js",
-      "bytes": 1989,
-      "sha256": "9887d44d6deaddd1b2d7c4fed15dfaa109bcd6f77a52f735c7130c2e8bdaeec8"
-    },
-    {
-      "path": "workbench/public/codex-link.js",
-      "bytes": 817,
-      "sha256": "51a90d2f056dd102136beae723390b99ef95015271e8fae65a0236c15fa636d6"
-    },
-    {
-      "path": "workbench/public/dev-tools.css",
-      "bytes": 2152,
-      "sha256": "e7e18d54ed86e736a4c90f3532e81eda8d8a0c41d41d87d5b198dfdd354e0130"
-    },
-    {
-      "path": "workbench/public/dev-tools.js",
-      "bytes": 9820,
-      "sha256": "3754f06d56fe01fe121ca927d3582ca814e19a3a8f26fdf5c45ffa280f86c284"
-    },
-    {
-      "path": "workbench/public/eva-v001.css",
-      "bytes": 2747,
-      "sha256": "cb60fc6d5ce9acc1358148c8123d7c1af43af21797b830018702983a6aa9a8bf"
-    },
-    {
-      "path": "workbench/public/features.css",
-      "bytes": 3158,
-      "sha256": "0e81db52e2e95be48cca13d7f6a00fc2cbc293015bc40865d2955ecc75685593"
-    },
-    {
-      "path": "workbench/public/fonts/OFL-NotoSerifCJK.txt",
-      "bytes": 4301,
-      "sha256": "6a73f9541c2de74158c0e7cf6b0a58ef774f5a780bf191f2d7ec9cc53efe2bf2"
-    },
-    {
-      "path": "workbench/public/fonts/SOURCES.md",
-      "bytes": 361,
-      "sha256": "cd8db7ba0cf9101b5c99ed72263f61007c41c1813b8fa80a11a5ffa4eb0fcb59"
-    },
-    {
-      "path": "workbench/public/fonts/mincho.css",
-      "bytes": 135,
-      "sha256": "224d9ff679e9b56f0023d647bad59bd9345e5fe0884df0a4f6874a9c14d62b14"
-    },
-    {
-      "path": "workbench/public/index.html",
-      "bytes": 10616,
-      "sha256": "04ee20b9e1c7f5695e7ba234cd507207ff19ae1bba15d46427cddc52f796961d"
-    },
-    {
-      "path": "workbench/public/intro-cg.js",
-      "bytes": 15720,
-      "sha256": "01eb61c5525c46203f2d0252ec0c45049b2e94a5784b1e0d7a28116c26d683de"
-    },
-    {
-      "path": "workbench/public/intro.css",
-      "bytes": 8524,
-      "sha256": "9e663ffbbf9db506dbb25cb6a6674a54689f41b362c93ac2e17b9b9fd9c99e9f"
-    },
-    {
-      "path": "workbench/public/intro.html",
-      "bytes": 1836,
-      "sha256": "7f0109a32474e32601b6aee1ecd4fc3b5f1253af693e46817202a0b308187b6a"
-    },
-    {
-      "path": "workbench/public/intro.js",
-      "bytes": 887,
-      "sha256": "3ff03d9c542170b0d4602b6090b47e2f419b6ef457393b683b5385cdbedf32a0"
-    },
-    {
-      "path": "workbench/public/markdown-lite.js",
-      "bytes": 5744,
-      "sha256": "bbe434270e813b03757cfdd0d5a47883e692ee64f294659f554a9cdfdcae9ec1"
-    },
-    {
-      "path": "workbench/public/media/audio-unit02-fluid/README.md",
-      "bytes": 1289,
-      "sha256": "d184f9fd0f02149ec74fd655b6a467b144bc5728d2b6e851d1df8a9fd58afc5e"
-    },
-    {
-      "path": "workbench/public/media/audio-unit02-fluid/VOICE-NOTES.txt",
-      "bytes": 272,
-      "sha256": "f2e3afc4f2222268e4a3117a14f8f928972ac65a171f5f64c869e9239f652508"
-    },
-    {
-      "path": "workbench/public/media/audio-unit02-fluid/timeline.json",
-      "bytes": 1079,
-      "sha256": "cd07d619f9a608c63759c4d597888231c62f26b2ed0c9aa5be8f9e77c2dd24b9"
-    },
-    {
-      "path": "workbench/public/media/eva/nerv-mark.svg",
-      "bytes": 398,
-      "sha256": "b9bb4d189d2753544e80b3bdb14a026433580c74e7b192ad6207286a056c6c98"
-    },
-    {
-      "path": "workbench/public/media/eva/theme-title.svg",
-      "bytes": 206,
-      "sha256": "e17ae424f1f71f3e49310effed67dafb9615aa92b550439ca244dce866201917"
-    },
-    {
-      "path": "workbench/public/media/eva/unit00-mark.svg",
-      "bytes": 398,
-      "sha256": "c6b5c082af5a40fcb577b52b98840576cbd960d63fbf1c0e35553bd14077f0e8"
-    },
-    {
-      "path": "workbench/public/media/official/codex-node.svg",
-      "bytes": 282,
-      "sha256": "5eab43291f55b158fe2eac585cd5e44875ea1e08caeea486fe088b2c023add3f"
-    },
-    {
-      "path": "workbench/public/media/pilot/pilot-linework.svg",
-      "bytes": 260,
-      "sha256": "2614e699af8dbe3d3306df8a265c5ea39da6fbc70c42f0e38dcfc2b28ab4f16e"
-    },
-    {
-      "path": "workbench/public/media/pilot/pilot-placeholder-unit00.svg",
-      "bytes": 431,
-      "sha256": "7b370658511605feca57115bfb2486238104c854513bbf98bbeb1cf792865250"
-    },
-    {
-      "path": "workbench/public/media/pilot/pilot-placeholder.svg",
-      "bytes": 431,
-      "sha256": "996c5aa57efd741148cf7891b2cb3bb077b5efebcada61623e4715453aa042c2"
-    },
-    {
-      "path": "workbench/public/motion-v12.js",
-      "bytes": 885,
-      "sha256": "17dc799bfb910defbbd3cac2cd47c30fd74466ab850daca9beb69a48531a5467"
-    },
-    {
-      "path": "workbench/public/pilot-alerts.js",
-      "bytes": 2214,
-      "sha256": "b10298cfa6ac0ce4e33c7c9220ad6d72f7dcf6d549226630eb7fe842093295ba"
-    },
-    {
-      "path": "workbench/public/protocol-fx.js",
-      "bytes": 2767,
-      "sha256": "89a049c3e3839031d3eea5ad4ed4d9d6a8a6e5e0c755d0ef1f2745925eec34a3"
-    },
-    {
-      "path": "workbench/public/scan-workbench.js",
-      "bytes": 4511,
-      "sha256": "093e0cdcace9219181709376e2eb6b581fe2f636c21c61d41f8fad46857a2d95"
-    },
-    {
-      "path": "workbench/public/sequence-audio.js",
-      "bytes": 1716,
-      "sha256": "783405e4668c1f9d874e9ea2ac85069fb2ad1238bd1e5d9c1f92bc7c671a9568"
-    },
-    {
-      "path": "workbench/public/sequence-timing.js",
-      "bytes": 441,
-      "sha256": "c5c1470823f403b64ff2223ef58bb052f6cc9c188585e7ae044211d9557c9509"
-    },
-    {
-      "path": "workbench/public/stage-layout.js",
-      "bytes": 457,
-      "sha256": "4531b86f508672f1ec6edb4f10b946c6d103e81c568cada0fe09b6d7f8126425"
-    },
-    {
-      "path": "workbench/public/style.css",
-      "bytes": 25125,
-      "sha256": "06bcc4cfdabdd429282682256cf621a3f6cd82f0fb3396f1bedc2f7b6e36063f"
-    },
-    {
-      "path": "workbench/public/system-clock.js",
-      "bytes": 586,
-      "sha256": "7ecb9cf3d27ea1d1eabe63a61a34ae8b387f397e07feec4ad953d3a2eab9d36f"
-    },
-    {
-      "path": "workbench/public/theme.js",
-      "bytes": 1341,
-      "sha256": "74f1dc0a03f3fc13ffa635486f87d8f7927c3e7ea79ef803b32ab5d9df4b616c"
-    },
-    {
-      "path": "workbench/public/unified-sequence.js",
-      "bytes": 6681,
-      "sha256": "3985f91221bdbf65bce6f0ac6513e641901c24928520a050419fec40c0cf086c"
-    },
-    {
-      "path": "workbench/public/unit00.css",
-      "bytes": 6403,
-      "sha256": "f88a276ac0593409fa5e6d39d410f62c461738af25336e782d1070256aa7843a"
-    },
-    {
-      "path": "workbench/public/unit02.css",
-      "bytes": 11192,
-      "sha256": "f103042bbb9edeb5ddc45439b38acc0a33628673c069ec32afbbb069bf77c25d"
-    },
-    {
-      "path": "workbench/public/vendor/HTML-TO-IMAGE-LICENSE.txt",
-      "bytes": 1066,
-      "sha256": "dcfe4a33fbd700305cf9308c02e8800dbef57c46ecc26ce2f4438b28a0bd9571"
-    },
-    {
-      "path": "workbench/public/vendor/THREE-LICENSE.txt",
-      "bytes": 1081,
-      "sha256": "bfe119ea4fd413f5f7ca3fcd63adb0c4a073ed39daa2fe7d3e6b769e21272601"
-    },
-    {
-      "path": "workbench/public/vendor/html-to-image.js",
-      "bytes": 20562,
-      "sha256": "a90b42909d80964269ef6d5f3d1e4a5a7e2a4c263a5d2a76a9e7151901343262"
-    },
-    {
-      "path": "workbench/public/vendor/three.core.js",
-      "bytes": 1403455,
-      "sha256": "eb077d2417f61d3e6d9264c317cabc4ea35769ed6b0ab533067292a550784c20"
-    },
-    {
-      "path": "workbench/public/vendor/three.module.js",
-      "bytes": 603113,
-      "sha256": "c8211c69345d2e9949dc7a8ac969380497aa0600a5a8ac6a459c8cd02dd9cb8a"
-    },
-    {
-      "path": "workbench/server.cjs",
-      "bytes": 18902,
-      "sha256": "4cf605101372e4f15d4997f87e3ada45785ad7eaae4233a881e389374ae92fe2"
-    },
-    {
-      "path": "workbench/start.ps1",
-      "bytes": 4519,
-      "sha256": "614b31023d42781decd040d155e6506acf6df41360af25f380600f1d02cade5e"
-    },
-    {
-      "path": "workbench/state.cjs",
-      "bytes": 2452,
-      "sha256": "7b13b2c5470ed0e6c9083e036ecd20569f469d81fca88b1f6dfedefaedc0d1f0"
-    },
-    {
-      "path": "workbench/terminal.cjs",
-      "bytes": 3569,
-      "sha256": "53417f08c67a4a1ebc615357828c11a1260646534f06d58a8466c7866ddbf941"
-    },
-    {
-      "path": "workbench/tests/approval-decision.test.cjs",
-      "bytes": 717,
-      "sha256": "74f97ed54a7bae49b59027e53bae2fac4c76247a4335ac51be51602cc1cfb7bb"
-    },
-    {
-      "path": "workbench/tests/audio-announcements.test.cjs",
-      "bytes": 2021,
-      "sha256": "fd1e10ca38024accf54008b1d6ac63ad6114b9e121a704dd9a3f2f6c4d4d8032"
-    },
-    {
-      "path": "workbench/tests/boot-atmosphere.test.cjs",
-      "bytes": 1532,
-      "sha256": "bdf9cc93f48faedb66d3a48ed463bca03de0ae7a5eed5e291dcc563ef569462b"
-    },
-    {
-      "path": "workbench/tests/bridge-lifecycle.test.cjs",
-      "bytes": 2709,
-      "sha256": "a9673cc746882d4339379927dd8e97c20c11d1129222ff6f909dcae0c3ebf159"
-    },
-    {
-      "path": "workbench/tests/dev-tools.test.cjs",
-      "bytes": 5188,
-      "sha256": "5e89d5f8d1059ae1135547cfceacbfc0058deb651165c62c1941e4e153aadead"
-    },
-    {
-      "path": "workbench/tests/markdown-lite.test.cjs",
-      "bytes": 1190,
-      "sha256": "13f4dbf679cdbe792fc558c4080c3a215b21ca3e5eafca69504544740ea56227"
-    },
-    {
-      "path": "workbench/tests/motion-v12.test.cjs",
-      "bytes": 1259,
-      "sha256": "10ed26b96c2a0c24346c5c7e501b00a515022dc9af2cdd378ae962a86f61f96e"
-    },
-    {
-      "path": "workbench/tests/pilot-alerts.test.cjs",
-      "bytes": 1607,
-      "sha256": "d9810ab8d2ab12eca17362a7bd317f7514d0c0322334bbf0e6a4971b6993f1e6"
-    },
-    {
-      "path": "workbench/tests/state.test.cjs",
-      "bytes": 2757,
-      "sha256": "edfe4418f978245facf1fac3d625ef49b295448b9d57d535acaec204138de7ae"
-    },
-    {
-      "path": "workbench/tests/sync-confirmation.test.cjs",
-      "bytes": 881,
-      "sha256": "c05e2d99ee66be3be3c866956e42cb1281bda2803f9949353ad392f53741bd5b"
-    },
-    {
-      "path": "workbench/tests/system-theme.test.cjs",
-      "bytes": 1105,
-      "sha256": "72364b04b543a248c1b090735466f39b7a86d045f6547b101b0098823c5bd716"
-    },
-    {
-      "path": "workbench/tests/theme-and-instance.test.cjs",
-      "bytes": 1377,
-      "sha256": "e70dfebad135dd6dd1facaf1e90080a410707b43d16d3f377d05b98f3381cb0d"
-    },
-    {
-      "path": "workbench/tests/workbench-features.test.cjs",
-      "bytes": 2790,
-      "sha256": "161cf5de7ed43271e06239208c1efc5c5680d89bc007824a815e19f53e526b82"
+      "bytes": 1429,
+      "sha256": "c33868c621a4db10599c938f32f4d00b880fd82db68d7559f576965b7df7668a"
     }
   ]
 }

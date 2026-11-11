@@ -1,3 +1,126 @@
+function createCompletionGate({ stableMs = 3000 } = {}) {
+  const holdMs = Math.max(0, Number(stableMs) || 0);
+  let initialized = false;
+  let running = false;
+  let sawRunning = false;
+  let baselineKey = null;
+  let baselineSignature = "";
+  let baselineConversation = null;
+  let lastKey = null;
+  let lastSignature = "";
+  let lastConversation = null;
+  let pending = null;
+  let triggeredKey = null;
+  let triggeredConversation = null;
+
+  const same = (left, right) => (left ?? null) === (right ?? null);
+  const snapshotOf = (value) => ({
+    key: typeof value?.key === "string" && value.key ? value.key : null,
+    signature: typeof value?.signature === "string" ? value.signature : "",
+    conversation: typeof value?.conversation === "string" && value.conversation
+      ? value.conversation
+      : null,
+  });
+  const remember = (snapshot) => {
+    lastKey = snapshot.key;
+    lastSignature = snapshot.signature;
+    lastConversation = snapshot.conversation;
+  };
+
+  function observe({
+    now,
+    running: nextRunning,
+    approvalVisible = false,
+    snapshot = null,
+  }) {
+    const at = Number(now);
+    if (!Number.isFinite(at)) return false;
+    const current = snapshotOf(snapshot);
+
+    if (!initialized) {
+      initialized = true;
+      running = Boolean(nextRunning);
+      sawRunning = running;
+      baselineKey = current.key;
+      baselineSignature = current.signature;
+      baselineConversation = current.conversation;
+      remember(current);
+      return false;
+    }
+
+    const wasRunning = running;
+    running = Boolean(nextRunning);
+    if (running) {
+      pending = null;
+      if (!wasRunning && !sawRunning) {
+        sawRunning = true;
+        baselineKey = lastKey;
+        baselineSignature = lastSignature;
+        baselineConversation = lastConversation;
+      }
+      return false;
+    }
+
+    if (!sawRunning) {
+      pending = null;
+      remember(current);
+      return false;
+    }
+
+    if (
+      baselineConversation &&
+      current.conversation &&
+      current.conversation !== baselineConversation
+    ) {
+      pending = null;
+      sawRunning = false;
+      remember(current);
+      return false;
+    }
+
+    if (approvalVisible || !current.key) {
+      pending = null;
+      return false;
+    }
+
+    if (
+      !pending ||
+      pending.key !== current.key ||
+      pending.signature !== current.signature ||
+      !same(pending.conversation, current.conversation)
+    ) {
+      pending = { ...current, since: at };
+      return false;
+    }
+
+    if (at - pending.since < holdMs) return false;
+
+    const sameKey = same(current.key, baselineKey);
+    const sameSignature = same(current.signature, baselineSignature);
+    const sameConversation = !baselineConversation ||
+      !current.conversation ||
+      same(current.conversation, baselineConversation);
+    const completed = !(sameKey && sameSignature && sameConversation);
+    const duplicate = same(current.key, triggeredKey) &&
+      same(current.conversation, triggeredConversation);
+
+    pending = null;
+    sawRunning = false;
+    remember(current);
+    if (!completed || duplicate) return false;
+    triggeredKey = current.key;
+    triggeredConversation = current.conversation;
+    return true;
+  }
+
+  function pendingDelay(now) {
+    if (!pending) return null;
+    return Math.max(0, holdMs - (Number(now) - pending.since));
+  }
+
+  return { observe, pendingDelay };
+}
+
 function installEvaSkinUi(config) {
   const root = config?.root;
   const overlay = config?.overlay;
@@ -19,6 +142,8 @@ function installEvaSkinUi(config) {
     portrait: true,
     portraitStrength: 0.11,
   });
+  const completionStableMs = 3000;
+  const welcomeFreshMs = 30000;
   const ranges = Object.freeze({ portraitStrength: [0.03, 0.28] });
   const hasMedia = (id) => typeof media[id] === "string" && media[id].startsWith("data:");
   const hasAny = (ids) => ids.some(hasMedia);
@@ -32,13 +157,9 @@ function installEvaSkinUi(config) {
   let activityObserver = null;
   let activityTimer = null;
   let completionTimer = null;
-  let lastFinalKey = null;
-  let runBaselineFinalKey = null;
-  let wasRunning = false;
-  let sawRunning = false;
   let lastApprovalAt = 0;
   const seenApprovals = new Set();
-  const seenCompletions = new Set();
+  const completionGate = createCompletionGate({ stableMs: completionStableMs });
 
   function normalize(key, value) {
     if (!Object.hasOwn(defaults, key)) return undefined;
@@ -239,7 +360,12 @@ function installEvaSkinUi(config) {
   }
 
   const bootGroup = addGroup("启动与声音");
-  addSwitch(bootGroup, "boot", "开机动画", "下次启动 Codex 时播放 NERV 序列");
+  addSwitch(
+    bootGroup,
+    "boot",
+    "开机动画",
+    "下次启动播放驾驶员选择与 NERV 序列；应用内换肤不播放",
+  );
   addSwitch(bootGroup, "bootVoice", "启动语音", "同步阶段播放当前驾驶员语音", hasBootVoice());
   addSwitch(bootGroup, "pickVoice", "选择应答", "切换驾驶员时播放短语音", hasPickVoice());
   addSwitch(bootGroup, "welcomeVoice", "欢迎语音", "启动完成后播放", hasWelcomeVoice());
@@ -474,14 +600,27 @@ function installEvaSkinUi(config) {
   };
   const onBootFinished = (event) => {
     const detail = event?.detail;
-    if (!detail?.completed || !options.welcomeVoice) return;
-    if (welcomeConsumedKey && detail.bootId && window[welcomeConsumedKey] === detail.bootId) return;
+    if (!detail?.completed || !detail.bootId || !options.welcomeVoice) return;
+    const endedAt = Number(detail.endedAt);
+    if (!Number.isFinite(endedAt) || Date.now() - endedAt > welcomeFreshMs) return;
+    if (welcomeConsumedKey && window[welcomeConsumedKey] === detail.bootId) return;
+    const sessionKey = welcomeConsumedKey ? `${welcomeConsumedKey}:${detail.bootId}` : "";
+    if (sessionKey) {
+      try {
+        if (sessionStorage.getItem(sessionKey)) return;
+      } catch {}
+    }
     const driver = detail.driver === "rei" ? "rei" : "asuka";
     const id = `${driver}Welcome`;
     if (!hasMedia(id)) return;
     if (welcomeConsumedKey && detail.bootId) {
       try {
         window[welcomeConsumedKey] = detail.bootId;
+      } catch {}
+    }
+    if (sessionKey) {
+      try {
+        sessionStorage.setItem(sessionKey, "1");
       } catch {}
     }
     playMedia(id, null, 0.78);
@@ -497,9 +636,15 @@ function installEvaSkinUi(config) {
   }
 
   function isTaskRunning() {
-    return [...document.querySelectorAll(
-      'button[aria-label="停止"], button[aria-label="Stop"], button[aria-label="Stop generating"]',
-    )].some(isVisible);
+    return [...document.querySelectorAll([
+      'button[aria-label="停止"]',
+      'button[aria-label="Stop"]',
+      'button[aria-label="Stop generating"]',
+      '[data-app-action-sidebar-thread-active="true"][data-sidebar-indicator="working"]',
+      '[data-app-action-sidebar-thread-active="true"] [data-loading-indicator]',
+      '[data-app-action-sidebar-thread-active="true"] [aria-label="处理中"]',
+      '[data-app-action-sidebar-thread-active="true"] [aria-label="Working"]',
+    ].join(","))].some(isVisible);
   }
 
   function hashText(value) {
@@ -524,12 +669,43 @@ function installEvaSkinUi(config) {
     return `text:${hashText(text)}:${text.length}`;
   }
 
-  function latestFinalKey() {
+  function activeConversationKey() {
+    const row = document.querySelector(
+      '[data-app-action-sidebar-thread-active="true"][data-app-action-sidebar-thread-id]',
+    );
+    return row?.getAttribute("data-app-action-sidebar-thread-id") || null;
+  }
+
+  function latestFinalSnapshot() {
     const nodes = document.querySelectorAll(
       '[data-local-conversation-final-assistant="true"]',
     );
+    const activeConversation = activeConversationKey();
     const node = nodes[nodes.length - 1];
-    return node ? messageKey(node) : null;
+    if (!node) {
+      return activeConversation
+        ? { key: null, signature: "", conversation: activeConversation }
+        : null;
+    }
+    const text = (node.innerText || node.textContent || "")
+      .replace(/\s+/g, " ")
+      .trim();
+    const conversation = activeConversation ||
+      node.closest("[data-response-annotation-conversation]")
+        ?.getAttribute("data-response-annotation-conversation") ||
+      node.getAttribute("data-response-annotation-conversation") ||
+      null;
+    return {
+      key: messageKey(node),
+      signature: `${hashText(text)}:${text.length}`,
+      conversation,
+    };
+  }
+
+  function hasVisibleApproval() {
+    return [...document.querySelectorAll(
+      '[data-codex-approval-surface="true"]',
+    )].some(isVisible);
   }
 
   function approvalKey(node) {
@@ -554,27 +730,22 @@ function installEvaSkinUi(config) {
     return playMedia(id, null, 0.88);
   }
 
-  function scheduleCompletionCheck(baseline) {
-    if (completionTimer) clearTimeout(completionTimer);
+  function scheduleCompletionCheck(delay) {
+    if (completionTimer || disposed) return;
     completionTimer = setTimeout(() => {
       completionTimer = null;
-      if (disposed || isTaskRunning()) return;
-      const key = latestFinalKey();
-      if (sawRunning && key && key !== baseline && !seenCompletions.has(key)) {
-        seenCompletions.add(key);
-        lastFinalKey = key;
-        if (options.completeVoice) playTaskVoice("complete");
-      } else {
-        lastFinalKey = key ?? lastFinalKey;
-      }
-      sawRunning = false;
-    }, 900);
+      try {
+        checkActivity();
+      } catch {}
+    }, Math.max(120, Number(delay) || 0));
   }
 
   function checkActivity() {
     if (disposed) return;
+    const now = performance.now();
     const running = isTaskRunning();
-    const finalKey = latestFinalKey();
+    const approvalVisible = hasVisibleApproval();
+    const snapshot = latestFinalSnapshot();
 
     for (const node of document.querySelectorAll(
       '[data-codex-approval-surface="true"]',
@@ -583,22 +754,27 @@ function installEvaSkinUi(config) {
       const key = approvalKey(node);
       if (seenApprovals.has(key)) continue;
       seenApprovals.add(key);
-      const now = performance.now();
       if (options.approvalVoice && now - lastApprovalAt >= 1200) {
         lastApprovalAt = now;
         playTaskVoice("approval");
       }
     }
 
-    if (running && !wasRunning) {
-      sawRunning = true;
-      runBaselineFinalKey = lastFinalKey;
-    } else if (!running && wasRunning) {
-      scheduleCompletionCheck(runBaselineFinalKey);
-    } else if (!running && !sawRunning) {
-      lastFinalKey = finalKey;
+    const completed = completionGate.observe({
+      now,
+      running,
+      approvalVisible,
+      snapshot,
+    });
+    if (completed && options.completeVoice) playTaskVoice("complete");
+
+    const delay = completionGate.pendingDelay(now);
+    if (delay !== null) {
+      scheduleCompletionCheck(delay + 80);
+    } else if (completionTimer) {
+      clearTimeout(completionTimer);
+      completionTimer = null;
     }
-    wasRunning = running;
   }
 
   function scheduleActivityCheck() {
@@ -625,10 +801,12 @@ function installEvaSkinUi(config) {
   syncDriver(currentDriver, false);
   refresh();
 
-  lastFinalKey = latestFinalKey();
-  wasRunning = isTaskRunning();
-  sawRunning = wasRunning;
-  runBaselineFinalKey = lastFinalKey;
+  completionGate.observe({
+    now: performance.now(),
+    running: isTaskRunning(),
+    approvalVisible: hasVisibleApproval(),
+    snapshot: latestFinalSnapshot(),
+  });
   for (const node of document.querySelectorAll(
     '[data-codex-approval-surface="true"]',
   )) {
@@ -644,6 +822,10 @@ function installEvaSkinUi(config) {
         "aria-label",
         "data-codex-approval-surface",
         "data-local-conversation-final-assistant",
+        "data-app-action-sidebar-thread-active",
+        "data-app-action-sidebar-thread-id",
+        "data-sidebar-indicator",
+        "data-loading-indicator",
       ],
     });
   }

@@ -41,6 +41,9 @@ test("启动器只通过已验证的官方 Appx 与回环 CDP 工作", () => {
     "$runtime.driver",
     "$state.driver = $selectedDriver",
     "Stop-Codex",
+    "Stop-StaleInjectors",
+    "Get-ProcessRows",
+    "--watch",
   ]) {
     assert.ok(source.includes(fragment), `missing launcher contract: ${fragment}`);
   }
@@ -59,16 +62,16 @@ test("CDP 目标列表兼容 Windows PowerShell 5.1 的数组返回", () => {
   );
 });
 
-test("默认入口是官方 Codex 皮肤，工作台保留独立入口", () => {
+test("默认入口只启动官方 Codex 皮肤", () => {
   const skin = read("Start-EVA.cmd");
-  const workbench = read("Start-EVA-Workbench.cmd");
   const vbs = read("Start-EVA.vbs");
   assert.match(skin, /Start-EVA\.vbs/);
   assert.match(vbs, /codex-skin\\Start-EVA\.ps1/);
   assert.match(vbs, /-PromptRestart/);
   assert.match(vbs, /-GuiPrompt/);
   assert.match(vbs, /shell\.Run command, 0, False/);
-  assert.match(workbench, /workbench\\start\.ps1/);
+  assert.equal(fs.existsSync(path.join(root, "Start-EVA-Workbench.cmd")), false);
+  assert.equal(fs.existsSync(path.join(root, "workbench", "start.ps1")), false);
   assert.match(read("Restore-EVA.cmd"), /Restore-EVA\.ps1/);
 });
 
@@ -122,22 +125,22 @@ test("恢复脚本同时处理 CDP 清理和注入器进程", () => {
 test("package 版本与皮肤版本一致", () => {
   const pkg = JSON.parse(read("package.json"));
   const injector = read("codex-skin/injector.mjs");
-  assert.equal(pkg.version, "0.4.0");
-  assert.match(injector, /export const SKIN_VERSION = "0\.4\.0"/);
+  assert.equal(pkg.version, "0.4.1");
+  assert.match(injector, /export const SKIN_VERSION = "0\.4\.1"/);
 });
 
-test("项目版权以 HamizDev 为主并保留必要上游声明", () => {
+test("项目版权以 HamizDev 为主且不保留已移除工作台声明", () => {
   const license = read("LICENSE");
   assert.match(license, /Copyright \(c\) 2026 HamizDev/);
-  assert.ok(
-    license.indexOf("Copyright (c) 2026 HamizDev") <
-      license.indexOf("Copyright (c) 2026 Iris-change"),
-  );
+  assert.ok(!license.includes("Iris-change"));
   const notices = read("THIRD_PARTY_NOTICES.md");
   assert.match(notices, /DSH EVA Theme/);
-  assert.match(notices, /Dragon Codex Boot/);
-  assert.deepEqual(
-    fs.readdirSync(path.join(root, "licenses")).sort(),
-    ["DSH-EVA-MIT.txt", "DragonCodexBoot-MIT.txt"],
-  );
+  assert.ok(!notices.includes("Dragon Codex Boot"));
+  assert.deepEqual(fs.readdirSync(path.join(root, "licenses")).sort(), ["DSH-EVA-MIT.txt"]);
+});
+
+test("来源说明只描述当前官方 Codex 换肤层", () => {
+  const provenance = read("PROVENANCE.md");
+  assert.match(provenance, /官方 Codex 桌面客户端换肤层/);
+  assert.ok(!/HACKCLAW|骇爪|Dragon Codex Boot|Iris-change|codex app-server/i.test(provenance));
 });

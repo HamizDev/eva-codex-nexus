@@ -1,19 +1,23 @@
-# 来源核对记录
+# 来源说明
 
-核对日期：2026-11-04。
+当前仓库只包含**官方 Codex 桌面客户端换肤层**，不包含独立 Codex 客户端或网页工作台。
 
-用户已补充原“制作骇爪终端启动动画”对话截图：原开发说明将 HACKCLAW 工作台界面、交互、项目管理、图片输入和 Codex 连接代码列为该对话中逐步开发的部分；Windows 启动器另行参考并复用 Dragon Codex Boot。详细证据范围和边界见 CODE-ORIGINS.md。
+## 本项目实现
 
-此前“整个底座来源未知”的描述已被这条开发记录更新。这不是完整的 Git 历史或所有代码的独立相似性审计，不能把第三方组件和素材一起称为原创。
+- `codex-skin/Start-EVA.ps1`：发现并启动本机已安装、已签名的官方 Codex，校验本地 CDP 端点；
+- `codex-skin/injector.mjs`：目标校验、启动层、皮肤注入、热更新、`verify` 与 `remove`；
+- `codex-skin/assets/`：EVA 双角色配色、抽象线框、装饰层、设置面板与自动提醒逻辑；
+- `scripts/`：桌面快捷方式、源码清单和发布边界检查。
 
-`v0.4.0` 的推荐启动链：桌面 EVA Codex.lnk → wscript.exe → Start-EVA.vbs → codex-skin/Start-EVA.ps1 → 官方 Appx Codex（回环 CDP）→ codex-skin/injector.mjs → 官方 renderer 的单次启动层、CSS、摘要面板装饰层与 `表示設定`。该链路不修改 WindowsApps、`app.asar`、签名、认证或 API 配置。
+这些代码由 `HamizDev` 维护，采用根目录 MIT 许可。
 
-DSH 启动媒体由 `Import-DSH-Boot.ps1` 从用户本机的 `dsh-plugin-eva-theme` 仓库导入到 `%LOCALAPPDATA%\EVACodexSkin\dsh-boot`，导入时按 DSH `assets/manifest.json` 校验字节数和 SHA-256。v0.4.0 的受控包包含 18 个素材、合计 5,170,918 字节。公开仓库只包含导入器、自有 CSS、设置/试听逻辑和说明，不包含 DSH 的 GIF、角色头像、立绘、语音、音效或音乐。受控验证来源为 DSH commit `f8b96381ceda724c58e79ec375e0dfe08d244349`（v0.51.2）。
+## 外部来源
 
-README 顶部 NERV 标志取自 DSH EVA Theme 的 `assets/svg/nerv-logo.svg`，本地副本 SHA-256 为 `C517C9BC95B38017912AD42F0D7CB0770A0ED15298A881BAF2AAE484185A18AC`。该图形只用于同人主题展示，不随项目代码的 MIT 许可重新授权。
+- **DSH EVA Theme**：<https://github.com/seaison/dsh-plugin-eva-theme>。参考双驾驶员配色、启动流程、音效生命周期和设置结构；其代码许可为 MIT，全文见 `licenses/DSH-EVA-MIT.txt`。
+- **DSH 本地媒体**：GIF、警报/插入栓、头像、角色线稿、语音和打字音不进入公开仓库，只通过 `Import-DSH-Boot.ps1` 从用户本机的 DSH 主题仓库校验并复制到 `%LOCALAPPDATA%\EVACodexSkin\dsh-boot`。
+- **NERV 顶部标志**：取自 DSH EVA Theme 的 `assets/svg/nerv-logo.svg`，仅用于同人主题展示；项目 MIT 不覆盖 EVA/NERV 图形、商标或角色权利。
+- **官方 Codex**：由使用者自行安装。本项目不修改 `WindowsApps`、`app.asar`、签名、账号令牌、代理、Base URL 或模型配置。
 
-备用启动链仍为：Start-EVA-Workbench.cmd → workbench/start.ps1 → Node server.cjs → 官方 codex app-server；前端为网页、Canvas 和 Three.js。两条链都没有打包或调用原交接包的 DragonCodexBoot.cs/WPF 启动器、上游 MP4 或快捷方式替换工具。
+## 媒体边界
 
-Dragon Codex Boot：https://github.com/yushua0808-cpu/dragon-codex-boot 。2026-11-04 核对上游为 MIT，许可证全文在 licenses/DragonCodexBoot-MIT.txt。保留参考来源和许可，不自动将其用于整个工作台。
-
-后续若找到其他明确复用代码，应补充相应许可。项目自有代码采用 MIT，主版权署名为 `HamizDev`，并保留原工作台底座 `Iris-change` 的原始版权通知。完整私人视觉未公开分发，公开版使用占位素材；见 LICENSE-STATUS.md 和 ASSETS.md。
+MIT 只覆盖本项目代码，不覆盖 EVA 角色形象、名称、音乐、语音、动画或 NERV/EVA 商标。导入 DSH 媒体不等于获得公开再分发权；公开版本仍只提供导入器、自有 CSS 和说明。详细素材边界见 `ASSETS.md`、`ASSET-TODO.md` 与 `DSH-BOOT.md`。
