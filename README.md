@@ -1,24 +1,39 @@
 # EVA Codex Nexus
 
 > 给**官方 Codex 客户端**换上一层 EVA 皮肤，而不是另做一个 Codex 工作台。
-> **当前版本：v0.1.1（开发预览）**。非官方项目，与 OpenAI、Studio Khara、Gainax 及相关权利方均无关联。
+> **当前版本：v0.2.0（开发预览）**。非官方项目，与 OpenAI、Studio Khara、Gainax 及相关权利方均无关联。
 
-从 v0.1.0 开始，默认入口 `Start-EVA.cmd` 启动的是**你电脑上已安装的官方 Codex**。侧栏、项目、会话、输入框、审批、菜单和快捷键仍然是 Codex 原生的，只额外叠加 EVA 的配色、线框和装饰层。v0.1.1 增加了每次启动播放一次的抽象 EVA 启动层。现有独立工作台保留为备用入口，不再抢占默认启动方式。
+从 v0.1.0 开始，默认入口启动的是**你电脑上已安装的官方 Codex**。侧栏、项目、会话、输入框、审批、菜单和快捷键仍然是 Codex 原生的，只额外叠加 EVA 的配色、线框和装饰层。v0.2.0 增加了无控制台启动、官方 Codex 图标的桌面快捷方式，以及可选的 DSH 启动动画本地资源包。现有独立工作台保留为备用入口，不再抢占默认启动方式。
 
 ## 两种入口
 
 | 入口 | 行为 |
 | --- | --- |
-| `Start-EVA.cmd` | **默认入口**：官方 Codex + EVA 皮肤（默认 02 明日香） |
+| 桌面 `EVA Codex` 快捷方式 | **推荐入口**：无控制台、官方 Codex 图标，官方 Codex + EVA 皮肤 |
+| `Start-EVA.cmd` | 兼容入口：通过隐藏的 `Start-EVA.vbs` 启动；命令行窗口只短暂出现 |
 | `Start-EVA.cmd rei` | 官方 Codex + 00 绫波丽皮肤 |
 | `Start-EVA.cmd asuka` | 官方 Codex + 02 明日香皮肤 |
 | `Start-EVA-Rei.cmd` | 双击切换到 00 绫波丽皮肤 |
 | `Restore-EVA.cmd` | 移除当前皮肤，不关闭 Codex；官方文件不被修改 |
+| `Install-EVA-DesktopShortcut.cmd` | 重新创建桌面快捷方式；图标取自官方 Codex 客户端 |
+| `Import-DSH-Boot.cmd` | 从本机 DSH 主题仓库导入启动动画素材；媒体只留在本机 |
 | `Start-EVA-Workbench.cmd` | 旧的独立 EVA 工作台，继续保留 |
+
+Windows 的 `.cmd` 文件不能可靠地自定义图标。本项目的做法是创建一个目标为 `wscript.exe` 的 `.lnk` 快捷方式：它直接调用隐藏的 `Start-EVA.vbs`，图标使用 `ChatGPT.exe,0`，因此桌面上看到的是官方 Codex 图标，启动时也不会留下 CMD/PowerShell 黑框。
 
 首次使用默认入口时，如果 Codex 已经打开，脚本会提示**重启一次**，因为当前窗口没有开启本地调试端口。重启后会继续使用官方 Codex 的账号和会话数据；本工具不读取、不修改 `auth.json`、API Key、Base URL 或模型配置。
 
-每次由 `Start-EVA.cmd` 启动一个新的 Codex 进程时，会先播放约 2～4 秒的启动层；点击或按 `Esc` 可跳过。刷新 renderer、切换主题或重新附加注入器不会重播；系统开启“减少动态效果”时直接跳过。
+每次启动一个新的 Codex 进程时，会先播放一次启动层。导入 DSH 资源包后使用 `nerv-boot.gif → NERV 警报 → 插入栓/驾驶员同步` 序列，并播放当前驾驶员的本机启动语音，约 13.5 秒；没有资源包时回退到 v0.1.1 的抽象线框启动层。点击、`Esc` 或 `Space` 可跳过，刷新 renderer、切换主题或重新附加注入器不会重播；系统开启“减少动态效果”时直接跳过。
+
+## DSH 启动动画
+
+仓库不会提交 DSH 的 GIF、角色头像、语音或音乐。需要 DSH 启动动画时，在本机已有 DSH 主题仓库的前提下运行：
+
+```powershell
+Import-DSH-Boot.cmd "D:\path\to\dsh-plugin-eva-theme"
+```
+
+导入器会校验 DSH `assets/manifest.json` 中的字节数和 SHA-256，再把 7 个启动素材复制到 `%LOCALAPPDATA%\EVACodexSkin\dsh-boot`。注入器启动时自动读取该目录；校验失败时不会使用损坏或篡改的包。完整边界和目录结构见 [DSH-BOOT.md](DSH-BOOT.md)。
 
 ## 使用流程
 
@@ -46,7 +61,7 @@
 2. 以 `--remote-debugging-address=127.0.0.1 --remote-debugging-port=9345` 启动一个受控实例；
 3. 使用独立的 Chromium 配置目录 `%LOCALAPPDATA%\EVACodexSkin\cdp-profile`，避免污染官方默认配置；
 4. 只连接 URL 为 `app://-/index.html` 的页面，拒绝 `avatar-overlay` 宠物层和非回环 WebSocket；
-5. 从官方 Codex 主进程的启动时间生成一次性启动指纹，首次连接时注入 `assets/boot.css` 和抽象启动层；
+5. 从官方 Codex 主进程的启动时间生成一次性启动指纹；若本机存在已校验的 DSH 启动包，则注入 `assets/dsh-boot.css` 和 DSH 序列，否则注入抽象启动层；
 6. 注入 `codex-skin/assets/eva-skin.css` 和常驻抽象装饰层；
 7. 监视页面重载和主题切换，自动重新应用，但同一 Codex 进程不重播启动层；
 8. `Restore-EVA.cmd` 删除样式、启动层、装饰节点和注入器进程。
@@ -66,15 +81,15 @@
 已在 `OpenAI.Codex 26.1106.6628.0`、Chromium `157.0.8103.51` 的真实 `app://-/index.html` renderer 上做过受控实例冒烟：
 
 - 02 明日香与 00 绫波丽两套皮肤均能注入；
-- 冷启动时启动层在 Codex shell 就绪前出现，Asuka / Rei 两套编号和配色均正常；
-- 刷新页面不重播启动层，`Esc` 可跳过，“减少动态效果”下不显示；
+- DSH GIF、NERV 警报、插入栓、驾驶员头像和同步进度均正常渲染；启动语音在本机受控实例中可自动播放；
+- 刷新页面不重播启动层，`Esc` 可跳过，完整序列结束后自动清理，“减少动态效果”下不显示；
 - 侧栏、主区、输入框、原生按钮仍可交互；
 - 皮肤层 `pointer-events: none`；
 - 切换 driver 后 watcher 能重新应用；
 - `--remove` 后样式、覆盖层和 dataset 标记均消失；
 - `--verify` 能识别注入前后的状态。
 
-没有在本次会话中强行重启你正在使用的 Codex 窗口；`Start-EVA.cmd` 的完整“关闭当前窗口→Appx 激活→重新打开”路径需要你在方便时执行一次。如果 Appx 激活丢弃 CDP 参数，脚本会自动回退到直接启动已签名的 Store 可执行文件。
+桌面快捷方式已在本机创建并验证：目标为 `wscript.exe`，参数指向 `Start-EVA.vbs`，图标为官方 `ChatGPT.exe,0`，工作目录为仓库根目录。没有在本次会话中强行重启你正在使用的 Codex 窗口；隐藏入口的完整“关闭当前窗口→Appx 激活→重新打开”路径仍需要你在方便时执行一次。如果 Appx 激活丢弃 CDP 参数，脚本会自动回退到直接启动已签名的 Store 可执行文件。
 
 ## 开发与发布检查
 
@@ -102,12 +117,14 @@ node codex-skin\injector.mjs --remove --port 9345
 ```text
 codex-skin/
   Start-EVA.ps1          # 官方 Codex 启动/重启/注入
+  Import-DSH-Boot.ps1    # 校验并导入本机 DSH 启动素材
   Restore-EVA.ps1        # 移除皮肤
   injector.mjs           # CDP 目标校验、注入、watcher、verify/remove
   selectors.json         # 稳定 DOM 锚点合同
   assets/
     eva-skin.css         # 两套配色和装饰层
-    boot.css             # 单次启动层
+    boot.css             # 无 DSH 包时的抽象启动层
+    dsh-boot.css         # DSH 风格启动层的自有 CSS
     asuka-mark.svg
     rei-mark.svg
     linework.svg
@@ -121,10 +138,11 @@ workbench/               # 旧独立工作台，保留
 - 独立配置目录首次进入时可能需要登录一次；不同环境和版本不保证一定自动复用已有会话。
 - 没有实现自动更新、托盘控制、安装器或 macOS/Linux 版本。
 - 皮肤不改变模型、账户、计费、配额或任务执行逻辑。
-- 启动层只有抽象数字、线框和扫描动效，不含角色插画、原作语音或音乐。
+- 公开仓库不包含 DSH 的角色图、GIF、语音或音乐；未导入本地 DSH 资源包时，启动层回退为抽象数字、线框和扫描动效。
+- DSH 启动包不导入 9.4 MB 背景音乐；其再分发条件和体积均与本项目启动器不同。启动语音只在本机资源包内使用。
 
 ## 素材与许可
 
-代码采用 MIT；原工作台底座 `Iris-change/eva-codex-workbench` 的版权声明继续保留。公开包只包含抽象线框、编号和调色板，不包含 DSH 角色 PNG、GIF、语音、音乐或动画片段。
+代码采用 MIT；原工作台底座 `Iris-change/eva-codex-workbench` 的版权声明继续保留。公开包只包含抽象线框、编号和调色板，以及用于读取本地资源包的导入器与自有 CSS，不包含 DSH 角色 PNG、GIF、语音、音乐或动画片段。
 
 MIT 不覆盖 EVA 角色形象、NERV/EVA 商标、原作音乐或语音。素材边界见 `ASSETS.md`、`ASSET-TODO.md` 和 `codex-skin/assets/README.md`；第三方参考见 `THIRD_PARTY_NOTICES.md`。

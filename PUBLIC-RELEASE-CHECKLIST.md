@@ -1,15 +1,19 @@
-# v0.1.1 公开源码验收清单
+# v0.2.0 公开源码验收清单
 
-- [x] 根 / workbench package 与 lockfile 均为 v0.1.1
+- [x] 根 / workbench package 与 lockfile 均为 v0.2.0
 - [x] README、CHANGELOG、上游来源与素材声明更新
 - [x] 主题跟随系统、Markdown、状态提示测试纳入 `npm test`
 - [x] 官方 Codex 皮肤启动器、CDP 目标校验、Asuka/Rei 注入和恢复测试纳入 `npm run test:skin`
 - [x] 真实 `OpenAI.Codex 26.1106.6628.0` renderer 受控实例冒烟：注入、切换、verify、remove
 - [x] 真实 renderer 冷启动启动层、刷新不重播、Esc 跳过、Rei 启动层和减少动态效果验证
+- [x] DSH 启动资源本地导入、字节数/SHA-256 校验和媒体隔离
+- [x] DSH GIF、警报、插入栓、头像、同步环与启动语音的真实 renderer 验证
+- [x] 桌面快捷方式使用官方 Codex 图标、目标 `wscript.exe`、隐藏 VBS 启动
+- [x] DSH 媒体未进入公开仓库；公开包仅含导入器、自有 CSS 和说明
 - [x] `--remove` 同时清理启动层、启动样式与皮肤节点
 - [ ] 新设备 Windows 10 / 11 启动与 Codex CLI 真实联调
 - [ ] 角色插画、语音与音乐等授权素材最终确认
-- [ ] 在用户方便时执行一次完整“关闭当前 Codex → Start-EVA.cmd → 自动重开”路径
+- [ ] 在用户方便时执行一次完整“关闭当前 Codex → 桌面快捷方式/隐藏 VBS → 自动重开”路径
 - [x] GitHub 仓库已创建并维护（`HamizDev/eva-codex-nexus`）
 
 **每次发布前执行：** `npm test`、`npm run manifest`、`npm run verify:public`。

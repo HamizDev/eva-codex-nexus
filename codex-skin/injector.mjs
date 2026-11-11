@@ -6,7 +6,7 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
-export const SKIN_VERSION = "0.1.1";
+export const SKIN_VERSION = "0.2.0";
 export const SKIN_ID = "eva-codex-skin";
 export const DEFAULT_PORT = 9345;
 export const EXACT_MAIN_URL = "app://-/index.html";
@@ -28,6 +28,10 @@ const EARLY_APPLIED_KEY = "__EVA_CODEX_SKIN_EARLY_APPLIED__";
 const BOOT_RUNTIME_KEY = "__EVA_CODEX_SKIN_BOOT__";
 const BOOT_FINISH_KEY = "__EVA_CODEX_SKIN_BOOT_FINISH__";
 const BOOT_ID_PATTERN = /^[A-Za-z0-9._-]{1,128}$/;
+const DSH_BOOT_PACK_NAME = "dsh-eva-theme-boot-pack";
+const DSH_BOOT_REQUIRED_ASSETS = ["boot", "emergency", "entryPlug", "asukaHead", "reiHead"];
+const DSH_BOOT_OPTIONAL_ASSETS = ["asukaVoice", "reiVoice"];
+const DSH_BOOT_MAX_BYTES = 16 * 1024 * 1024;
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -202,6 +206,89 @@ function svgDataUrl(filePath) {
   return `data:image/svg+xml;base64,${bytes.toString("base64")}`;
 }
 
+function fileSha256(filePath) {
+  return crypto.createHash("sha256").update(fs.readFileSync(filePath)).digest("hex");
+}
+
+function resolvePackFile(root, relative) {
+  if (typeof relative !== "string" || !relative || path.isAbsolute(relative)) {
+    throw new Error("DSH boot pack contains an invalid asset path");
+  }
+  const full = path.resolve(root, relative);
+  const rel = path.relative(root, full);
+  if (!rel || rel.startsWith("..") || path.isAbsolute(rel)) {
+    throw new Error("DSH boot pack asset escapes its directory");
+  }
+  return full;
+}
+
+export function loadDshBootPack(packRoot) {
+  if (!packRoot) return null;
+  const root = path.resolve(packRoot);
+  const manifestPath = path.join(root, "manifest.json");
+  if (!fs.existsSync(manifestPath)) return null;
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8").replace(/^\uFEFF/, ""));
+  if (manifest?.schemaVersion !== 1 || manifest?.package !== DSH_BOOT_PACK_NAME) {
+    throw new Error("DSH boot pack manifest has an unsupported schema");
+  }
+  if (!Array.isArray(manifest.assets)) throw new Error("DSH boot pack has no asset list");
+  const entries = new Map();
+  for (const asset of manifest.assets) {
+    if (!asset || typeof asset.id !== "string" || entries.has(asset.id)) {
+      throw new Error("DSH boot pack contains a duplicate or invalid asset");
+    }
+    entries.set(asset.id, asset);
+  }
+  for (const id of DSH_BOOT_REQUIRED_ASSETS) {
+    if (!entries.has(id)) throw new Error(`DSH boot pack is missing required asset: ${id}`);
+  }
+  const allowed = new Set([...DSH_BOOT_REQUIRED_ASSETS, ...DSH_BOOT_OPTIONAL_ASSETS]);
+  const assets = {};
+  const inline = {};
+  const hashes = [];
+  let totalBytes = 0;
+  for (const [id, entry] of entries) {
+    if (!allowed.has(id)) continue;
+    const filePath = resolvePackFile(root, entry.file);
+    if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
+      throw new Error(`DSH boot pack asset is missing: ${entry.file}`);
+    }
+    const bytes = fs.statSync(filePath).size;
+    totalBytes += bytes;
+    if (totalBytes > DSH_BOOT_MAX_BYTES) {
+      throw new Error("DSH boot pack exceeds the 16 MiB loading limit");
+    }
+    if (Number.isInteger(entry.bytes) && entry.bytes !== bytes) {
+      throw new Error(`DSH boot pack size mismatch: ${entry.file}`);
+    }
+    const sha256 = fileSha256(filePath);
+    if (typeof entry.sha256 === "string" && entry.sha256.toLowerCase() !== sha256) {
+      throw new Error(`DSH boot pack SHA-256 mismatch: ${entry.file}`);
+    }
+    const type = typeof entry.type === "string" ? entry.type : "";
+    if (!/^(?:image\/(?:gif|png|svg\+xml)|audio\/mpeg)$/.test(type)) {
+      throw new Error(`DSH boot pack has an unsupported MIME type: ${type}`);
+    }
+    const data = fs.readFileSync(filePath);
+    assets[id] = `data:${type};base64,${data.toString("base64")}`;
+    if (type === "image/svg+xml") {
+      const markup = data.toString("utf8").replace(/^\uFEFF/, "");
+      if (/<\s*script\b|\son[a-z]+\s*=|@import|url\(\s*["']?\s*(?:https?:|\/\/)/i.test(markup)) {
+        throw new Error(`DSH boot pack SVG contains active or remote content: ${entry.file}`);
+      }
+      inline[id] = markup;
+    }
+    hashes.push(`${id}:${sha256}`);
+  }
+  return {
+    root,
+    manifest,
+    assets,
+    inline,
+    revision: crypto.createHash("sha256").update(hashes.sort().join("\n")).digest("hex").slice(0, 24),
+  };
+}
+
 function bootProfile(driver) {
   return driver === "rei"
     ? {
@@ -258,6 +345,72 @@ function buildBootMarkup(driver) {
     "<span>点击或按 ESC 跳过</span>",
     '<span class="eva-boot-link">LINK START</span>',
     "</footer>",
+  ].join("");
+}
+
+function buildDshBootMarkup(driver, pack, syncSeconds) {
+  const copy = bootProfile(driver);
+  const avatar = pack.assets[driver === "rei" ? "reiHead" : "asukaHead"];
+  const voice = pack.assets[driver === "rei" ? "reiVoice" : "asukaVoice"];
+  const mode = driver === "rei" ? "LIGHT / UNIT 00" : "DARK / UNIT 02";
+  const source = pack.manifest.sourceVersion
+    ? `DSH BOOT ${pack.manifest.sourceVersion}`
+    : "DSH BOOT";
+  return [
+    '<div class="eva-dsh-layer eva-dsh-gif-layer" data-dsh-layer="gif">',
+    `<img class="eva-dsh-gif" src="${pack.assets.boot}" alt="" width="256" height="256">`,
+    "</div>",
+    '<div class="eva-dsh-layer eva-dsh-alert-layer" data-dsh-layer="emergency">',
+    `<img class="eva-dsh-alert-art" src="${pack.assets.emergency}" alt="">`,
+    '<div class="eva-dsh-alert-scan" aria-hidden="true"></div>',
+    "</div>",
+    '<div class="eva-dsh-layer eva-dsh-console-layer" data-dsh-layer="sync">',
+    '<header class="eva-dsh-head">',
+    '<div><span class="eva-dsh-kicker"><b>NERV</b> // MAGI SYSTEM</span>',
+    `<strong>${copy.code}</strong><small>${source}</small></div>`,
+    '<span class="eva-dsh-head-code">TOKYO-III<br><b>LEVEL 07</b></span>',
+    "</header>",
+    '<main class="eva-dsh-grid">',
+    '<section class="eva-dsh-bay">',
+    '<span class="eva-dsh-bay-label">NERV / ENTRY SYSTEM<b>ENTRY PLUG / CONNECTED</b></span>',
+    '<div class="eva-dsh-plug" role="img" aria-label="Entry Plug">' + pack.inline.entryPlug + "</div>",
+    '<span class="eva-dsh-bay-lock">INTERLOCK / ENGAGED</span>',
+    '<span class="eva-dsh-bay-target">驾驶员已装载 · PILOT LOADED</span>',
+    "</section>",
+    '<section class="eva-dsh-panel">',
+    '<div class="eva-dsh-pilot">',
+    `<span class="eva-dsh-pilot-face" style="--dsh-avatar:url('${avatar}')"></span>`,
+    '<div class="eva-dsh-pilot-copy">',
+    `<span class="eva-dsh-unit">${copy.unit}</span>`,
+    `<h1>${copy.pilotCn}</h1><p>${copy.pilot}</p>`,
+    `<small>${copy.unitLabel}<br>${mode}</small>`,
+    "</div>",
+    "</div>",
+    '<div class="eva-dsh-sync-console">',
+    '<div class="eva-dsh-sync-ring" aria-hidden="true">',
+    '<svg viewBox="0 0 180 180" fill="none" stroke="currentColor">',
+    '<circle cx="90" cy="90" r="86" stroke-dasharray="1 7" opacity=".4"/>',
+    '<circle cx="90" cy="90" r="70" stroke-width="3" opacity=".15"/>',
+    '<circle class="eva-dsh-ring-meter" cx="90" cy="90" r="70" stroke-width="3" pathLength="100"/>',
+    '<path d="M90 0v9m90 81h-9M90 180v-9M0 90h9" opacity=".8"/>',
+    "</svg>",
+    '<span class="eva-dsh-percent">00%</span><small>SYNC RATIO</small>',
+    "</div>",
+    '<div class="eva-dsh-sync-copy"><span class="eva-dsh-live"><i></i>NEURAL LINK ACTIVE</span>',
+    `<h2>${driver === "rei" ? "绫波丽" : "明日香"}</h2><p>同步中 / SYNCHRONIZING</p>`,
+    '<div class="eva-dsh-meter" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i></div>',
+    `<div class="eva-dsh-meter-copy"><span>00%</span><span>00:00 / 00:${String(syncSeconds).padStart(2, "0")}</span></div></div>`,
+    "</div>",
+    '<div class="eva-dsh-systems" aria-hidden="true">',
+    "<span>A10 INTERFACE<b>CONNECTED</b></span><span>L.C.L. CHAMBER<b>SEALED</b></span><span>MAGI SYSTEM<b>STABLE</b></span>",
+    "</div>",
+    "</section>",
+    "</main>",
+    '<footer class="eva-dsh-foot"><span class="eva-dsh-status"><i></i>驾驶舱同步中 · LINK ESTABLISHING</span>',
+    '<span class="eva-dsh-magi">MELCHIOR·1 / BALTHASAR·2 / CASPER·3</span></footer>',
+    "</div>",
+    '<button type="button" class="eva-dsh-skip" aria-label="跳过启动动画">跳过 / ESC</button>',
+    voice ? `<audio class="eva-dsh-voice" preload="auto" src="${voice}"></audio>` : "",
   ].join("");
 }
 
@@ -400,6 +553,245 @@ export function buildBootSource({ driver, css, bootId }) {
   })()`;
 }
 
+export function buildDshBootSource({ driver, css, bootId, pack }) {
+  if (!isDriver(driver)) throw new Error(`Unknown EVA driver: ${String(driver)}`);
+  if (typeof bootId !== "string" || !BOOT_ID_PATTERN.test(bootId)) {
+    throw new Error("Boot id must contain only letters, digits, dot, dash or underscore");
+  }
+  if (!pack?.assets?.boot || !pack?.assets?.emergency || !pack?.assets?.entryPlug) {
+    throw new Error("DSH boot pack is incomplete");
+  }
+  const voiceId = driver === "rei" ? "reiVoice" : "asukaVoice";
+  const voiceEntry = Array.isArray(pack.manifest.assets)
+    ? pack.manifest.assets.find((asset) => asset?.id === voiceId)
+    : null;
+  const syncMs = Number.isFinite(voiceEntry?.durationSeconds)
+    ? Math.max(3000, Math.min(12000, Math.round(voiceEntry.durationSeconds * 1000)))
+    : 4600;
+  const syncSeconds = Math.max(1, Math.round(syncMs / 1000));
+  const markup = buildDshBootMarkup(driver, pack, syncSeconds);
+  const source = pack.manifest.sourceCommit
+    ? String(pack.manifest.sourceCommit).slice(0, 8)
+    : "local";
+  return `(() => {
+    const bootId = ${JSON.stringify(bootId)};
+    const driver = ${JSON.stringify(driver)};
+    const styleId = ${JSON.stringify(BOOT_STYLE_ID)};
+    const elementId = ${JSON.stringify(BOOT_ID)};
+    const storageKey = "eva-codex-skin-boot-launch";
+    const runtimeKey = ${JSON.stringify(BOOT_RUNTIME_KEY)};
+    const finishKey = ${JSON.stringify(BOOT_FINISH_KEY)};
+    const source = ${JSON.stringify(source)};
+    if (window[runtimeKey]?.bootId === bootId) {
+      return { played: false, reason: "already-installed" };
+    }
+    try {
+      if (localStorage.getItem(storageKey) === bootId) {
+        return { played: false, reason: "already-played" };
+      }
+    } catch {}
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return { played: false, reason: "reduced-motion" };
+    }
+    const root = document.documentElement;
+    if (!root) return { played: false, reason: "missing-documentElement" };
+    const boot = document.createElement("div");
+    boot.id = elementId;
+    boot.dataset.driver = driver;
+    boot.dataset.phase = "gif";
+    boot.dataset.dshSource = source;
+    boot.setAttribute("role", "dialog");
+    boot.setAttribute("aria-modal", "true");
+    boot.setAttribute("aria-label", "NERV 驾驶员启动序列");
+    boot.innerHTML = ${JSON.stringify(markup)};
+    const phases = { gif: 3840, emergency: 3000, sync: ${syncMs} };
+    let shownAt = 0;
+    let mounted = false;
+    let leaving = false;
+    let appReady = false;
+    let sequenceDone = false;
+    let attemptTimer = null;
+    let phaseTimer = null;
+    let cleanupTimer = null;
+    let progressFrame = null;
+    let syncStarted = 0;
+    const timers = new Set();
+    const later = (fn, ms) => {
+      const timer = setTimeout(() => {
+        timers.delete(timer);
+        if (!leaving) fn();
+      }, ms);
+      timers.add(timer);
+      return timer;
+    };
+    const stopAudio = () => {
+      const audio = boot.querySelector(".eva-dsh-voice");
+      if (audio) {
+        try { audio.pause(); } catch {}
+      }
+    };
+    const removeListeners = () => {
+      window.removeEventListener("keydown", onKey, true);
+      boot.removeEventListener("click", onBackdropClick);
+    };
+    const cleanup = () => {
+      for (const timer of timers) clearTimeout(timer);
+      timers.clear();
+      if (attemptTimer) clearInterval(attemptTimer);
+      if (phaseTimer) clearTimeout(phaseTimer);
+      if (cleanupTimer) clearTimeout(cleanupTimer);
+      if (progressFrame !== null) cancelAnimationFrame(progressFrame);
+      phaseTimer = null;
+      attemptTimer = null;
+      cleanupTimer = null;
+      progressFrame = null;
+      stopAudio();
+      removeListeners();
+      try { boot.remove(); } catch {}
+      try { document.getElementById(styleId)?.remove(); } catch {}
+      try { delete root.dataset.evaBoot; } catch {
+        root.removeAttribute("data-eva-boot");
+      }
+      if (window[runtimeKey]?.bootId === bootId) {
+        try { delete window[runtimeKey]; } catch {
+          window[runtimeKey] = undefined;
+        }
+      }
+      if (window[finishKey] === finish) {
+        try { delete window[finishKey]; } catch {
+          window[finishKey] = undefined;
+        }
+      }
+    };
+    const leave = () => {
+      if (leaving) return;
+      leaving = true;
+      stopAudio();
+      boot.dataset.phase = "handoff";
+      boot.classList.add("is-leaving");
+      boot.style.pointerEvents = "none";
+      cleanupTimer = setTimeout(cleanup, 760);
+    };
+    const maybeFinish = () => {
+      if (leaving || !sequenceDone) return;
+      const elapsed = performance.now() - shownAt;
+      if (appReady || elapsed >= 15000) leave();
+    };
+    const finish = (reason) => {
+      if (reason === "app-ready") {
+        appReady = true;
+        maybeFinish();
+        return;
+      }
+      leave();
+    };
+    const setPhase = (phase) => {
+      if (leaving) return;
+      boot.dataset.phase = phase;
+      if (phase === "emergency") {
+        phaseTimer = later(startSync, phases.emergency);
+      }
+    };
+    const tickSync = (now) => {
+      progressFrame = null;
+      if (leaving) return;
+      const ratio = Math.min(1, Math.max(0, (now - syncStarted) / phases.sync));
+      const percent = Math.round(ratio * 100);
+      const ring = boot.querySelector(".eva-dsh-ring-meter");
+      const meter = boot.querySelector(".eva-dsh-meter");
+      const percentNode = boot.querySelector(".eva-dsh-percent");
+      const meterPercent = boot.querySelector(".eva-dsh-meter-copy span");
+      const meterTime = boot.querySelector(".eva-dsh-meter-copy span:last-child");
+      boot.style.setProperty("--dsh-progress", percent);
+      if (ring) ring.style.strokeDasharray = percent + " 100";
+      if (meter) meter.setAttribute("aria-valuenow", String(percent));
+      const label = String(percent).padStart(2, "0") + "%";
+      if (percentNode) percentNode.textContent = label;
+      if (meterPercent) meterPercent.textContent = label;
+      if (meterTime) meterTime.textContent = "00:" + String(Math.floor(ratio * ${syncSeconds})).padStart(2, "0") + " / 00:" + String(${syncSeconds}).padStart(2, "0");
+      if (ratio < 1) {
+        progressFrame = requestAnimationFrame(tickSync);
+      } else {
+        sequenceDone = true;
+        maybeFinish();
+      }
+    };
+    const startSync = () => {
+      if (leaving) return;
+      setPhase("sync");
+      syncStarted = performance.now();
+      const voice = boot.querySelector(".eva-dsh-voice");
+      if (voice) {
+        voice.volume = 0.75;
+        try { Promise.resolve(voice.play()).catch(() => {}); } catch {}
+      }
+      progressFrame = requestAnimationFrame(tickSync);
+    };
+    const onSkip = (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      leave();
+    };
+    const onBackdropClick = (event) => {
+      if (event.target?.closest?.("button,audio")) return;
+      leave();
+    };
+    const onKey = (event) => {
+      if (event.key === "Escape" || event.key === " " || event.key === "Enter") {
+        event.preventDefault();
+        event.stopPropagation();
+        leave();
+      }
+    };
+    const install = () => {
+      if (!document.body) return false;
+      if (!document.getElementById(styleId)) {
+        const style = document.createElement("style");
+        style.id = styleId;
+        style.textContent = ${JSON.stringify(css)};
+        (document.head || document.documentElement).appendChild(style);
+      }
+      if (!document.getElementById(elementId)) document.body.appendChild(boot);
+      try { localStorage.setItem(storageKey, bootId); } catch {}
+      root.dataset.evaBoot = driver;
+      mounted = true;
+      shownAt = performance.now();
+      window.addEventListener("keydown", onKey, true);
+      boot.addEventListener("click", onBackdropClick);
+      boot.querySelector(".eva-dsh-skip")?.addEventListener("click", onSkip);
+      requestAnimationFrame(() => {
+        if (!leaving) boot.classList.add("is-active");
+      });
+      phaseTimer = later(() => setPhase("emergency"), phases.gif);
+      later(() => {
+        appReady = true;
+        maybeFinish();
+      }, 15000);
+      return true;
+    };
+    const runtime = { bootId, driver, finish, cleanup, mounted: false };
+    window[runtimeKey] = runtime;
+    window[finishKey] = finish;
+    if (install()) {
+      runtime.mounted = true;
+      return { played: true, driver, source };
+    }
+    attemptTimer = setInterval(() => {
+      if (install()) {
+        clearInterval(attemptTimer);
+        attemptTimer = null;
+        runtime.mounted = true;
+      }
+    }, 80);
+    later(() => {
+      if (attemptTimer) clearInterval(attemptTimer);
+      attemptTimer = null;
+      if (!mounted) cleanup();
+    }, 15000);
+    return { played: false, reason: "waiting-for-body" };
+  })()`;
+}
+
 export function buildInstallSource({
   driver,
   css,
@@ -511,7 +903,7 @@ export function buildEarlySource(payloadSource, revision, bootSource = "") {
       if (!((shell && sidebar && input) || settings)) return false;
       try {
         ${payloadSource};
-        try { window[${JSON.stringify(BOOT_FINISH_KEY)}]?.(); } catch {}
+        try { window[${JSON.stringify(BOOT_FINISH_KEY)}]?.("app-ready"); } catch {}
         window[${JSON.stringify(EARLY_APPLIED_KEY)}] = generation;
       } catch (error) {
         console.error("[eva-skin] early install failed", error);
@@ -570,10 +962,13 @@ export function buildPayloadFromStrings({
   version = SKIN_VERSION,
   bootCss = "",
   bootId = null,
+  bootPack = null,
 }) {
   const source = buildInstallSource({ driver, css, linework, mark, version });
   const bootSource = bootId
-    ? buildBootSource({ driver, css: bootCss, bootId })
+    ? bootPack
+      ? buildDshBootSource({ driver, css: bootCss, bootId, pack: bootPack })
+      : buildBootSource({ driver, css: bootCss, bootId })
     : "";
   const revision = crypto
     .createHash("sha256")
@@ -590,9 +985,25 @@ export function buildPayloadFromStrings({
     .update(bootCss)
     .update("\0")
     .update(bootId || "")
+    .update("\0")
+    .update(bootPack?.revision || "")
     .digest("hex")
     .slice(0, 24);
-  return { driver, version, source, revision, bootId, bootSource };
+  return {
+    driver,
+    version,
+    source,
+    revision,
+    bootId,
+    bootSource,
+    bootPack: bootPack
+      ? {
+          sourceCommit: bootPack.manifest.sourceCommit || null,
+          sourceVersion: bootPack.manifest.sourceVersion || null,
+          revision: bootPack.revision,
+        }
+      : null,
+  };
 }
 
 export function loadPayload(driver, options = {}) {
@@ -601,8 +1012,9 @@ export function loadPayload(driver, options = {}) {
   const linework = svgDataUrl(path.join(ASSETS, "linework.svg"));
   const mark = svgDataUrl(path.join(ASSETS, driver === "rei" ? "rei-mark.svg" : "asuka-mark.svg"));
   const bootId = options.bootId ?? null;
+  const bootPack = options.bootPack ?? null;
   const bootCss = bootId
-    ? fs.readFileSync(path.join(ASSETS, "boot.css"), "utf8")
+    ? fs.readFileSync(path.join(ASSETS, bootPack ? "dsh-boot.css" : "boot.css"), "utf8")
     : "";
   return buildPayloadFromStrings({
     driver,
@@ -611,6 +1023,7 @@ export function loadPayload(driver, options = {}) {
     mark,
     bootCss,
     bootId,
+    bootPack,
   });
 }
 
@@ -795,6 +1208,14 @@ function stateRootFrom(options) {
   return path.resolve(root);
 }
 
+function bootPackFrom(options) {
+  const root = options.bootPack
+    ? path.resolve(options.bootPack)
+    : path.join(stateRootFrom(options), "dsh-boot");
+  if (!fs.existsSync(path.join(root, "manifest.json"))) return null;
+  return loadDshBootPack(root);
+}
+
 function readDriverFromState(stateDir, fallback = "asuka") {
   try {
     const value = fs.readFileSync(path.join(stateDir, "driver.txt"), "utf8").trim();
@@ -878,8 +1299,9 @@ async function runWatch(options) {
   const stateDir = stateRootFrom(options);
   await fsp.mkdir(stateDir, { recursive: true });
   options.bootId = options.bootId || crypto.randomUUID();
+  const bootPack = bootPackFrom(options);
   let driver = options.driver || readDriverFromState(stateDir);
-  let current = loadPayload(driver, { bootId: options.bootId });
+  let current = loadPayload(driver, { bootId: options.bootId, bootPack });
   let stamp = driverStamp(stateDir);
   const sessions = new Map();
   const failures = new Map();
@@ -899,7 +1321,7 @@ async function runWatch(options) {
       const nextDriver = readDriverFromState(stateDir, driver);
       if (nextDriver !== driver) {
         driver = nextDriver;
-        current = loadPayload(driver, { bootId: options.bootId });
+        current = loadPayload(driver, { bootId: options.bootId, bootPack });
         for (const [id, record] of sessions) {
           try {
             if (record.earlyScriptId) {
@@ -1088,7 +1510,10 @@ async function runOnce(options) {
   const stateDir = stateRootFrom(options);
   const driver = options.driver || readDriverFromState(stateDir);
   options.bootId = options.bootId || crypto.randomUUID();
-  const current = loadPayload(driver, { bootId: options.bootId });
+  const current = loadPayload(driver, {
+    bootId: options.bootId,
+    bootPack: bootPackFrom(options),
+  });
   const targets = (await listTargets(options.port))
     .filter((target) => classifyTarget(target) === "main");
   const results = [];
@@ -1133,6 +1558,7 @@ export function parseArgs(argv) {
     driver: null,
     stateDir: null,
     bootId: null,
+    bootPack: null,
     probeTimeoutMs: 15000,
     verifyTimeoutMs: 15000,
     screenshot: null,
@@ -1153,6 +1579,7 @@ export function parseArgs(argv) {
     else if (arg === "--driver") options.driver = next();
     else if (arg === "--state-dir") options.stateDir = next();
     else if (arg === "--boot-id") options.bootId = next();
+    else if (arg === "--boot-pack") options.bootPack = next();
     else if (arg === "--probe-timeout-ms") options.probeTimeoutMs = Number(next());
     else if (arg === "--timeout-ms") options.verifyTimeoutMs = Number(next());
     else if (arg === "--screenshot") options.screenshot = path.resolve(next());
@@ -1188,6 +1615,7 @@ Usage:
 Options:
   --driver <asuka|rei>       select the EVA palette
   --boot-id <id>             stable ID for one official Codex launch
+  --boot-pack <path>         local DSH boot asset pack
   --state-dir <path>         runtime state directory
   --probe-timeout-ms <ms>    wait for the Codex shell
   --timeout-ms <ms>          wait for visual verification

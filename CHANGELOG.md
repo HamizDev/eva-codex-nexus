@@ -1,5 +1,30 @@
 # 更新日志
 
+## v0.2.0 · 2026-11-11
+
+### 新增
+
+- 新增 `Start-EVA.vbs` 隐藏启动入口；桌面快捷方式目标为 `wscript.exe`，不再留下 CMD/PowerShell 控制台窗口。
+- 新增 `Install-EVA-DesktopShortcut.cmd` / `scripts/Install-EVA-DesktopShortcut.ps1`：在桌面创建 `.lnk`，图标直接引用官方 `ChatGPT.exe,0`，与官方 Codex 图标一致。
+- 新增 DSH 启动动画本地资源包：`Import-DSH-Boot.cmd` 从本机 `dsh-plugin-eva-theme` 仓库导入并校验 GIF、警报 SVG、插入栓 SVG、Asuka/Rei 头像与启动语音。
+- 新增 `codex-skin/assets/dsh-boot.css` 与 DSH 启动状态机：GIF → NERV 警报 → 插入栓/驾驶员同步，播放对应启动语音，完成淡出。
+- 无 DSH 资源包时保留原抽象启动层作为回退；有包时自动读取 `%LOCALAPPDATA%\EVACodexSkin\dsh-boot`。
+- 新增 `DSH-BOOT.md`，记录导入方式、校验规则、本地目录和媒体许可边界。
+
+### 修复与维护
+
+- `Start-EVA.ps1` 新增 `-GuiPrompt`：隐藏启动时用 Windows 对话框显示“需要重启一次”和失败原因，避免卡在不可见的 `Read-Host`。
+- 启动器将 DSH 启动包路径以 `--boot-pack` 传给注入器；启动包缺失、哈希不符或含主动 SVG 内容时拒绝使用并回退。
+- DSH 启动包不进入公开仓库；GIF、角色图、语音和音乐继续适用 DSH 的独立 NOTICE，不因代码 MIT 自动获得再分发许可。
+- 版本统一升级到 `0.2.0`，同步根/workbench package、lockfile、服务端、启动器、桥接标识和测试断言。
+
+### 验证
+
+- `npm run test:skin` 18/18 通过。
+- 在 `OpenAI.Codex 26.1106.6628.0` / Chromium `157.0.8103.51` 的独立受控实例中，DSH GIF、警报、插入栓、头像、同步环和启动语音均渲染/播放通过。
+- 验证冷启动仅播放一次、刷新不重播、`Esc` 跳过、`Space`/背景点击跳过、减少动态效果直接跳过、序列结束自动清理。
+- 桌面快捷方式已创建并校验：目标、参数、工作目录与官方 Codex 图标路径正确；当前正在使用的 Codex PID 5048 未被关闭或重启。
+
 ## v0.1.1 · 2026-11-11
 
 ### 新增

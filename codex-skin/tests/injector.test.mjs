@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
+import crypto from "node:crypto";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
@@ -14,6 +16,7 @@ import {
   buildRemoveSource,
   classifyTarget,
   isDriver,
+  loadDshBootPack,
   loadPayload,
   parseArgs,
   validateDebuggerUrl,
@@ -58,7 +61,7 @@ test("主题与 payload 版本稳定且可切换", () => {
   assert.equal(isDriver("asuka"), true);
   assert.equal(isDriver("rei"), true);
   assert.equal(isDriver("system"), false);
-  assert.equal(SKIN_VERSION, "0.1.1");
+  assert.equal(SKIN_VERSION, "0.2.0");
   const asuka = loadPayload("asuka");
   const rei = loadPayload("rei");
   assert.equal(asuka.driver, "asuka");
@@ -125,6 +128,74 @@ test("首次启动动画只播放一次并可跳过", () => {
   assert.match(buildRemoveSource(), /eva-codex-skin-boot-style/);
 });
 
+test("DSH 启动包按清单校验并生成本地启动序列", () => {
+  const packRoot = fs.mkdtempSync(path.join(os.tmpdir(), "eva-dsh-pack-"));
+  const contents = {
+    boot: { file: "assets/boot.gif", type: "image/gif", data: Buffer.from("GIF89a") },
+    emergency: {
+      file: "assets/emergency.svg",
+      type: "image/svg+xml",
+      data: Buffer.from("<svg xmlns=\"http://www.w3.org/2000/svg\"></svg>"),
+    },
+    entryPlug: {
+      file: "assets/plug.svg",
+      type: "image/svg+xml",
+      data: Buffer.from("<svg xmlns=\"http://www.w3.org/2000/svg\"><path/></svg>"),
+    },
+    asukaHead: { file: "assets/asuka.png", type: "image/png", data: Buffer.from("89504e470d0a1a0a", "hex") },
+    reiHead: { file: "assets/rei.png", type: "image/png", data: Buffer.from("89504e470d0a1a0a", "hex") },
+  };
+  const assets = [];
+  for (const [id, value] of Object.entries(contents)) {
+    const target = path.join(packRoot, value.file);
+    fs.mkdirSync(path.dirname(target), { recursive: true });
+    fs.writeFileSync(target, value.data);
+    assets.push({
+      id,
+      file: value.file,
+      type: value.type,
+      bytes: value.data.length,
+      sha256: crypto.createHash("sha256").update(value.data).digest("hex"),
+    });
+  }
+  fs.writeFileSync(path.join(packRoot, "manifest.json"), JSON.stringify({
+    schemaVersion: 1,
+    package: "dsh-eva-theme-boot-pack",
+    sourceCommit: "0123456789abcdef0123456789abcdef01234567",
+    sourceVersion: "9.9.9",
+    assets,
+  }));
+  try {
+    const pack = loadDshBootPack(packRoot);
+    assert.equal(pack.assets.boot.startsWith("data:image/gif;base64,"), true);
+    assert.equal(pack.revision.length, 24);
+    const payload = buildPayloadFromStrings({
+      driver: "asuka",
+      css: "html{background:#000}",
+      linework: "data:image/svg+xml;base64,AA==",
+      mark: "data:image/svg+xml;base64,AA==",
+      bootCss: "#eva-codex-skin-boot{opacity:0}",
+      bootId: "launch-dsh-123",
+      bootPack: pack,
+    });
+    assert.equal(payload.bootPack.sourceVersion, "9.9.9");
+    for (const fragment of [
+      "eva-dsh-layer",
+      "dataset.phase",
+      "NERV",
+      "eva-dsh-alert-layer",
+      "DSH BOOT 9.9.9",
+      "app-ready",
+      "prefers-reduced-motion",
+    ]) {
+      assert.ok(payload.bootSource.includes(fragment), `missing DSH boot contract: ${fragment}`);
+    }
+    assert.ok(!/(?:src|href)\s*=\s*["']https?:|url\(\s*["']?https?:|@import/i.test(payload.bootSource));
+  } finally {
+    fs.rmSync(packRoot, { recursive: true, force: true });
+  }
+});
+
 test("安装脚本不会接管鼠标事件", () => {
   const source = buildInstallSource({
     driver: "rei",
@@ -140,6 +211,7 @@ test("安装脚本不会接管鼠标事件", () => {
 test("皮肤 CSS 使用稳定选择器并禁用远程资源", () => {
   const css = fs.readFileSync(path.join(root, "assets", "eva-skin.css"), "utf8");
   const bootCss = fs.readFileSync(path.join(root, "assets", "boot.css"), "utf8");
+  const dshBootCss = fs.readFileSync(path.join(root, "assets", "dsh-boot.css"), "utf8");
   for (const fragment of [
     "html[data-eva-skin=\"asuka\"]",
     "html[data-eva-skin=\"rei\"]",
@@ -164,6 +236,18 @@ test("皮肤 CSS 使用稳定选择器并禁用远程资源", () => {
   }
   assert.ok(!bootCss.includes("@import"));
   assert.ok(!/url\(\s*https?:/i.test(bootCss));
+  for (const fragment of [
+    "#eva-codex-skin-boot",
+    ".eva-dsh-gif",
+    ".eva-dsh-alert-layer",
+    ".eva-dsh-pilot-face",
+    ".eva-dsh-ring-meter",
+    "@media (prefers-reduced-motion: reduce)",
+  ]) {
+    assert.ok(dshBootCss.includes(fragment), `missing DSH boot CSS contract: ${fragment}`);
+  }
+  assert.ok(!dshBootCss.includes("@import"));
+  assert.ok(!/url\(\s*https?:/i.test(dshBootCss));
 });
 
 test("主题资源不包含角色图片或远程引用", () => {
@@ -194,11 +278,13 @@ test("CLI 参数边界", () => {
     "--port", "9456",
     "--driver", "rei",
     "--boot-id", "launch-9456",
+    "--boot-pack", "C:\\Temp\\dsh-boot",
   ]);
   assert.equal(options.mode, "verify");
   assert.equal(options.port, 9456);
   assert.equal(options.driver, "rei");
   assert.equal(options.bootId, "launch-9456");
+  assert.equal(options.bootPack, "C:\\Temp\\dsh-boot");
   assert.throws(() => parseArgs(["--port", "80"]), /between/);
   assert.throws(() => parseArgs(["--driver", "system"]), /asuka or rei/);
   assert.throws(() => parseArgs(["--boot-id", "bad id"]), /Boot id/);

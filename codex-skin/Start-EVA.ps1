@@ -7,12 +7,13 @@ param(
   [switch]$RestartExisting,
   [switch]$PromptRestart,
   [switch]$ForceRestart,
+  [switch]$GuiPrompt,
   [switch]$VerifyOnly,
   [string]$CodexExe
 )
 
 $ErrorActionPreference = 'Stop'
-$SkinVersion = '0.1.1'
+$SkinVersion = '0.2.0'
 $PortExplicit = $PSBoundParameters.ContainsKey('Port')
 $StateRoot = Join-Path $env:LOCALAPPDATA 'EVACodexSkin'
 $StatePath = Join-Path $StateRoot 'state.json'
@@ -26,6 +27,54 @@ $InjectorPath = Join-Path $PSScriptRoot 'injector.mjs'
 function Write-Step {
   param([Parameter(Mandatory)][string]$Message)
   Write-Host "[EVA] $Message"
+}
+
+function Show-GuiMessage {
+  param(
+    [Parameter(Mandatory)][string]$Message,
+    [string]$Title = 'EVA Codex',
+    [ValidateSet('Info', 'Warning', 'Error', 'Question')]
+    [string]$Kind = 'Info'
+  )
+  Add-Type -AssemblyName System.Windows.Forms
+  $icon = switch ($Kind) {
+    'Error' { [System.Windows.Forms.MessageBoxIcon]::Error }
+    'Warning' { [System.Windows.Forms.MessageBoxIcon]::Warning }
+    'Question' { [System.Windows.Forms.MessageBoxIcon]::Question }
+    default { [System.Windows.Forms.MessageBoxIcon]::Information }
+  }
+  [System.Windows.Forms.MessageBox]::Show(
+    $Message,
+    $Title,
+    [System.Windows.Forms.MessageBoxButtons]::OK,
+    $icon
+  ) | Out-Null
+}
+
+function Confirm-CodexRestart {
+  $message = @(
+    '官方 Codex 已经打开，但换肤需要让它在本地调试端口上重新启动一次。',
+    '',
+    '继续会关闭当前 Codex 窗口。聊天记录不会丢失，窗口随后会自动重开。',
+    '',
+    '现在重启 Codex？'
+  ) -join [Environment]::NewLine
+  if (-not $GuiPrompt) {
+    Write-Host ''
+    Write-Host '官方 Codex 已经打开，但换肤必须让它在本地调试端口 9345 上重新启动一次。' -ForegroundColor Yellow
+    Write-Host '继续会关闭当前 Codex 窗口（聊天记录不会丢失，但当前窗口会重开）。' -ForegroundColor Yellow
+    $answer = Read-Host '现在重启 Codex？[y/N]'
+    return $answer -match '^(?i)y(es)?$'
+  }
+  Add-Type -AssemblyName System.Windows.Forms
+  $result = [System.Windows.Forms.MessageBox]::Show(
+    $message,
+    'EVA Codex - 需要重启一次',
+    [System.Windows.Forms.MessageBoxButtons]::YesNo,
+    [System.Windows.Forms.MessageBoxIcon]::Question,
+    [System.Windows.Forms.MessageBoxDefaultButton]::Button2
+  )
+  return $result -eq [System.Windows.Forms.DialogResult]::Yes
 }
 
 function Get-NodeRuntime {
@@ -446,11 +495,7 @@ try {
         throw '官方 Codex 正在运行，但当前实例没有开启本地 CDP。请先退出 Codex，或用 Start-EVA.cmd 的提示重启一次。'
       }
       if (-not $RestartExisting -and $PromptRestart) {
-        Write-Host ''
-        Write-Host '官方 Codex 已经打开，但换肤必须让它在本地调试端口 9345 上重新启动一次。' -ForegroundColor Yellow
-        Write-Host '继续会关闭当前 Codex 窗口（聊天记录不会丢失，但当前窗口会重开）。' -ForegroundColor Yellow
-        $answer = Read-Host '现在重启 Codex？[y/N]'
-        if ($answer -notmatch '^(?i)y(es)?$') {
+        if (-not (Confirm-CodexRestart)) {
           Write-Step '已取消，没有关闭 Codex。'
           exit 0
         }
@@ -509,8 +554,16 @@ try {
   Write-Host ''
   Write-Host "安全提示：CDP 只绑定 127.0.0.1，但本地程序仍可能读取调试通道。使用完可运行 Restore-EVA.cmd 或关闭 Codex。"
 } catch {
-  Write-Host ''
-  Write-Host "EVA 换肤失败：$($_.Exception.Message)" -ForegroundColor Red
-  Write-Host "日志：$InjectorErrorLog"
+  $message = @(
+    "EVA 换肤失败：$($_.Exception.Message)",
+    '',
+    "日志：$InjectorErrorLog"
+  ) -join [Environment]::NewLine
+  if ($GuiPrompt) {
+    Show-GuiMessage -Message $message -Kind Error
+  } else {
+    Write-Host ''
+    Write-Host $message -ForegroundColor Red
+  }
   exit 1
 }

@@ -11,7 +11,12 @@ function read(relative) {
 }
 
 test("PowerShell 启动器保留 Windows PowerShell 5.1 所需的 UTF-8 BOM", () => {
-  for (const relative of ["codex-skin/Start-EVA.ps1", "codex-skin/Restore-EVA.ps1"]) {
+  for (const relative of [
+    "codex-skin/Start-EVA.ps1",
+    "codex-skin/Import-DSH-Boot.ps1",
+    "codex-skin/Restore-EVA.ps1",
+    "scripts/Install-EVA-DesktopShortcut.ps1",
+  ]) {
     const bytes = fs.readFileSync(path.join(root, relative));
     assert.deepEqual([...bytes.subarray(0, 3)], [0xef, 0xbb, 0xbf], relative);
   }
@@ -36,15 +41,50 @@ test("启动器只通过已验证的官方 Appx 与回环 CDP 工作", () => {
   }
   assert.ok(!source.includes("app.asar"));
   assert.ok(!source.includes("WindowsApps\\OpenAI.Codex_") || source.includes("Capture"));
+  assert.ok(source.includes("[switch]$GuiPrompt"));
+  assert.ok(source.includes("System.Windows.Forms.MessageBox"));
+  assert.ok(source.includes("Confirm-CodexRestart"));
 });
 
 test("默认入口是官方 Codex 皮肤，工作台保留独立入口", () => {
   const skin = read("Start-EVA.cmd");
   const workbench = read("Start-EVA-Workbench.cmd");
-  assert.match(skin, /codex-skin\\Start-EVA\.ps1/);
-  assert.match(skin, /-PromptRestart/);
+  const vbs = read("Start-EVA.vbs");
+  assert.match(skin, /Start-EVA\.vbs/);
+  assert.match(vbs, /codex-skin\\Start-EVA\.ps1/);
+  assert.match(vbs, /-PromptRestart/);
+  assert.match(vbs, /-GuiPrompt/);
+  assert.match(vbs, /shell\.Run command, 0, False/);
   assert.match(workbench, /workbench\\start\.ps1/);
   assert.match(read("Restore-EVA.cmd"), /Restore-EVA\.ps1/);
+});
+
+test("桌面快捷方式使用官方 Codex 图标并指向隐藏启动器", () => {
+  const source = read("scripts/Install-EVA-DesktopShortcut.ps1");
+  for (const fragment of [
+    "Get-AppxPackage -Name 'OpenAI.Codex'",
+    "Desktop",
+    "TargetPath = $wscript",
+    "IconLocation = $codex.Path + ',0'",
+    "Start-EVA.vbs",
+    "WindowStyle = 7",
+  ]) {
+    assert.ok(source.includes(fragment), `missing shortcut contract: ${fragment}`);
+  }
+});
+
+test("DSH 启动包导入器只在本地复制并校验媒体", () => {
+  const source = read("codex-skin/Import-DSH-Boot.ps1");
+  for (const fragment of [
+    "dsh-eva-theme",
+    "assets\\manifest.json",
+    "Get-FileHash",
+    "sourceCommit",
+    "PACK-NOTICE.txt",
+    "local-only; original DSH media license applies",
+  ]) {
+    assert.ok(source.includes(fragment), `missing DSH importer contract: ${fragment}`);
+  }
 });
 
 test("恢复脚本同时处理 CDP 清理和注入器进程", () => {
@@ -58,6 +98,6 @@ test("恢复脚本同时处理 CDP 清理和注入器进程", () => {
 test("package 版本与皮肤版本一致", () => {
   const pkg = JSON.parse(read("package.json"));
   const injector = read("codex-skin/injector.mjs");
-  assert.equal(pkg.version, "0.1.1");
-  assert.match(injector, /export const SKIN_VERSION = "0\.1\.1"/);
+  assert.equal(pkg.version, "0.2.0");
+  assert.match(injector, /export const SKIN_VERSION = "0\.2\.0"/);
 });
