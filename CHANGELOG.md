@@ -1,5 +1,18 @@
 # 更新日志
 
+## v0.2.1 · 2026-11-11
+
+### 修复
+
+- 修复 Windows PowerShell 5.1 将 CDP `/json/list` 的 JSON 数组作为单一对象返回时，`Test-CdpEndpoint` 误判 `9345` 未开放的问题；启动器现在会先展开目标数组再校验 renderer。
+- 增加 CDP 目标数组兼容性回归测试，避免再次出现“端口正常监听但提示没有开启本地 CDP”的问题。
+
+### 验证
+
+- 在正在运行的官方 Codex `26.1106.6628.0` renderer 上重新执行启动器，检测到 `127.0.0.1:9345` 并成功应用 Asuka 皮肤。
+- `--verify` 返回 `installed: true`、`stylePresent: true`、`overlayPresent: true`、`pass: true`。
+- 19 项皮肤测试通过，包含新增的 Windows PowerShell 5.1 数组兼容测试。
+
 ## v0.2.0 · 2026-11-11
 
 ### 新增

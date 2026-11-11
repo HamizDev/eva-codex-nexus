@@ -46,6 +46,14 @@ test("启动器只通过已验证的官方 Appx 与回环 CDP 工作", () => {
   assert.ok(source.includes("Confirm-CodexRestart"));
 });
 
+test("CDP 目标列表兼容 Windows PowerShell 5.1 的数组返回", () => {
+  const source = read("codex-skin/Start-EVA.ps1");
+  assert.match(
+    source,
+    /Invoke-RestMethod -Uri "http:\/\/127\.0\.0\.1:\$CdpPort\/json\/list" -TimeoutSec 2 -MaximumRedirection 0 \| ForEach-Object \{ \$_ \}/,
+  );
+});
+
 test("默认入口是官方 Codex 皮肤，工作台保留独立入口", () => {
   const skin = read("Start-EVA.cmd");
   const workbench = read("Start-EVA-Workbench.cmd");
@@ -98,6 +106,6 @@ test("恢复脚本同时处理 CDP 清理和注入器进程", () => {
 test("package 版本与皮肤版本一致", () => {
   const pkg = JSON.parse(read("package.json"));
   const injector = read("codex-skin/injector.mjs");
-  assert.equal(pkg.version, "0.2.0");
-  assert.match(injector, /export const SKIN_VERSION = "0\.2\.0"/);
+  assert.equal(pkg.version, "0.2.1");
+  assert.match(injector, /export const SKIN_VERSION = "0\.2\.1"/);
 });

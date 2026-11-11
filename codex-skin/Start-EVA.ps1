@@ -13,7 +13,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-$SkinVersion = '0.2.0'
+$SkinVersion = '0.2.1'
 $PortExplicit = $PSBoundParameters.ContainsKey('Port')
 $StateRoot = Join-Path $env:LOCALAPPDATA 'EVACodexSkin'
 $StatePath = Join-Path $StateRoot 'state.json'
@@ -233,7 +233,7 @@ function Test-CdpEndpoint {
         return $false
       }
     }
-    $targets = @(Invoke-RestMethod -Uri "http://127.0.0.1:$CdpPort/json/list" -TimeoutSec 2 -MaximumRedirection 0)
+    $targets = @(Invoke-RestMethod -Uri "http://127.0.0.1:$CdpPort/json/list" -TimeoutSec 2 -MaximumRedirection 0 | ForEach-Object { $_ })
     foreach ($target in $targets) {
       if ($target.type -ne 'page' -or -not ([string]$target.url).StartsWith('app://')) { continue }
       try {

@@ -1,4 +1,4 @@
-# EVA Codex Nexus · v0.2.0 开发交接
+# EVA Codex Nexus · v0.2.1 开发交接
 
 基线日期 2026-11-11。当前默认形态为**官方 Codex Desktop + EVA 皮肤**；旧的独立工作台保留为备用入口，不再作为默认启动方式。
 

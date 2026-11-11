@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "project": "eva-codex-nexus",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "files": [
     {
       "path": ".editorconfig",
@@ -21,17 +21,17 @@
     {
       "path": "ASSET-TODO.md",
       "bytes": 1367,
-      "sha256": "9b891cfa325768cab3a8738c7b4158040bb8340444c1923cd74dad8a5ac9723f"
+      "sha256": "d2f1d040a68ec79bca1b08731f53c9b9d7a9071a68ef4b2325417360d5cedec7"
     },
     {
       "path": "ASSETS.md",
       "bytes": 1464,
-      "sha256": "06197e589639a68c40a3f6d2f7cdb121c63932ca52f1cfbb0e33a78be125dacc"
+      "sha256": "b8ee0e49f00ea92f7248164516cd9caf900b985433fdb9bf5e055548405ce7da"
     },
     {
       "path": "CHANGELOG.md",
-      "bytes": 7748,
-      "sha256": "62c2dae131e040de906fe4a66570c1ffdb426cffd7f28aa5a37b8b77936136e0"
+      "bytes": 8486,
+      "sha256": "c7689589ffcfbcbea881bf3939281c0a0dce341e6315a34c566a025933177b30"
     },
     {
       "path": "CODE-ORIGINS.md",
@@ -46,7 +46,7 @@
     {
       "path": "DEVELOPMENT-HANDOFF.md",
       "bytes": 4014,
-      "sha256": "634db2ffdbc7dd22e2445a7edc9949cb8c3ad79458e439b835313dd7bda816e2"
+      "sha256": "fed7b7a0052cdffb3caa9a8ba8bda6bb286022bce76245df4716dc70da102ee1"
     },
     {
       "path": "DSH-BOOT.md",
@@ -76,22 +76,22 @@
     {
       "path": "LICENSE-STATUS.md",
       "bytes": 904,
-      "sha256": "23bf3da91a2c1bd909ec403cfaa9f4ad807a8bb8f5e690e04511dce42d8d2f95"
+      "sha256": "cc3b43186ab53ea50dab9a982e058eb2dc86d7408f46410ff549b512ff6442e4"
     },
     {
       "path": "PROVENANCE.md",
       "bytes": 2085,
-      "sha256": "972d95f830cd591f3439961a9171612de3f685a8d08321a923f966d9b74a6fee"
+      "sha256": "0006f89c6825c7b872ee959295bd824c5d935121bb7fac3e10debb1bfe7e4041"
     },
     {
       "path": "PUBLIC-RELEASE-CHECKLIST.md",
-      "bytes": 1604,
-      "sha256": "1f182eb01918640e5f11db2ecb76286eed6046a368c5bb1207915b90b46cc9d0"
+      "bytes": 1688,
+      "sha256": "865786e192988b36bc84237f2e573a6e5e32005b2bd6e42ecfc8c1a0530e4f1f"
     },
     {
       "path": "README.md",
-      "bytes": 9306,
-      "sha256": "f91d5c32fda718fe146c3c4cd174657c90fef81e2aa8f579295c23348cd9f088"
+      "bytes": 9414,
+      "sha256": "2aede2647b66afa9c77b8a67aee48a476cea5741119a9b13f5ce26766812ee3f"
     },
     {
       "path": "Restore-EVA.cmd",
@@ -140,8 +140,8 @@
     },
     {
       "path": "codex-skin/Start-EVA.ps1",
-      "bytes": 22163,
-      "sha256": "d5fcb69c5f2ead52596ecdb302a7d46c686db9fa4ea0bf6fbb945a938fe95267"
+      "bytes": 22187,
+      "sha256": "ee5d3d9d8c279770f71fc26ff231738c446cd8d395e8f6ae8cd95d16104b1719"
     },
     {
       "path": "codex-skin/assets/README.md",
@@ -181,7 +181,7 @@
     {
       "path": "codex-skin/injector.mjs",
       "bytes": 59887,
-      "sha256": "fc43aea3dee0d0b1ccc77f52914fd1d343eff70b30edfd3184f4fca51a324d32"
+      "sha256": "59228b039406b5af26bc483b9655ffced609c1c7fe38521461ff966027ad791e"
     },
     {
       "path": "codex-skin/selectors.json",
@@ -191,12 +191,12 @@
     {
       "path": "codex-skin/tests/injector.test.mjs",
       "bytes": 10571,
-      "sha256": "1656170b04ca7b3dd30df5e7986394f112efb56bbd7ddcef25dbf15526074e86"
+      "sha256": "f178293ba258c373f5eb740b4545f33b950db82e913b356c37b9a7b29aeed0ed"
     },
     {
       "path": "codex-skin/tests/launcher.test.mjs",
-      "bytes": 3645,
-      "sha256": "843ffe2bffef395a1a5ddde7850b326a95005ce00e8a098f4d160b656e24c7c2"
+      "bytes": 3952,
+      "sha256": "c80cbdb332d06dccfcddc4bbe351643c90c67ed6acefe84af29b381e462911c3"
     },
     {
       "path": "licenses/Codex-Dream-Skin-MIT.txt",
@@ -216,7 +216,7 @@
     {
       "path": "package.json",
       "bytes": 521,
-      "sha256": "1f0f98b7688b06f3f20aac7adf2ed7b1116611296b50c45aa4e20ee97c0e8863"
+      "sha256": "f5619c6ff73cd8c2872a105b6c8b94ada762e52fbfb5ec46e5872a7997c94640"
     },
     {
       "path": "scripts/Install-EVA-DesktopShortcut.ps1",
@@ -251,7 +251,7 @@
     {
       "path": "workbench/bridge.cjs",
       "bytes": 3543,
-      "sha256": "33e01fd20900762113ad808e4189d99d6355adbd6817e61481f738bcde5415ae"
+      "sha256": "c8105ef854cdd52cafba298285fee00090689f523891d306133665587e9161c0"
     },
     {
       "path": "workbench/git-service.cjs",
@@ -271,12 +271,12 @@
     {
       "path": "workbench/package-lock.json",
       "bytes": 1734,
-      "sha256": "797805bdc404da077889080c73a7e8f1842201936a9d766bb285fc3ab2ef7e21"
+      "sha256": "e7f2fb0a9fd1a228e94f93158070774b2eb4208aed0d8c41823d7c1570d57589"
     },
     {
       "path": "workbench/package.json",
       "bytes": 332,
-      "sha256": "a652f04fe0618443ec3c956fa2d7c510167c764edbe3513a313d6b16e4a3ac9f"
+      "sha256": "cf93908a90e8bf622f9d62a5878fe8a80512d089e022f7e78ca66d402f899d4d"
     },
     {
       "path": "workbench/plugins.cjs",
@@ -511,12 +511,12 @@
     {
       "path": "workbench/server.cjs",
       "bytes": 18902,
-      "sha256": "b00982a16c4f79d667586195b97ed423654e3f7cb284e3db7cb31ce18b39d4ea"
+      "sha256": "bf0f1a153d9e4f02ef2e7a989ca513081c066283ddf771353be1c08828d55847"
     },
     {
       "path": "workbench/start.ps1",
       "bytes": 4519,
-      "sha256": "61b1682ba72cf1d5b50608636f60724c0fdda3353a5f1c09d1a8347db1c4f372"
+      "sha256": "5f83419dd5d44a0407dc1665f7a2362f17e6c1ecf5dd710aab23496c326b5237"
     },
     {
       "path": "workbench/state.cjs",

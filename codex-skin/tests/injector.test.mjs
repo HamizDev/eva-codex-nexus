@@ -61,7 +61,7 @@ test("主题与 payload 版本稳定且可切换", () => {
   assert.equal(isDriver("asuka"), true);
   assert.equal(isDriver("rei"), true);
   assert.equal(isDriver("system"), false);
-  assert.equal(SKIN_VERSION, "0.2.0");
+  assert.equal(SKIN_VERSION, "0.2.1");
   const asuka = loadPayload("asuka");
   const rei = loadPayload("rei");
   assert.equal(asuka.driver, "asuka");
