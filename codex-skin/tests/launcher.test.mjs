@@ -27,6 +27,9 @@ test("启动器只通过已验证的官方 Appx 与回环 CDP 工作", () => {
     "--user-data-dir=",
     "Test-CdpEndpoint",
     "Test-ProcessDescendsFrom",
+    "Get-CodexLaunchId",
+    "CreationDate",
+    "--boot-id",
     "Stop-Codex",
   ]) {
     assert.ok(source.includes(fragment), `missing launcher contract: ${fragment}`);
@@ -55,6 +58,6 @@ test("恢复脚本同时处理 CDP 清理和注入器进程", () => {
 test("package 版本与皮肤版本一致", () => {
   const pkg = JSON.parse(read("package.json"));
   const injector = read("codex-skin/injector.mjs");
-  assert.equal(pkg.version, "0.1.0");
-  assert.match(injector, /export const SKIN_VERSION = "0\.1\.0"/);
+  assert.equal(pkg.version, "0.1.1");
+  assert.match(injector, /export const SKIN_VERSION = "0\.1\.1"/);
 });

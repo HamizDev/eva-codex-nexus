@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import {
   EXACT_MAIN_URL,
   SKIN_VERSION,
+  buildBootSource,
   buildEarlySource,
   buildInstallSource,
   buildPayloadFromStrings,
@@ -57,7 +58,7 @@ test("主题与 payload 版本稳定且可切换", () => {
   assert.equal(isDriver("asuka"), true);
   assert.equal(isDriver("rei"), true);
   assert.equal(isDriver("system"), false);
-  assert.equal(SKIN_VERSION, "0.1.0");
+  assert.equal(SKIN_VERSION, "0.1.1");
   const asuka = loadPayload("asuka");
   const rei = loadPayload("rei");
   assert.equal(asuka.driver, "asuka");
@@ -85,6 +86,45 @@ test("注入和恢复都只使用 EVA 自有节点", () => {
   assert.match(remove, /delete root\.dataset\.evaSkin/);
 });
 
+test("首次启动动画只播放一次并可跳过", () => {
+  const boot = buildBootSource({
+    driver: "asuka",
+    css: "#eva-codex-skin-boot{opacity:0}@keyframes boot-in{to{opacity:1}}",
+    bootId: "launch-abc-123",
+  });
+  for (const fragment of [
+    "eva-codex-skin-boot",
+    "eva-codex-skin-boot-launch",
+    "already-played",
+    "prefers-reduced-motion",
+    "ASUKA LANGLEY",
+    "EVANGELION UNIT-02",
+    "Escape",
+    "localStorage",
+    "requestAnimationFrame",
+  ]) {
+    assert.ok(boot.includes(fragment), `missing boot contract: ${fragment}`);
+  }
+  assert.ok(!/https?:/i.test(boot));
+  assert.ok(!/<audio|<video|<image/i.test(boot));
+
+  const rei = buildBootSource({
+    driver: "rei",
+    css: "#eva-codex-skin-boot{opacity:0}",
+    bootId: "launch-rei-456",
+  });
+  assert.match(rei, /REI AYANAMI/);
+  assert.match(rei, /EVANGELION UNIT-00/);
+
+  const early = buildEarlySource("void 0", "rev-1", boot);
+  assert.ok(early.includes("eva-codex-skin-boot-launch"));
+  assert.ok(
+    early.indexOf("eva-codex-skin-boot-launch") <
+      early.indexOf("__EVA_CODEX_SKIN_EARLY_GENERATION__"),
+  );
+  assert.match(buildRemoveSource(), /eva-codex-skin-boot-style/);
+});
+
 test("安装脚本不会接管鼠标事件", () => {
   const source = buildInstallSource({
     driver: "rei",
@@ -99,6 +139,7 @@ test("安装脚本不会接管鼠标事件", () => {
 
 test("皮肤 CSS 使用稳定选择器并禁用远程资源", () => {
   const css = fs.readFileSync(path.join(root, "assets", "eva-skin.css"), "utf8");
+  const bootCss = fs.readFileSync(path.join(root, "assets", "boot.css"), "utf8");
   for (const fragment of [
     "html[data-eva-skin=\"asuka\"]",
     "html[data-eva-skin=\"rei\"]",
@@ -113,6 +154,16 @@ test("皮肤 CSS 使用稳定选择器并禁用远程资源", () => {
   assert.ok(!css.includes("@import"));
   assert.ok(!/url\(\s*https?:/i.test(css));
   assert.ok(!/<script/i.test(css));
+  for (const fragment of [
+    "#eva-codex-skin-boot",
+    "@keyframes eva-boot-scan",
+    "@keyframes eva-boot-progress-in",
+    "@media (prefers-reduced-motion: reduce)",
+  ]) {
+    assert.ok(bootCss.includes(fragment), `missing boot CSS contract: ${fragment}`);
+  }
+  assert.ok(!bootCss.includes("@import"));
+  assert.ok(!/url\(\s*https?:/i.test(bootCss));
 });
 
 test("主题资源不包含角色图片或远程引用", () => {
@@ -138,11 +189,18 @@ test("选择器合同保留稳定锚点", () => {
 });
 
 test("CLI 参数边界", () => {
-  const options = parseArgs(["--verify", "--port", "9456", "--driver", "rei"]);
+  const options = parseArgs([
+    "--verify",
+    "--port", "9456",
+    "--driver", "rei",
+    "--boot-id", "launch-9456",
+  ]);
   assert.equal(options.mode, "verify");
   assert.equal(options.port, 9456);
   assert.equal(options.driver, "rei");
+  assert.equal(options.bootId, "launch-9456");
   assert.throws(() => parseArgs(["--port", "80"]), /between/);
   assert.throws(() => parseArgs(["--driver", "system"]), /asuka or rei/);
+  assert.throws(() => parseArgs(["--boot-id", "bad id"]), /Boot id/);
   assert.throws(() => parseArgs(["--wat"]), /Unknown argument/);
 });

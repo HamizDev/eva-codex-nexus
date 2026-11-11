@@ -1,9 +1,9 @@
 # EVA Codex Nexus
 
 > 给**官方 Codex 客户端**换上一层 EVA 皮肤，而不是另做一个 Codex 工作台。
-> **当前版本：v0.1.0（开发预览）**。非官方项目，与 OpenAI、Studio Khara、Gainax 及相关权利方均无关联。
+> **当前版本：v0.1.1（开发预览）**。非官方项目，与 OpenAI、Studio Khara、Gainax 及相关权利方均无关联。
 
-从 v0.1.0 开始，默认入口 `Start-EVA.cmd` 启动的是**你电脑上已安装的官方 Codex**。侧栏、项目、会话、输入框、审批、菜单和快捷键仍然是 Codex 原生的，只额外叠加 EVA 的配色、线框和装饰层。现有独立工作台保留为备用入口，不再抢占默认启动方式。
+从 v0.1.0 开始，默认入口 `Start-EVA.cmd` 启动的是**你电脑上已安装的官方 Codex**。侧栏、项目、会话、输入框、审批、菜单和快捷键仍然是 Codex 原生的，只额外叠加 EVA 的配色、线框和装饰层。v0.1.1 增加了每次启动播放一次的抽象 EVA 启动层。现有独立工作台保留为备用入口，不再抢占默认启动方式。
 
 ## 两种入口
 
@@ -18,6 +18,8 @@
 
 首次使用默认入口时，如果 Codex 已经打开，脚本会提示**重启一次**，因为当前窗口没有开启本地调试端口。重启后会继续使用官方 Codex 的账号和会话数据；本工具不读取、不修改 `auth.json`、API Key、Base URL 或模型配置。
 
+每次由 `Start-EVA.cmd` 启动一个新的 Codex 进程时，会先播放约 2～4 秒的启动层；点击或按 `Esc` 可跳过。刷新 renderer、切换主题或重新附加注入器不会重播；系统开启“减少动态效果”时直接跳过。
+
 ## 使用流程
 
 默认入口的日常流程和官方 Codex 一致：
@@ -28,7 +30,7 @@
 - 使用原生菜单、搜索、快捷键和窗口行为；
 - 关闭窗口即退出本次皮肤会话。
 
-皮肤不是独立客户端，也不是网页套壳。它只向官方 renderer 注入一份 CSS 和一层 `pointer-events: none` 的装饰节点；不会替换 React 组件，不会修改 `app.asar`，不会改签名，也不会绕过登录或订阅配额。
+皮肤不是独立客户端，也不是网页套壳。它向官方 renderer 注入配色 CSS、常驻的 `pointer-events: none` 装饰层，以及启动时短暂显示的启动层；启动层结束后会完全释放输入。它不会替换 React 组件，不会修改 `app.asar`，不会改签名，也不会绕过登录或订阅配额。
 
 ## 环境要求
 
@@ -44,9 +46,10 @@
 2. 以 `--remote-debugging-address=127.0.0.1 --remote-debugging-port=9345` 启动一个受控实例；
 3. 使用独立的 Chromium 配置目录 `%LOCALAPPDATA%\EVACodexSkin\cdp-profile`，避免污染官方默认配置；
 4. 只连接 URL 为 `app://-/index.html` 的页面，拒绝 `avatar-overlay` 宠物层和非回环 WebSocket；
-5. 注入 `codex-skin/assets/eva-skin.css` 和抽象装饰层；
-6. 监视页面重载和主题切换，自动重新应用；
-7. `Restore-EVA.cmd` 删除样式、装饰节点和注入器进程。
+5. 从官方 Codex 主进程的启动时间生成一次性启动指纹，首次连接时注入 `assets/boot.css` 和抽象启动层；
+6. 注入 `codex-skin/assets/eva-skin.css` 和常驻抽象装饰层；
+7. 监视页面重载和主题切换，自动重新应用，但同一 Codex 进程不重播启动层；
+8. `Restore-EVA.cmd` 删除样式、启动层、装饰节点和注入器进程。
 
 实现参考了现有 Codex 换肤项目的回环 CDP、目标校验、`Page.addScriptToEvaluateOnNewDocument` 和 watcher 架构；没有把它们的角色图片、音轨或主题素材打包进本仓库。选择器和适配边界记录在 `codex-skin/selectors.json`。
 
@@ -63,6 +66,8 @@
 已在 `OpenAI.Codex 26.1106.6628.0`、Chromium `157.0.8103.51` 的真实 `app://-/index.html` renderer 上做过受控实例冒烟：
 
 - 02 明日香与 00 绫波丽两套皮肤均能注入；
+- 冷启动时启动层在 Codex shell 就绪前出现，Asuka / Rei 两套编号和配色均正常；
+- 刷新页面不重播启动层，`Esc` 可跳过，“减少动态效果”下不显示；
 - 侧栏、主区、输入框、原生按钮仍可交互；
 - 皮肤层 `pointer-events: none`；
 - 切换 driver 后 watcher 能重新应用；
@@ -102,6 +107,7 @@ codex-skin/
   selectors.json         # 稳定 DOM 锚点合同
   assets/
     eva-skin.css         # 两套配色和装饰层
+    boot.css             # 单次启动层
     asuka-mark.svg
     rei-mark.svg
     linework.svg
@@ -115,6 +121,7 @@ workbench/               # 旧独立工作台，保留
 - 独立配置目录首次进入时可能需要登录一次；不同环境和版本不保证一定自动复用已有会话。
 - 没有实现自动更新、托盘控制、安装器或 macOS/Linux 版本。
 - 皮肤不改变模型、账户、计费、配额或任务执行逻辑。
+- 启动层只有抽象数字、线框和扫描动效，不含角色插画、原作语音或音乐。
 
 ## 素材与许可
 

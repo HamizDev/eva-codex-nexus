@@ -12,7 +12,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-$SkinVersion = '0.1.0'
+$SkinVersion = '0.1.1'
 $PortExplicit = $PSBoundParameters.ContainsKey('Port')
 $StateRoot = Join-Path $env:LOCALAPPDATA 'EVACodexSkin'
 $StatePath = Join-Path $StateRoot 'state.json'
@@ -147,6 +147,27 @@ function Get-CodexProcesses {
     $_.ExecutablePath -and
     $_.ExecutablePath.Equals($Executable, [StringComparison]::OrdinalIgnoreCase)
   })
+}
+
+function Get-CodexLaunchId {
+  param([Parameter(Mandatory)][object]$Install)
+  $processes = @(Get-CodexProcesses -Executable $Install.Executable)
+  if (-not $processes.Count) { return [guid]::NewGuid().ToString('N') }
+  $main = $processes | Sort-Object CreationDate | Select-Object -First 1
+  $created = if ($main.CreationDate) {
+    ([datetime]$main.CreationDate).ToUniversalTime().ToString('o')
+  } else {
+    [string]$main.ProcessId
+  }
+  $material = "$($Install.Executable)|$($main.ProcessId)|$created"
+  $sha = [Security.Cryptography.SHA256]::Create()
+  try {
+    $bytes = [Text.Encoding]::UTF8.GetBytes($material)
+    $hash = ($sha.ComputeHash($bytes) | ForEach-Object { $_.ToString('x2') }) -join ''
+    return $hash.Substring(0, 24)
+  } finally {
+    $sha.Dispose()
+  }
 }
 
 function Test-CdpEndpoint {
@@ -352,7 +373,8 @@ function Start-Injector {
   param(
     [Parameter(Mandatory)][string]$NodePath,
     [Parameter(Mandatory)][int]$CdpPort,
-    [Parameter(Mandatory)][string]$SelectedDriver
+    [Parameter(Mandatory)][string]$SelectedDriver,
+    [Parameter(Mandatory)][string]$BootId
   )
   New-Item -ItemType Directory -Force -Path $StateRoot | Out-Null
   Set-Content -LiteralPath $InjectorLog -Value '' -Encoding UTF8
@@ -362,6 +384,7 @@ function Start-Injector {
     '--watch',
     '--port', "$CdpPort",
     '--driver', $SelectedDriver,
+    '--boot-id', $BootId,
     '--state-dir', ('"{0}"' -f $StateRoot)
   ) -join ' '
   $process = Start-Process -FilePath $NodePath -ArgumentList $argumentLine `
@@ -446,13 +469,15 @@ try {
   }
 
   Stop-RecordedInjector -State $saved
-  $injector = Start-Injector -NodePath $node.Path -CdpPort $Port -SelectedDriver $selectedDriver
+  $bootId = Get-CodexLaunchId -Install $install
+  $injector = Start-Injector -NodePath $node.Path -CdpPort $Port -SelectedDriver $selectedDriver -BootId $bootId
   $state = [ordered]@{
     schemaVersion = 1
     app = 'EVA-CODEX-SKIN'
     version = $SkinVersion
     port = $Port
     driver = $selectedDriver
+    bootId = $bootId
     injectorPid = $injector.Id
     injectorPath = $InjectorPath
     nodePath = $node.Path

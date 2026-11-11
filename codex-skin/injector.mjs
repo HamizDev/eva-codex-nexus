@@ -6,7 +6,7 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
-export const SKIN_VERSION = "0.1.0";
+export const SKIN_VERSION = "0.1.1";
 export const SKIN_ID = "eva-codex-skin";
 export const DEFAULT_PORT = 9345;
 export const EXACT_MAIN_URL = "app://-/index.html";
@@ -20,9 +20,14 @@ const SELECTORS = JSON.parse(fs.readFileSync(SELECTOR_FILE, "utf8"));
 const SELECTOR_MAP = SELECTORS.selectors;
 const STYLE_ID = "eva-codex-skin-style";
 const OVERLAY_ID = "eva-codex-skin-overlay";
+const BOOT_ID = "eva-codex-skin-boot";
+const BOOT_STYLE_ID = "eva-codex-skin-boot-style";
 const RUNTIME_KEY = "__EVA_CODEX_SKIN__";
 const EARLY_GENERATION_KEY = "__EVA_CODEX_SKIN_EARLY_GENERATION__";
 const EARLY_APPLIED_KEY = "__EVA_CODEX_SKIN_EARLY_APPLIED__";
+const BOOT_RUNTIME_KEY = "__EVA_CODEX_SKIN_BOOT__";
+const BOOT_FINISH_KEY = "__EVA_CODEX_SKIN_BOOT_FINISH__";
+const BOOT_ID_PATTERN = /^[A-Za-z0-9._-]{1,128}$/;
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -197,6 +202,204 @@ function svgDataUrl(filePath) {
   return `data:image/svg+xml;base64,${bytes.toString("base64")}`;
 }
 
+function bootProfile(driver) {
+  return driver === "rei"
+    ? {
+        unit: "00",
+        pilot: "REI AYANAMI",
+        pilotCn: "绫波丽 / 零号机",
+        unitLabel: "EVANGELION UNIT-00",
+        code: "00.00 // FIRST CHILD",
+        pattern: "PATTERN: BLUE",
+        sync: "96.4",
+      }
+    : {
+        unit: "02",
+        pilot: "ASUKA LANGLEY",
+        pilotCn: "明日香 / 二号机",
+        unitLabel: "EVANGELION UNIT-02",
+        code: "02.03 // TEST PILOT",
+        pattern: "PATTERN: RED",
+        sync: "98.7",
+      };
+}
+
+function buildBootMarkup(driver) {
+  const copy = bootProfile(driver);
+  return [
+    '<div class="eva-boot-grid"></div>',
+    '<div class="eva-boot-vignette"></div>',
+    '<div class="eva-boot-scan"></div>',
+    '<header class="eva-boot-head">',
+    '<span><b>NERV</b> // MAGI SYSTEM</span>',
+    `<span>${copy.code}</span>`,
+    "</header>",
+    '<aside class="eva-boot-side eva-boot-side-left">',
+    `<span>SYNC</span><b>${copy.sync}</b><span>${copy.pattern}</span>`,
+    "</aside>",
+    '<aside class="eva-boot-side eva-boot-side-right">',
+    "<span>A10 NERVE CLIP</span><b>ACTIVE</b><span>LINK STABLE</span>",
+    "</aside>",
+    '<div class="eva-boot-center">',
+    '<div class="eva-boot-crosshair"></div>',
+    '<div class="eva-boot-ring eva-boot-ring-a"></div>',
+    '<div class="eva-boot-ring eva-boot-ring-b"></div>',
+    `<div class="eva-boot-number">${copy.unit}</div>`,
+    `<div class="eva-boot-unit">${copy.unitLabel}</div>`,
+    `<div class="eva-boot-pilot">${copy.pilot}<small>${copy.pilotCn}</small></div>`,
+    "</div>",
+    '<div class="eva-boot-progress">',
+    '<div class="eva-boot-progress-head"><span>NEURAL LINK / SYNC RATIO</span>',
+    `<b>${copy.sync}%</b></div>`,
+    '<div class="eva-boot-progress-track"><i></i></div>',
+    '<div class="eva-boot-progress-foot"><span>SYNCHRONIZATION</span><span>STABLE</span></div>',
+    "</div>",
+    '<footer class="eva-boot-foot">',
+    "<span>点击或按 ESC 跳过</span>",
+    '<span class="eva-boot-link">LINK START</span>',
+    "</footer>",
+  ].join("");
+}
+
+export function buildBootSource({ driver, css, bootId }) {
+  if (!isDriver(driver)) throw new Error(`Unknown EVA driver: ${String(driver)}`);
+  if (typeof bootId !== "string" || !BOOT_ID_PATTERN.test(bootId)) {
+    throw new Error("Boot id must contain only letters, digits, dot, dash or underscore");
+  }
+  const markup = buildBootMarkup(driver);
+  return `(() => {
+    const bootId = ${JSON.stringify(bootId)};
+    const driver = ${JSON.stringify(driver)};
+    const styleId = ${JSON.stringify(BOOT_STYLE_ID)};
+    const elementId = ${JSON.stringify(BOOT_ID)};
+    const storageKey = "eva-codex-skin-boot-launch";
+    const runtimeKey = ${JSON.stringify(BOOT_RUNTIME_KEY)};
+    const finishKey = ${JSON.stringify(BOOT_FINISH_KEY)};
+    if (window[runtimeKey]?.bootId === bootId) {
+      return { played: false, reason: "already-installed" };
+    }
+    try {
+      if (localStorage.getItem(storageKey) === bootId) {
+        return { played: false, reason: "already-played" };
+      }
+    } catch {}
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return { played: false, reason: "reduced-motion" };
+    }
+    const root = document.documentElement;
+    if (!root) return { played: false, reason: "missing-documentElement" };
+    const boot = document.createElement("div");
+    boot.id = elementId;
+    boot.dataset.driver = driver;
+    boot.setAttribute("aria-hidden", "true");
+    boot.innerHTML = ${JSON.stringify(markup)};
+    let shownAt = 0;
+    let leaving = false;
+    let attemptTimer = null;
+    let attemptDeadline = 0;
+    let finishTimer = null;
+    let cleanupTimer = null;
+    let mounted = false;
+    const removeListeners = () => {
+      window.removeEventListener("keydown", onKey, true);
+      boot.removeEventListener("click", onSkip);
+    };
+    const cleanup = () => {
+      if (attemptTimer) clearInterval(attemptTimer);
+      if (finishTimer) clearTimeout(finishTimer);
+      if (cleanupTimer) clearTimeout(cleanupTimer);
+      attemptTimer = null;
+      finishTimer = null;
+      cleanupTimer = null;
+      removeListeners();
+      try { boot.remove(); } catch {}
+      try { document.getElementById(styleId)?.remove(); } catch {}
+      try { delete root.dataset.evaBoot; } catch {
+        root.removeAttribute("data-eva-boot");
+      }
+      if (window[runtimeKey]?.bootId === bootId) {
+        try { delete window[runtimeKey]; } catch {
+          window[runtimeKey] = undefined;
+        }
+      }
+      if (window[finishKey] === finish) {
+        try { delete window[finishKey]; } catch {
+          window[finishKey] = undefined;
+        }
+      }
+    };
+    const finish = () => {
+      if (leaving || !mounted) return;
+      leaving = true;
+      if (finishTimer) clearTimeout(finishTimer);
+      const elapsed = performance.now() - shownAt;
+      const delay = Math.max(0, 1900 - elapsed);
+      finishTimer = setTimeout(() => {
+        boot.classList.add("is-leaving");
+        boot.style.pointerEvents = "none";
+        cleanupTimer = setTimeout(cleanup, 420);
+      }, delay);
+    };
+    const onSkip = (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      finish();
+    };
+    const onKey = (event) => {
+      if (event.key === "Escape" || event.key === " " || event.key === "Enter") {
+        event.preventDefault();
+        event.stopPropagation();
+        finish();
+      }
+    };
+    const install = () => {
+      if (!document.body) return false;
+      if (!document.getElementById(styleId)) {
+        const style = document.createElement("style");
+        style.id = styleId;
+        style.textContent = ${JSON.stringify(css)};
+        (document.head || document.documentElement).appendChild(style);
+      }
+      if (!document.getElementById(elementId)) {
+        document.body.appendChild(boot);
+      }
+      try { localStorage.setItem(storageKey, bootId); } catch {}
+      root.dataset.evaBoot = driver;
+      mounted = true;
+      shownAt = performance.now();
+      window.addEventListener("keydown", onKey, true);
+      boot.addEventListener("click", onSkip);
+      requestAnimationFrame(() => {
+        if (!leaving) boot.classList.add("is-active");
+      });
+      finishTimer = setTimeout(finish, 4800);
+      return true;
+    };
+    const runtime = { bootId, driver, finish, cleanup, mounted: false };
+    window[runtimeKey] = runtime;
+    window[finishKey] = finish;
+    if (install()) {
+      runtime.mounted = true;
+      return { played: true, driver };
+    }
+    attemptDeadline = performance.now() + 15000;
+    attemptTimer = setInterval(() => {
+      if (install()) {
+        clearInterval(attemptTimer);
+        attemptTimer = null;
+        runtime.mounted = true;
+        return;
+      }
+      if (performance.now() >= attemptDeadline) {
+        clearInterval(attemptTimer);
+        attemptTimer = null;
+        cleanup();
+      }
+    }, 32);
+    return { played: true, driver, waitingForBody: true };
+  })()`;
+}
+
 export function buildInstallSource({
   driver,
   css,
@@ -276,11 +479,12 @@ export function buildInstallSource({
   })()`;
 }
 
-export function buildEarlySource(payloadSource, revision) {
+export function buildEarlySource(payloadSource, revision, bootSource = "") {
   const shellSelector = SELECTOR_MAP.shellMain;
   const sidebarSelector = SELECTOR_MAP.sidebar;
   const inputSelector = SELECTOR_MAP.composerInput;
   return `(() => {
+    ${bootSource ? `try { ${bootSource}; } catch (error) { console.error("[eva-skin] boot install failed", error); }` : ""}
     const generation = ${JSON.stringify(revision)};
     window[${JSON.stringify(EARLY_GENERATION_KEY)}] = generation;
     let observer = null;
@@ -307,6 +511,7 @@ export function buildEarlySource(payloadSource, revision) {
       if (!((shell && sidebar && input) || settings)) return false;
       try {
         ${payloadSource};
+        try { window[${JSON.stringify(BOOT_FINISH_KEY)}]?.(); } catch {}
         window[${JSON.stringify(EARLY_APPLIED_KEY)}] = generation;
       } catch (error) {
         console.error("[eva-skin] early install failed", error);
@@ -328,12 +533,16 @@ export function buildEarlySource(payloadSource, revision) {
 export function buildRemoveSource() {
   return `(() => {
     try { window[${JSON.stringify(RUNTIME_KEY)}]?.cleanup?.(); } catch {}
+    try { window[${JSON.stringify(BOOT_RUNTIME_KEY)}]?.cleanup?.(); } catch {}
     document.getElementById(${JSON.stringify(STYLE_ID)})?.remove();
     document.getElementById(${JSON.stringify(OVERLAY_ID)})?.remove();
+    document.getElementById(${JSON.stringify(BOOT_STYLE_ID)})?.remove();
+    document.getElementById(${JSON.stringify(BOOT_ID)})?.remove();
     const root = document.documentElement;
     try {
       delete root.dataset.evaSkin;
       delete root.dataset.evaSkinVersion;
+      delete root.dataset.evaBoot;
       root.style.removeProperty("--eva-linework");
       root.style.removeProperty("--eva-mark");
     } catch {}
@@ -342,6 +551,12 @@ export function buildRemoveSource() {
     }
     try { delete window[${JSON.stringify(EARLY_APPLIED_KEY)}]; } catch {
       window[${JSON.stringify(EARLY_APPLIED_KEY)}] = undefined;
+    }
+    try { delete window[${JSON.stringify(BOOT_RUNTIME_KEY)}]; } catch {
+      window[${JSON.stringify(BOOT_RUNTIME_KEY)}] = undefined;
+    }
+    try { delete window[${JSON.stringify(BOOT_FINISH_KEY)}]; } catch {
+      window[${JSON.stringify(BOOT_FINISH_KEY)}] = undefined;
     }
     return true;
   })()`;
@@ -353,8 +568,13 @@ export function buildPayloadFromStrings({
   linework,
   mark,
   version = SKIN_VERSION,
+  bootCss = "",
+  bootId = null,
 }) {
   const source = buildInstallSource({ driver, css, linework, mark, version });
+  const bootSource = bootId
+    ? buildBootSource({ driver, css: bootCss, bootId })
+    : "";
   const revision = crypto
     .createHash("sha256")
     .update(version)
@@ -366,17 +586,32 @@ export function buildPayloadFromStrings({
     .update(linework)
     .update("\0")
     .update(mark)
+    .update("\0")
+    .update(bootCss)
+    .update("\0")
+    .update(bootId || "")
     .digest("hex")
     .slice(0, 24);
-  return { driver, version, source, revision };
+  return { driver, version, source, revision, bootId, bootSource };
 }
 
-export function loadPayload(driver) {
+export function loadPayload(driver, options = {}) {
   if (!isDriver(driver)) throw new Error("主题只能是 asuka 或 rei");
   const css = fs.readFileSync(path.join(ASSETS, "eva-skin.css"), "utf8");
   const linework = svgDataUrl(path.join(ASSETS, "linework.svg"));
   const mark = svgDataUrl(path.join(ASSETS, driver === "rei" ? "rei-mark.svg" : "asuka-mark.svg"));
-  return buildPayloadFromStrings({ driver, css, linework, mark });
+  const bootId = options.bootId ?? null;
+  const bootCss = bootId
+    ? fs.readFileSync(path.join(ASSETS, "boot.css"), "utf8")
+    : "";
+  return buildPayloadFromStrings({
+    driver,
+    css,
+    linework,
+    mark,
+    bootCss,
+    bootId,
+  });
 }
 
 export class CdpSession {
@@ -593,6 +828,7 @@ function runtimeBase(options, driver, status, extra = {}) {
     pid: process.pid,
     port: options.port,
     driver,
+    bootId: options.bootId || null,
     status,
     updatedAt: new Date().toISOString(),
     ...extra,
@@ -603,10 +839,22 @@ async function applyOnce(target, current, port, options) {
   const session = await connectTarget(target, port);
   let earlyScriptId = null;
   try {
+    const earlySource = buildEarlySource(
+      current.source,
+      current.revision,
+      current.bootSource,
+    );
     const early = await session.send("Page.addScriptToEvaluateOnNewDocument", {
-      source: buildEarlySource(current.source, current.revision),
+      source: earlySource,
     });
     earlyScriptId = early.identifier ?? null;
+    if (current.bootSource) {
+      try {
+        await session.evaluate(current.bootSource);
+      } catch (error) {
+        console.error(`[eva-skin] boot display failed: ${error.message}`);
+      }
+    }
     const probe = await waitForCodexProbe(session, options.probeTimeoutMs);
     await session.evaluate(buildEarlySource(current.source, current.revision));
     let verified = await waitForVerifiedSession(session, options.verifyTimeoutMs);
@@ -629,8 +877,9 @@ async function applyOnce(target, current, port, options) {
 async function runWatch(options) {
   const stateDir = stateRootFrom(options);
   await fsp.mkdir(stateDir, { recursive: true });
+  options.bootId = options.bootId || crypto.randomUUID();
   let driver = options.driver || readDriverFromState(stateDir);
-  let current = loadPayload(driver);
+  let current = loadPayload(driver, { bootId: options.bootId });
   let stamp = driverStamp(stateDir);
   const sessions = new Map();
   const failures = new Map();
@@ -650,7 +899,7 @@ async function runWatch(options) {
       const nextDriver = readDriverFromState(stateDir, driver);
       if (nextDriver !== driver) {
         driver = nextDriver;
-        current = loadPayload(driver);
+        current = loadPayload(driver, { bootId: options.bootId });
         for (const [id, record] of sessions) {
           try {
             if (record.earlyScriptId) {
@@ -660,7 +909,13 @@ async function runWatch(options) {
             }
             record.earlyScriptId = (await record.session.send(
               "Page.addScriptToEvaluateOnNewDocument",
-              { source: buildEarlySource(current.source, current.revision) },
+              {
+                source: buildEarlySource(
+                  current.source,
+                  current.revision,
+                  current.bootSource,
+                ),
+              },
             )).identifier ?? null;
             await record.session.evaluate(buildEarlySource(current.source, current.revision));
             await record.session.evaluate(current.source);
@@ -713,7 +968,11 @@ async function runWatch(options) {
             if (record.session.closed) return;
             try {
               await record.session.evaluate(
-                buildEarlySource(current.source, current.revision),
+                buildEarlySource(
+                  current.source,
+                  current.revision,
+                  current.bootSource,
+                ),
               );
               await record.session.evaluate(current.source);
             } catch (error) {
@@ -828,7 +1087,8 @@ async function runRemove(options) {
 async function runOnce(options) {
   const stateDir = stateRootFrom(options);
   const driver = options.driver || readDriverFromState(stateDir);
-  const current = loadPayload(driver);
+  options.bootId = options.bootId || crypto.randomUUID();
+  const current = loadPayload(driver, { bootId: options.bootId });
   const targets = (await listTargets(options.port))
     .filter((target) => classifyTarget(target) === "main");
   const results = [];
@@ -872,6 +1132,7 @@ export function parseArgs(argv) {
     port: DEFAULT_PORT,
     driver: null,
     stateDir: null,
+    bootId: null,
     probeTimeoutMs: 15000,
     verifyTimeoutMs: 15000,
     screenshot: null,
@@ -891,6 +1152,7 @@ export function parseArgs(argv) {
     else if (arg === "--port") options.port = Number(next());
     else if (arg === "--driver") options.driver = next();
     else if (arg === "--state-dir") options.stateDir = next();
+    else if (arg === "--boot-id") options.bootId = next();
     else if (arg === "--probe-timeout-ms") options.probeTimeoutMs = Number(next());
     else if (arg === "--timeout-ms") options.verifyTimeoutMs = Number(next());
     else if (arg === "--screenshot") options.screenshot = path.resolve(next());
@@ -902,6 +1164,9 @@ export function parseArgs(argv) {
   }
   if (options.driver !== null && !isDriver(options.driver)) {
     throw new Error("Driver must be asuka or rei");
+  }
+  if (options.bootId !== null && !BOOT_ID_PATTERN.test(options.bootId)) {
+    throw new Error("Boot id must contain only letters, digits, dot, dash or underscore");
   }
   for (const key of ["probeTimeoutMs", "verifyTimeoutMs"]) {
     if (!Number.isInteger(options[key]) || options[key] < 1000 || options[key] > 120000) {
@@ -922,6 +1187,7 @@ Usage:
 
 Options:
   --driver <asuka|rei>       select the EVA palette
+  --boot-id <id>             stable ID for one official Codex launch
   --state-dir <path>         runtime state directory
   --probe-timeout-ms <ms>    wait for the Codex shell
   --timeout-ms <ms>          wait for visual verification

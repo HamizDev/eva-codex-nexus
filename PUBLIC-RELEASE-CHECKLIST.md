@@ -1,12 +1,14 @@
-# v0.1.0 公开源码验收清单
+# v0.1.1 公开源码验收清单
 
-- [x] 根 / workbench package 与 lockfile 均为 v0.1.0
+- [x] 根 / workbench package 与 lockfile 均为 v0.1.1
 - [x] README、CHANGELOG、上游来源与素材声明更新
 - [x] 主题跟随系统、Markdown、状态提示测试纳入 `npm test`
 - [x] 官方 Codex 皮肤启动器、CDP 目标校验、Asuka/Rei 注入和恢复测试纳入 `npm run test:skin`
 - [x] 真实 `OpenAI.Codex 26.1106.6628.0` renderer 受控实例冒烟：注入、切换、verify、remove
+- [x] 真实 renderer 冷启动启动层、刷新不重播、Esc 跳过、Rei 启动层和减少动态效果验证
+- [x] `--remove` 同时清理启动层、启动样式与皮肤节点
 - [ ] 新设备 Windows 10 / 11 启动与 Codex CLI 真实联调
-- [ ] 绫波丽启动序列与授权素材最终确认
+- [ ] 角色插画、语音与音乐等授权素材最终确认
 - [ ] 在用户方便时执行一次完整“关闭当前 Codex → Start-EVA.cmd → 自动重开”路径
 - [x] GitHub 仓库已创建并维护（`HamizDev/eva-codex-nexus`）
 
