@@ -241,8 +241,8 @@ function installEvaSkinUi(config) {
   const previewButtons = [];
   const packVersion = String(config.packVersion || "").trim();
   const packCommit = String(config.packCommit || "").trim().slice(0, 8);
-  if (packVersion) packNode.textContent = `DSH MEDIA ${packVersion}${packCommit ? " / " + packCommit : ""}`;
-  else packNode.textContent = "DSH 媒体包未导入";
+  if (packVersion) packNode.textContent = `EVA THEME ${packVersion}${packCommit ? " / " + packCommit : ""}`;
+  else packNode.textContent = "EVA 主题素材未导入";
 
   function addGroup(title) {
     const group = document.createElement("section");
@@ -262,7 +262,7 @@ function installEvaSkinUi(config) {
     const name = document.createElement("b");
     name.textContent = label;
     const detail = document.createElement("small");
-    detail.textContent = available ? hint : "需要先从 DSH 仓库导入本地媒体";
+    detail.textContent = available ? hint : "需要先导入本地 EVA 主题素材";
     copy.append(name, detail);
     const button = document.createElement("button");
     button.type = "button";

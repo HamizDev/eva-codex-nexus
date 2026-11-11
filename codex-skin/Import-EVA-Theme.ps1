@@ -7,20 +7,24 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $StateRoot = Join-Path $env:LOCALAPPDATA 'EVACodexSkin'
-if (-not $Destination) { $Destination = Join-Path $StateRoot 'dsh-boot' }
+if (-not $Destination) { $Destination = Join-Path $StateRoot 'eva-theme' }
 $Destination = [IO.Path]::GetFullPath($Destination)
 $RepoRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 
-function Resolve-DshSource {
+function Resolve-EvaThemeSource {
   param([string]$Requested)
   $candidates = @()
   if ($Requested) {
     $candidates += $Requested
   } else {
-    if ($env:DSH_EVA_THEME_ROOT) { $candidates += $env:DSH_EVA_THEME_ROOT }
+    if ($env:EVA_THEME_SOURCE_ROOT) { $candidates += $env:EVA_THEME_SOURCE_ROOT }
+    $researchRoot = Join-Path (Split-Path -Parent $RepoRoot) 'skin-research'
+    if (Test-Path -LiteralPath $researchRoot -PathType Container) {
+      $candidates += @(Get-ChildItem -LiteralPath $researchRoot -Directory -ErrorAction SilentlyContinue |
+        ForEach-Object { $_.FullName })
+    }
     $candidates += @(
-      (Join-Path (Split-Path -Parent $RepoRoot) 'skin-research\dsh-eva-theme'),
-      (Join-Path $RepoRoot 'dsh-eva-theme')
+      (Join-Path $RepoRoot 'eva-theme')
     )
   }
   foreach ($candidate in $candidates) {
@@ -30,7 +34,7 @@ function Resolve-DshSource {
       return $full
     }
   }
-  throw '没有找到 DSH EVA 主题仓库。请运行 Import-DSH-Boot.cmd "D:\path\to\dsh-plugin-eva-theme"。'
+  throw '没有找到本地 EVA 主题素材目录。请运行 Import-EVA-Theme.cmd "D:\path\to\eva-theme"。'
 }
 
 function Get-Sha256 {
@@ -48,14 +52,14 @@ function Test-PathWithinRoot {
   return $pathFull.StartsWith($rootFull, [StringComparison]::OrdinalIgnoreCase)
 }
 
-$source = Resolve-DshSource -Requested $SourceRoot
+$source = Resolve-EvaThemeSource -Requested $SourceRoot
 $assetManifestPath = Join-Path $source 'assets\manifest.json'
 $noticePath = Join-Path $source 'NOTICE.md'
 $licensePath = Join-Path $source 'LICENSE'
 $packagePath = Join-Path $source 'package.json'
 foreach ($required in @($assetManifestPath, $noticePath, $licensePath)) {
   if (-not (Test-Path -LiteralPath $required -PathType Leaf)) {
-    throw "DSH 主题缺少必要文件：$required"
+    throw "本地素材目录缺少必要文件：$required"
   }
 }
 
@@ -97,31 +101,31 @@ $assets = @()
 foreach ($id in $requiredAssetIds) {
   $sourceEntry = $assetManifest.assets.$id
   if (-not $sourceEntry -or -not $sourceEntry.file) {
-    throw "DSH 资源清单缺少 $id。"
+    throw "素材清单缺少 $id。"
   }
 }
 foreach ($id in $requiredAssetIds + $optionalAssetIds) {
   $sourceEntry = $assetManifest.assets.$id
   if (-not $sourceEntry -or -not $sourceEntry.file) {
     if ($optionalAssetIds -contains $id) { continue }
-    throw "DSH 资源清单缺少 $id。"
+    throw "素材清单缺少 $id。"
   }
   $relative = [string]$sourceEntry.file
   if ($relative -match '(^|[\\/])\.\.([\\/]|$)' -or [IO.Path]::IsPathRooted($relative)) {
-    throw "DSH 资源路径不安全：$relative"
+    throw "素材路径不安全：$relative"
   }
   $sourceFile = Join-Path (Join-Path $source 'assets') $relative
   if (-not (Test-PathWithinRoot -Root (Join-Path $source 'assets') -Path $sourceFile) -or
     -not (Test-Path -LiteralPath $sourceFile -PathType Leaf)) {
-    throw "DSH 资源不存在或越界：$sourceFile"
+    throw "素材不存在或越界：$sourceFile"
   }
   $bytes = (Get-Item -LiteralPath $sourceFile).Length
   $sha = Get-Sha256 -Path $sourceFile
   if ($sourceEntry.bytes -and [long]$sourceEntry.bytes -ne $bytes) {
-    throw "DSH 资源大小校验失败：$relative（清单 $($sourceEntry.bytes)，实际 $bytes）"
+    throw "素材大小校验失败：$relative（清单 $($sourceEntry.bytes)，实际 $bytes）"
   }
   if ($sourceEntry.sha256 -and ([string]$sourceEntry.sha256).ToLowerInvariant() -ne $sha) {
-    throw "DSH 资源 SHA-256 校验失败：$relative"
+    throw "素材 SHA-256 校验失败：$relative"
   }
   $assets += [ordered]@{
     id = $id
@@ -139,7 +143,7 @@ if ((Test-Path -LiteralPath $Destination -PathType Container) -and -not $Force) 
   if (Test-Path -LiteralPath $existingManifest -PathType Leaf) {
     $existing = Get-Content -LiteralPath $existingManifest -Raw -Encoding UTF8 | ConvertFrom-Json
     if ($existing.sourceCommit -eq $commit -and $commit) {
-      Write-Host "DSH 启动资源已经是最新版本（$($commit.Substring(0, 8))）。"
+      Write-Host "启动素材已经是最新版本（$($commit.Substring(0, 8))）。"
       Write-Host "位置：$Destination"
       return
     }
@@ -152,18 +156,18 @@ foreach ($asset in $assets) {
   $targetFile = Join-Path $Destination $asset.file
   Copy-Item -LiteralPath $sourceFile -Destination $targetFile -Force
   if ((Get-Sha256 -Path $targetFile) -ne $asset.sha256) {
-    throw "复制后的 DSH 资源校验失败：$targetFile"
+    throw "复制后的素材校验失败：$targetFile"
   }
 }
 
 $manifest = [ordered]@{
   schemaVersion = 1
-  package = 'dsh-eva-theme-boot-pack'
-  sourceRepository = 'https://github.com/seaison/dsh-plugin-eva-theme'
+  package = 'eva-theme-pack'
+  sourceRepository = 'local-only'
   sourceCommit = $commit
   sourceVersion = if ($package) { [string]$package.version } else { $null }
   importedAt = [DateTime]::UtcNow.ToString('o')
-  redistribution = 'local-only; original DSH media license applies'
+  redistribution = 'local-only; original media terms apply'
   features = @(
     'boot-sequence',
     'boot-voice',
@@ -197,20 +201,19 @@ $temporary = "$manifestPath.$PID.tmp"
 Move-Item -LiteralPath $temporary -Destination $manifestPath -Force
 
 $notice = @(
-  'EVA Codex + DSH boot pack',
+  'EVA Codex theme media',
   '',
-  'This directory contains media copied from the local dsh-plugin-eva-theme',
-  'checkout solely for use on this computer. The files are not part of the',
+  'This directory contains media copied from a local source theme directory',
+  'solely for use on this computer. The files are not part of the',
   'EVA Codex public repository and must not be redistributed with it.',
   '',
-  "Source: https://github.com/seaison/dsh-plugin-eva-theme",
+  "Source: $source",
   "Commit: $commit",
-  "DSH notice: $noticePath",
-  "DSH license: $licensePath",
+  "Source notice: $noticePath",
+  "Source license: $licensePath",
   '',
-  'The DSH code is MIT-licensed. Its third-party media is excluded from MIT.',
   'EVA characters, NERV marks, voices and music belong to their respective',
-  'rightsholders. Keep the DSH NOTICE and LICENSE with the original checkout.'
+  'rightsholders. Keep the source NOTICE and LICENSE with the original checkout.'
 ) -join [Environment]::NewLine
 Set-Content -LiteralPath (Join-Path $Destination 'PACK-NOTICE.txt') -Value $notice -Encoding UTF8
 

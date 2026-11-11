@@ -2,7 +2,7 @@
 
 - [x] 当前发行形态为官方 Codex Desktop + `codex-skin/` 换肤层；
 - [x] 仓库不包含旧独立工作台、`codex app-server` bridge、Workbench 启动入口或终端/Git/插件面板；
-- [x] 仓库不包含 DSH 的 GIF、头像、立绘、语音、打字音或音乐；
+- [x] 仓库不包含角色 GIF、头像、立绘、语音、打字音或音乐；
 - [x] 根 `package.json` 与 `codex-skin/injector.mjs` 版本一致；
 - [x] `npm test`、`npm run manifest`、`npm run verify:public` 通过；
 - [x] `MANIFEST.json` 与当前源码逐文件 SHA-256 一致；

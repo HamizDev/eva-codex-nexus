@@ -13,7 +13,7 @@ function read(relative) {
 test("PowerShell 启动器保留 Windows PowerShell 5.1 所需的 UTF-8 BOM", () => {
   for (const relative of [
     "codex-skin/Start-EVA.ps1",
-    "codex-skin/Import-DSH-Boot.ps1",
+    "codex-skin/Import-EVA-Theme.ps1",
     "codex-skin/Restore-EVA.ps1",
     "scripts/Install-EVA-DesktopShortcut.ps1",
   ]) {
@@ -89,10 +89,11 @@ test("桌面快捷方式使用官方 Codex 图标并指向隐藏启动器", () =
   }
 });
 
-test("DSH 启动包导入器只在本地复制并校验媒体", () => {
-  const source = read("codex-skin/Import-DSH-Boot.ps1");
+test("EVA 主题素材导入器只在本地复制并校验媒体", () => {
+  const source = read("codex-skin/Import-EVA-Theme.ps1");
   for (const fragment of [
-    "dsh-eva-theme",
+    "EVA_THEME_SOURCE_ROOT",
+    "eva-theme",
     "assets\\manifest.json",
     "asukaPortrait",
     "reiPortrait",
@@ -108,9 +109,9 @@ test("DSH 启动包导入器只在本地复制并校验媒体", () => {
     "Get-FileHash",
     "sourceCommit",
     "PACK-NOTICE.txt",
-    "local-only; original DSH media license applies",
+    "local-only; original media terms apply",
   ]) {
-    assert.ok(source.includes(fragment), `missing DSH importer contract: ${fragment}`);
+    assert.ok(source.includes(fragment), `missing EVA theme importer contract: ${fragment}`);
   }
 });
 
@@ -125,18 +126,19 @@ test("恢复脚本同时处理 CDP 清理和注入器进程", () => {
 test("package 版本与皮肤版本一致", () => {
   const pkg = JSON.parse(read("package.json"));
   const injector = read("codex-skin/injector.mjs");
-  assert.equal(pkg.version, "0.4.1");
-  assert.match(injector, /export const SKIN_VERSION = "0\.4\.1"/);
+  assert.equal(pkg.version, "0.4.2");
+  assert.match(injector, /export const SKIN_VERSION = "0\.4\.2"/);
 });
 
-test("项目版权以 HamizDev 为主且不保留已移除工作台声明", () => {
+test("项目版权以 HamizDev 为主且不保留旧上游声明", () => {
   const license = read("LICENSE");
   assert.match(license, /Copyright \(c\) 2026 HamizDev/);
   assert.ok(!license.includes("Iris-change"));
   const notices = read("THIRD_PARTY_NOTICES.md");
-  assert.match(notices, /DSH EVA Theme/);
+  assert.match(notices, /EVA\/NERV visual identity/);
   assert.ok(!notices.includes("Dragon Codex Boot"));
-  assert.deepEqual(fs.readdirSync(path.join(root, "licenses")).sort(), ["DSH-EVA-MIT.txt"]);
+  const licenseDir = path.join(root, "licenses");
+  assert.deepEqual(fs.existsSync(licenseDir) ? fs.readdirSync(licenseDir).sort() : [], []);
 });
 
 test("来源说明只描述当前官方 Codex 换肤层", () => {
