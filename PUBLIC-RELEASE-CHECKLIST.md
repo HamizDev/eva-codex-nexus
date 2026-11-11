@@ -1,6 +1,6 @@
-# v0.0.1 公开源码验收清单
+# v0.0.2 公开源码验收清单
 
-- [x] 根 / workbench package 与 lockfile 均为 v0.0.1
+- [x] 根 / workbench package 与 lockfile 均为 v0.0.2
 - [x] README、CHANGELOG、上游来源与素材声明更新
 - [x] 主题跟随系统、Markdown、状态提示测试纳入 `npm test`
 - [ ] 新设备 Windows 10 / 11 启动与 Codex CLI 真实联调

@@ -1,4 +1,4 @@
-# 许可状态（v0.0.1）
+# 许可状态（v0.0.2）
 
 - 代码：MIT；保留底座 `Iris-change` 原始版权，同时注明后续 `HamizDev` 修改。
 - 第三方库和字体：分别遵守仓库内许可与 `THIRD_PARTY_NOTICES.md`。

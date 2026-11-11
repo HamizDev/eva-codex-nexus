@@ -5,7 +5,7 @@ $env:HACKCLAW_DATA_DIR=Join-Path $PSScriptRoot 'data'
 $projectRoot = $PSScriptRoot
 $url = 'http://127.0.0.1:'+$Port
 # Only reuse the service started from THIS exact installation.
-$expectedVersion = '0.0.1'
+$expectedVersion = '0.0.2'
 $instancePath = [IO.Path]::GetFullPath($projectRoot).TrimEnd('\','/').ToLowerInvariant()
 $sha = [Security.Cryptography.SHA256]::Create()
 try { $hash = $sha.ComputeHash([Text.Encoding]::UTF8.GetBytes($instancePath)) } finally { $sha.Dispose() }

@@ -1,6 +1,6 @@
 # EVA Codex Nexus
 
-> 非官方、本地运行的 Codex 开发工作台。灵感来自 EVA 作品及 [DSH EVA Theme](https://github.com/seaison/dsh-plugin-eva-theme)。**首个版本：v0.0.1（开发预览）**。
+> 非官方、本地运行的 Codex 开发工作台。灵感来自 EVA 作品及 [DSH EVA Theme](https://github.com/seaison/dsh-plugin-eva-theme)。**当前版本：v0.0.2（开发预览）**；首个版本为 v0.0.1。
 
 使用自己电脑上的 **官方 Codex CLI / app-server**，不修改官方 Codex 客户端，不逆向认证，不绕过订阅配额。现有 Windows 本地界面具备 Codex 聊天与流式输出、图片、项目与会话管理、权限审批、停止任务、PowerShell 终端、Git 操作和插件管理等基础能力。
 

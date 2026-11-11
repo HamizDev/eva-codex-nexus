@@ -2,12 +2,12 @@
 const http=require('node:http'),fs=require('node:fs'),fsp=fs.promises,path=require('node:path'),crypto=require('node:crypto');
 const {execFile}=require('node:child_process');
 const {promisify}=require('node:util');const run=promisify(execFile);
-const {CodexBridge}=require('./bridge.cjs');const {reduceEvent}=require('./state.cjs');
+const {CodexBridge}=require('./bridge.cjs');const {reduceEvent}=require('./state.cjs');const {chooseApprovalDecision}=require('./approval-decision.cjs');
 const {instanceId}=require('./instance-id.cjs');
 const {AttachmentStore}=require('./attachments.cjs');const {normalizeModel,turnOptions}=require('./model-options.cjs');
 const {TerminalManager}=require('./terminal.cjs'),{GitService}=require('./git-service.cjs'),{PluginManager}=require('./plugins.cjs');
 const terminals=new TerminalManager(),git=new GitService(),plugins=new PluginManager(process.env.HACKCLAW_CODEX||'codex.exe');
-const ROOT=__dirname,INSTANCE=instanceId(__dirname),VERSION='0.0.1',DATA=path.resolve(process.env.HACKCLAW_DATA_DIR||path.join(ROOT,'data')),PORT=Number(process.env.HACKCLAW_PORT||43137),ORIGIN=`http://127.0.0.1:${PORT}`;
+const ROOT=__dirname,INSTANCE=instanceId(__dirname),VERSION='0.0.2',DATA=path.resolve(process.env.HACKCLAW_DATA_DIR||path.join(ROOT,'data')),PORT=Number(process.env.HACKCLAW_PORT||43137),ORIGIN=`http://127.0.0.1:${PORT}`;
 const attachments=new AttachmentStore(path.join(DATA,'attachments')),sendingThreads=new Set();
 const token=crypto.randomBytes(32).toString('hex'),subscribers=new Set(),approvals=new Map(),loaded=new Set();
 const terminalStyleNonce=crypto.randomBytes(18).toString('base64');
@@ -127,7 +127,11 @@ async function action(url,input){
     if(r.method==='item/tool/requestUserInput'){
       const answers={};for(const q of r.params.questions||[]){const answer=input.answers?.[q.id];if(typeof answer!=='string'||!answer.trim())throw Error('请回答所有问题');answers[q.id]={answers:[answer]}}result={answers};
     }else if(r.method==='item/permissions/requestApproval')result={permissions:input.accept?r.params.permissions:{},scope:'turn'};
-    else{const decision=input.accept?'accept':'decline';if(r.params.availableDecisions&&!r.params.availableDecisions.includes(decision))throw Error('当前请求不支持此决定');result={decision}}
+    else{
+      const decision=chooseApprovalDecision(r.params.availableDecisions,input.accept);
+      if(!decision)throw Error('当前请求不支持此决定');
+      result={decision};
+    }
     bridge.respond(r.id,result);approvals.delete(String(r.id));notify();return {ok:true};
   }
   if(url==='/api/login'){if(account.signedIn)return {alreadySignedIn:true};const r=await bridge.request('account/login/start',{type:'chatgpt'});return {authUrl:r.authUrl,loginId:r.loginId}}

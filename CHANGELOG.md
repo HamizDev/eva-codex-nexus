@@ -1,5 +1,23 @@
 # 更新日志
 
+## v0.0.2 · 2026-11-11
+
+### 修复
+
+- 适配新版 Codex CLI 的审批决定：命令审批不再固定发送 `decline`；缺少该选项时改用 `cancel`，拒绝和“仅允许本次”均已实测通过。
+- 新增审批决定回归测试，覆盖 `decline`、`cancel` 与旧版 CLI 决定列表。
+- 统一版本号到 `0.0.2`，同步根 package、workbench package、lockfile、服务端、启动脚本和 app-server 客户端标识。
+
+### 维护
+
+- 重新生成 `MANIFEST.json`，移除已删除文件的过期引用。
+- 统一文本文件换行符，避免新 clone 后 Git 面板出现仅由 CRLF 造成的修改。
+
+### 验证
+
+- `npm test` 34/34 全通过。
+- `npm run manifest` 与干净源码树上的 `npm run verify:public` 通过。
+
 ## v0.0.1 · 2026-11-09
 
 以 **EVA Codex Nexus** 为新的项目名称，基于既有 EVA Codex Workbench 开启独立版本线，从 `0.0.1` 重新编号；**不是删减版或重新编写 Codex 引擎**。
