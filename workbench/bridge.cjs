@@ -27,7 +27,7 @@ class CodexBridge extends EventEmitter {
     child.stderr.resume();
     this.lines=readline.createInterface({input:child.stdout});
     this.lines.on('line',line=>{if(this.child!==child)return;try{this.receive(JSON.parse(line))}catch(e){this.emit('diagnostic','Invalid app-server message: '+e.message)}});
-    await this.request('initialize',{clientInfo:{name:'eva_codex_nexus',title:'EVA Codex Nexus',version:'0.3.0'},capabilities:{experimentalApi:false}},60000);
+    await this.request('initialize',{clientInfo:{name:'eva_codex_nexus',title:'EVA Codex Nexus',version:'0.3.1'},capabilities:{experimentalApi:false}},60000);
     if(this.child!==child)throw Error('Codex initialization interrupted');
     this.send({method:'initialized',params:{}});this.connected=true;
   }

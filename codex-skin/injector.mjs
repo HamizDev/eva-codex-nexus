@@ -6,7 +6,7 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
-export const SKIN_VERSION = "0.3.0";
+export const SKIN_VERSION = "0.3.1";
 export const SKIN_ID = "eva-codex-skin";
 export const DEFAULT_PORT = 9345;
 export const EXACT_MAIN_URL = "app://-/index.html";
@@ -165,6 +165,7 @@ export function buildVerifyExpression() {
     const sidebar = document.querySelector(${JSON.stringify(SELECTOR_MAP.sidebar)});
     const main = document.querySelector(${JSON.stringify(SELECTOR_MAP.shellMain)});
     const settings = document.querySelector(${JSON.stringify(SELECTOR_MAP.settingsPanel)});
+    const browserPanel = document.querySelector(${JSON.stringify(SELECTOR_MAP.browserPanel)});
     const switcher = overlay?.querySelector(".eva-driver-switch") || null;
     const switchButtons = switcher
       ? [...switcher.querySelectorAll("[data-eva-driver]")]
@@ -204,6 +205,7 @@ export function buildVerifyExpression() {
         visible: switcherBox?.visible === true,
         pointerEvents: switcherPointerEvents,
         insideViewport: switcherInsideViewport,
+        hiddenForBrowserPanel: Boolean(browserPanel),
         activeDriver: switchButtons.find(
           (button) => button.getAttribute("aria-pressed") === "true",
         )?.dataset.evaDriver || null,
@@ -235,9 +237,14 @@ export function buildVerifyExpression() {
       result.overlayPresent === true &&
       result.overlayPointerEvents === "none" &&
       result.switcher.present === true &&
-      result.switcher.visible === true &&
-      result.switcher.pointerEvents === "auto" &&
-      result.switcher.insideViewport === true &&
+      (
+        result.switcher.hiddenForBrowserPanel === true ||
+        (
+          result.switcher.visible === true &&
+          result.switcher.pointerEvents === "auto" &&
+          result.switcher.insideViewport === true
+        )
+      ) &&
       result.switcher.buttonCount === 2 &&
       result.switcher.activeDriver === result.driver &&
       result.layout.fillsViewport === true &&

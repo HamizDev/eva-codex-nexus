@@ -4,14 +4,7 @@
 
 ## 2026-11-11 官方 Codex 皮肤层
 
-`v0.1.0` 新增 `codex-skin/`，默认启动官方 Codex Desktop 并通过回环 CDP 注入 EVA CSS 和非交互装饰层。实现前审阅了以下 MIT 项目的公开架构：
-
-- `Fei-Away/Codex-Dream-Skin`：CDP 启动参数、早期脚本、目标探针和 watcher；
-- `zhulin025/Codex-QQ-Skin`：Windows Appx 激活、进程归属和端口检查；
-- `HeiGeAi/heige-codex-skin-studio`：`app://-/index.html` 目标分类和 overlay 排除；
-- `freestylefly/codex-themes`：Electron watcher、平台发现和恢复流程。
-
-本仓库的 `injector.mjs`、PowerShell 启动器和 CSS 为面向本项目的重新实现；没有把上述项目的角色素材、主题包、音轨或安装器直接打包。Dream Skin 的 MIT 文本保存在 `licenses/Codex-Dream-Skin-MIT.txt`。这些代码许可不覆盖 OpenAI/Codex 商标或 EVA 角色、声音、音乐和图像的再分发权。
+`v0.1.0` 新增 `codex-skin/`，默认启动官方 Codex Desktop，并通过回环 CDP 注入本项目自己的 EVA CSS 和非交互装饰层。`injector.mjs`、PowerShell 启动器和主题样式均由本项目实现，不打包其他 Codex 换肤插件的注入器源码、主题包、角色素材或安装器。项目代码许可不覆盖 OpenAI/Codex 商标或 EVA 角色、声音、音乐和图像的再分发权。
 
 ## 用户补充的开发记录
 
@@ -28,12 +21,12 @@
 
 明日香工作台基于上述 starter 继续开发。候选包运行链为 CMD/PowerShell、Node 本地服务、网页界面及官方 app-server，没有包含或调用交接包中的 DragonCodexBoot.cs/WPF 启动器，不分发上游视频或快捷方式替换工具。
 
-Dragon Codex Boot 上游：https://github.com/yushua0808-cpu/dragon-codex-boot 。2026-11-04 核对上游 LICENSE 为 MIT，原许可证在 reference-launcher/LICENSE-DragonCodexBoot.txt；候选包保留对应许可与来源说明，不将其自动用作整个工作台的许可证。
+Dragon Codex Boot 上游：https://github.com/yushua0808-cpu/dragon-codex-boot 。2026-11-04 核对上游 LICENSE 为 MIT，许可证全文保存在 `licenses/DragonCodexBoot-MIT.txt`；本项目保留对应许可与来源说明，不将其自动用作整个工作台的许可证。
 
 Three.js、html-to-image 和 Noto 字体继续保留各自完整许可证。官方 Codex 由使用者自行安装。原始人物、标志、配音及音乐不因代码来源补齐而获得新的再分发许可。
 
 ## 剩余发布事项
 
-- 2026-11-05 用户确认自行开发的工作台代码和改动采用 MIT，版权署名 Iris-change；完整文本已写入 LICENSE。该决定不替代第三方软件、字体或素材原有许可。
+- 项目维护者 `HamizDev` 拥有后续开发与整合工作的主版权署名；原工作台底座 `Iris-change` 的必要版权通知继续保留。该决定不替代第三方软件、字体或素材原有许可。
 - 若后续找到其他明确复用的上游代码，继续补充来源、署名和适用条件。
 - 公共候选包继续使用中性占位素材；完整私人素材另行核实许可。

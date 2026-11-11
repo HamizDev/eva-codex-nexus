@@ -111,6 +111,22 @@ test("恢复脚本同时处理 CDP 清理和注入器进程", () => {
 test("package 版本与皮肤版本一致", () => {
   const pkg = JSON.parse(read("package.json"));
   const injector = read("codex-skin/injector.mjs");
-  assert.equal(pkg.version, "0.3.0");
-  assert.match(injector, /export const SKIN_VERSION = "0\.3\.0"/);
+  assert.equal(pkg.version, "0.3.1");
+  assert.match(injector, /export const SKIN_VERSION = "0\.3\.1"/);
+});
+
+test("项目版权以 HamizDev 为主并保留必要上游声明", () => {
+  const license = read("LICENSE");
+  assert.match(license, /Copyright \(c\) 2026 HamizDev/);
+  assert.ok(
+    license.indexOf("Copyright (c) 2026 HamizDev") <
+      license.indexOf("Copyright (c) 2026 Iris-change"),
+  );
+  const notices = read("THIRD_PARTY_NOTICES.md");
+  assert.match(notices, /DSH EVA Theme/);
+  assert.match(notices, /Dragon Codex Boot/);
+  assert.deepEqual(
+    fs.readdirSync(path.join(root, "licenses")).sort(),
+    ["DSH-EVA-MIT.txt", "DragonCodexBoot-MIT.txt"],
+  );
 });

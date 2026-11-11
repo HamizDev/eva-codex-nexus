@@ -15,6 +15,7 @@ import {
   buildInstallSource,
   buildPayloadFromStrings,
   buildRemoveSource,
+  buildVerifyExpression,
   classifyTarget,
   isDriver,
   loadDshBootPack,
@@ -62,7 +63,7 @@ test("主题与 payload 版本稳定且可切换", () => {
   assert.equal(isDriver("asuka"), true);
   assert.equal(isDriver("rei"), true);
   assert.equal(isDriver("system"), false);
-  assert.equal(SKIN_VERSION, "0.3.0");
+  assert.equal(SKIN_VERSION, "0.3.1");
   const asuka = loadPayload("asuka");
   const rei = loadPayload("rei");
   assert.equal(asuka.driver, "asuka");
@@ -221,6 +222,9 @@ test("安装脚本不会接管鼠标事件", () => {
   assert.match(source, /class="eva-driver-switch"/);
   assert.match(source, /aria-pressed/);
   assert.match(source, /setDriver/);
+  const verify = buildVerifyExpression();
+  assert.match(verify, /hiddenForBrowserPanel/);
+  assert.match(verify, /browserPanel/);
 });
 
 test("启动器显式主题只覆盖一次，应用内选择继续持久化", () => {
@@ -264,11 +268,18 @@ test("皮肤 CSS 使用稳定选择器并禁用远程资源", () => {
     "[aria-label=\"删除排队的消息\"]",
     "[role=\"tooltip\"]",
     ".bg-user-message",
+    ".rich-text-user-turn",
+    "--color-text-user-message: var(--eva-text-strong)",
+    "[data-browser-sidebar-address-input]",
+    "[data-testid=\"browser-profile-import-nux-banner\"]",
+    ".bg-neutral-soft-alpha",
+    "[role=\"tab\"][aria-selected=\"true\"]",
     ".bg-composer-primary",
     "#eva-codex-skin-overlay",
     "#eva-codex-skin-overlay .eva-driver-switch",
     "-webkit-app-region: no-drag",
     "pointer-events: auto !important",
+    "html[data-eva-skin]:has([data-browser-sidebar-address-input])",
     "@media (max-width: 900px)",
     "pointer-events: none !important",
     "@media (prefers-reduced-motion: reduce)",
@@ -320,6 +331,12 @@ test("选择器合同保留稳定锚点", () => {
   assert.equal(selectors.selectors.elevatedSurface, "[class*=\"bg-surface-elevated-secondary\"]");
   assert.equal(selectors.selectors.neutralSoftAction, "[class*=\"bg-background-neutral-soft-alpha\"]");
   assert.equal(selectors.selectors.userMessage, ".bg-user-message");
+  assert.match(selectors.selectors.userMessageRichText, /rich-text-user-turn/);
+  assert.match(selectors.selectors.browserPanel, /right-panel/);
+  assert.match(selectors.selectors.browserPanel, /data-browser-sidebar-address-input/);
+  assert.equal(selectors.selectors.browserAddressInput, "[data-browser-sidebar-address-input]");
+  assert.equal(selectors.selectors.browserImportBanner, "[data-testid=\"browser-profile-import-nux-banner\"]");
+  assert.equal(selectors.selectors.browserToolCard, ".bg-neutral-soft-alpha");
   assert.equal(selectors.selectors.composerPrimary, ".bg-composer-primary");
   assert.match(selectors.selectors.changeSummaryPill, /rounded-3xl/);
   assert.match(selectors.selectors.queuedRail, /排队消息操作/);
