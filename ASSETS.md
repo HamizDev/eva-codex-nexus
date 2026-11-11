@@ -1,4 +1,4 @@
-# EVA Codex Nexus 素材管理（v0.2.2）
+# EVA Codex Nexus 素材管理（v0.3.0）
 
 本代码仓库不包含 DSH 原版角色 PNG、GIF、语音 MP3 或动漫背景音乐。v0.2.0 增加了 DSH 启动资源导入器，但导入结果只写入 `%LOCALAPPDATA%\EVACodexSkin\dsh-boot`，不进入 Git 或公开源码包。本地启动器的音轨文件 `workbench/public/media/audio-unit02-fluid/voice.wav` 仍是可选扩展，也不在 GitHub 源码包中。
 

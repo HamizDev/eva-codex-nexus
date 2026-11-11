@@ -6,7 +6,7 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
-export const SKIN_VERSION = "0.2.2";
+export const SKIN_VERSION = "0.3.0";
 export const SKIN_ID = "eva-codex-skin";
 export const DEFAULT_PORT = 9345;
 export const EXACT_MAIN_URL = "app://-/index.html";
@@ -32,6 +32,9 @@ const DSH_BOOT_PACK_NAME = "dsh-eva-theme-boot-pack";
 const DSH_BOOT_REQUIRED_ASSETS = ["boot", "emergency", "entryPlug", "asukaHead", "reiHead"];
 const DSH_BOOT_OPTIONAL_ASSETS = ["asukaVoice", "reiVoice"];
 const DSH_BOOT_MAX_BYTES = 16 * 1024 * 1024;
+const DRIVER_STORAGE_KEY = "eva-codex-skin-driver-v1";
+const FORCE_DRIVER_TOKEN_KEY = "eva-codex-skin-force-driver-token-v1";
+const FORCE_DRIVER_TOKEN_PATTERN = /^[A-Za-z0-9._-]{1,128}$/;
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -162,6 +165,10 @@ export function buildVerifyExpression() {
     const sidebar = document.querySelector(${JSON.stringify(SELECTOR_MAP.sidebar)});
     const main = document.querySelector(${JSON.stringify(SELECTOR_MAP.shellMain)});
     const settings = document.querySelector(${JSON.stringify(SELECTOR_MAP.settingsPanel)});
+    const switcher = overlay?.querySelector(".eva-driver-switch") || null;
+    const switchButtons = switcher
+      ? [...switcher.querySelectorAll("[data-eva-driver]")]
+      : [];
     const box = (node) => {
       if (!node) return null;
       const rect = node.getBoundingClientRect();
@@ -173,6 +180,18 @@ export function buildVerifyExpression() {
           css.display !== "none" && css.visibility !== "hidden"
       };
     };
+    const overlayBox = box(overlay);
+    const switcherBox = box(switcher);
+    const switcherPointerEvents = switcher
+      ? getComputedStyle(switcher).pointerEvents
+      : null;
+    const switcherInsideViewport = Boolean(
+      switcherBox &&
+      switcherBox.x >= 0 &&
+      switcherBox.y >= 0 &&
+      switcherBox.x + switcherBox.width <= innerWidth + 1 &&
+      switcherBox.y + switcherBox.height <= innerHeight + 1
+    );
     const result = {
       installed: Boolean(root && root.dataset.evaSkin),
       driver: root?.dataset.evaSkin || null,
@@ -180,6 +199,27 @@ export function buildVerifyExpression() {
       stylePresent: Boolean(style),
       overlayPresent: Boolean(overlay),
       overlayPointerEvents: overlay ? getComputedStyle(overlay).pointerEvents : null,
+      switcher: {
+        present: Boolean(switcher),
+        visible: switcherBox?.visible === true,
+        pointerEvents: switcherPointerEvents,
+        insideViewport: switcherInsideViewport,
+        activeDriver: switchButtons.find(
+          (button) => button.getAttribute("aria-pressed") === "true",
+        )?.dataset.evaDriver || null,
+        buttonCount: switchButtons.length,
+      },
+      layout: {
+        overlay: overlayBox,
+        switcher: switcherBox,
+        fillsViewport: Boolean(
+          overlayBox &&
+          Math.abs(overlayBox.x) <= 1 &&
+          Math.abs(overlayBox.y) <= 1 &&
+          Math.abs(overlayBox.width - innerWidth) <= 1 &&
+          Math.abs(overlayBox.height - innerHeight) <= 1
+        ),
+      },
       sidebar: box(sidebar),
       main: box(main),
       settings: box(settings),
@@ -194,10 +234,24 @@ export function buildVerifyExpression() {
       result.stylePresent === true &&
       result.overlayPresent === true &&
       result.overlayPointerEvents === "none" &&
+      result.switcher.present === true &&
+      result.switcher.visible === true &&
+      result.switcher.pointerEvents === "auto" &&
+      result.switcher.insideViewport === true &&
+      result.switcher.buttonCount === 2 &&
+      result.switcher.activeDriver === result.driver &&
+      result.layout.fillsViewport === true &&
       (result.sidebar?.visible || result.main?.visible || result.settings?.visible) &&
       result.overflowX === false
     );
     return result;
+  })()`;
+}
+
+export function buildActiveDriverExpression() {
+  return `(() => {
+    const value = document.documentElement?.dataset?.evaSkin;
+    return value === "asuka" || value === "rei" ? value : null;
   })()`;
 }
 
@@ -797,22 +851,62 @@ export function buildInstallSource({
   css,
   linework,
   mark,
+  marks = null,
   version = SKIN_VERSION,
+  forceDriverToken = null,
 }) {
   if (!isDriver(driver)) throw new Error(`Unknown EVA driver: ${String(driver)}`);
+  if (
+    forceDriverToken !== null &&
+    (typeof forceDriverToken !== "string" ||
+      !FORCE_DRIVER_TOKEN_PATTERN.test(forceDriverToken))
+  ) {
+    throw new Error(
+      "Force driver token must contain only letters, digits, dot, dash or underscore",
+    );
+  }
+  const markSet = marks && typeof marks.asuka === "string" && typeof marks.rei === "string"
+    ? marks
+    : { asuka: mark, rei: mark };
   return `(() => {
     const previous = window[${JSON.stringify(RUNTIME_KEY)}];
     if (previous?.cleanup) {
       try { previous.cleanup(); } catch {}
     }
-    const driver = ${JSON.stringify(driver)};
+    const requestedDriver = ${JSON.stringify(driver)};
     const version = ${JSON.stringify(version)};
+    const linework = ${JSON.stringify(linework)};
+    const marks = ${JSON.stringify(markSet)};
+    const forceDriverToken = ${JSON.stringify(forceDriverToken || "")};
+    const driverStorageKey = ${JSON.stringify(DRIVER_STORAGE_KEY)};
+    const forceDriverTokenKey = ${JSON.stringify(FORCE_DRIVER_TOKEN_KEY)};
+    const isDriver = (value) => value === "asuka" || value === "rei";
+    const readStoredDriver = () => {
+      try {
+        const value = localStorage.getItem(driverStorageKey);
+        return isDriver(value) ? value : null;
+      } catch {
+        return null;
+      }
+    };
+    const persistDriver = (value) => {
+      try { localStorage.setItem(driverStorageKey, value); } catch {}
+    };
     const root = document.documentElement;
     if (!root) return { installed: false, reason: "missing documentElement" };
-    root.dataset.evaSkin = driver;
+    if (forceDriverToken) {
+      try {
+        if (localStorage.getItem(forceDriverTokenKey) !== forceDriverToken) {
+          localStorage.setItem(driverStorageKey, requestedDriver);
+          localStorage.setItem(forceDriverTokenKey, forceDriverToken);
+        }
+      } catch {}
+    }
+    const initialDriver = readStoredDriver() || requestedDriver;
+    root.dataset.evaSkin = initialDriver;
     root.dataset.evaSkinVersion = version;
-    root.style.setProperty("--eva-linework", "url(\\"" + ${JSON.stringify(linework)} + "\\")");
-    root.style.setProperty("--eva-mark", "url(\\"" + ${JSON.stringify(mark)} + "\\")");
+    root.style.setProperty("--eva-linework", 'url("' + linework + '")');
+    root.style.setProperty("--eva-mark", 'url("' + marks[initialDriver] + '")');
     let style = document.getElementById(${JSON.stringify(STYLE_ID)});
     if (!style) {
       style = document.createElement("style");
@@ -821,21 +915,55 @@ export function buildInstallSource({
     }
     style.textContent = ${JSON.stringify(css)};
     let overlay = document.getElementById(${JSON.stringify(OVERLAY_ID)});
-    if (!overlay) {
-      overlay = document.createElement("div");
-      overlay.id = ${JSON.stringify(OVERLAY_ID)};
-      overlay.setAttribute("aria-hidden", "true");
-      overlay.dataset.evaSkinOverlay = "true";
-      overlay.innerHTML = [
-        '<div class="eva-frame"></div>',
-        '<div class="eva-scan"></div>',
-        '<div class="eva-art"></div>',
-        '<div class="eva-unit">' + (driver === "rei" ? "00" : "02") + '</div>',
-        '<div class="eva-label">' + (driver === "rei" ? "EVA-00 // NEXUS LINK" : "EVA-02 // NEXUS LINK") + '</div>',
-        '<div class="eva-mark"></div>'
-      ].join("");
-      (document.body || root).appendChild(overlay);
-    }
+    if (overlay) overlay.remove();
+    overlay = document.createElement("div");
+    overlay.id = ${JSON.stringify(OVERLAY_ID)};
+    overlay.dataset.evaSkinOverlay = "true";
+    overlay.innerHTML = [
+      '<div class="eva-frame" aria-hidden="true"></div>',
+      '<div class="eva-scan" aria-hidden="true"></div>',
+      '<div class="eva-art" aria-hidden="true"></div>',
+      '<div class="eva-unit" aria-hidden="true">' + (initialDriver === "rei" ? "00" : "02") + '</div>',
+      '<div class="eva-label" aria-hidden="true">' + (initialDriver === "rei" ? "EVA-00 // NEXUS LINK" : "EVA-02 // NEXUS LINK") + '</div>',
+      '<div class="eva-mark" aria-hidden="true"></div>',
+      '<div class="eva-driver-switch" role="group" aria-label="EVA 驾驶员主题">',
+      '<span class="eva-driver-switch-label" aria-hidden="true">PILOT</span>',
+      '<button type="button" class="eva-driver-button" data-eva-driver="asuka" aria-label="切换到明日香主题（EVA-02）" aria-pressed="' + (initialDriver === "asuka") + '">',
+      '<span class="eva-driver-switch-unit">02</span><small>ASUKA</small></button>',
+      '<button type="button" class="eva-driver-button" data-eva-driver="rei" aria-label="切换到绫波丽主题（EVA-00）" aria-pressed="' + (initialDriver === "rei") + '">',
+      '<span class="eva-driver-switch-unit">00</span><small>REI</small></button>',
+      '</div>'
+    ].join("");
+    (document.body || root).appendChild(overlay);
+    let runtime = null;
+    const applyDriver = (next, persist) => {
+      if (!isDriver(next)) return false;
+      root.dataset.evaSkin = next;
+      root.dataset.evaSkinVersion = version;
+      root.style.setProperty("--eva-mark", 'url("' + marks[next] + '")');
+      const unit = overlay.querySelector(".eva-unit");
+      const label = overlay.querySelector(".eva-label");
+      if (unit) unit.textContent = next === "rei" ? "00" : "02";
+      if (label) {
+        label.textContent = next === "rei"
+          ? "EVA-00 // NEXUS LINK"
+          : "EVA-02 // NEXUS LINK";
+      }
+      for (const button of overlay.querySelectorAll("[data-eva-driver]")) {
+        button.setAttribute(
+          "aria-pressed",
+          String(button.dataset.evaDriver === next),
+        );
+      }
+      if (runtime) runtime.driver = next;
+      if (persist) persistDriver(next);
+      try {
+        root.dispatchEvent(new CustomEvent("eva-skin-driver-change", {
+          detail: { driver: next, version },
+        }));
+      } catch {}
+      return true;
+    };
     let observer = null;
     if (document.body && typeof MutationObserver === "function") {
       observer = new MutationObserver(() => {
@@ -866,8 +994,23 @@ export function buildInstallSource({
       }
       return true;
     };
-    window[${JSON.stringify(RUNTIME_KEY)}] = { id: ${JSON.stringify(SKIN_ID)}, version, driver, cleanup };
-    return { installed: true, driver, version };
+    runtime = {
+      id: ${JSON.stringify(SKIN_ID)},
+      version,
+      driver: initialDriver,
+      setDriver: (next) => applyDriver(next, true),
+      cleanup,
+    };
+    window[${JSON.stringify(RUNTIME_KEY)}] = runtime;
+    for (const button of overlay.querySelectorAll("[data-eva-driver]")) {
+      button.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        applyDriver(button.dataset.evaDriver, true);
+      });
+    }
+    applyDriver(initialDriver, false);
+    return { installed: true, driver: initialDriver, version };
   })()`;
 }
 
@@ -959,12 +1102,23 @@ export function buildPayloadFromStrings({
   css,
   linework,
   mark,
+  marks = null,
   version = SKIN_VERSION,
   bootCss = "",
   bootId = null,
   bootPack = null,
+  forceDriverToken = null,
 }) {
-  const source = buildInstallSource({ driver, css, linework, mark, version });
+  const markSet = marks ?? { asuka: mark, rei: mark };
+  const source = buildInstallSource({
+    driver,
+    css,
+    linework,
+    mark,
+    marks: markSet,
+    version,
+    forceDriverToken,
+  });
   const bootSource = bootId
     ? bootPack
       ? buildDshBootSource({ driver, css: bootCss, bootId, pack: bootPack })
@@ -980,9 +1134,11 @@ export function buildPayloadFromStrings({
     .update("\0")
     .update(linework)
     .update("\0")
-    .update(mark)
+    .update(JSON.stringify(markSet))
     .update("\0")
     .update(bootCss)
+    .update("\0")
+    .update(forceDriverToken || "")
     .update("\0")
     .update(bootId || "")
     .update("\0")
@@ -995,6 +1151,7 @@ export function buildPayloadFromStrings({
     source,
     revision,
     bootId,
+    forceDriverToken,
     bootSource,
     bootPack: bootPack
       ? {
@@ -1010,9 +1167,14 @@ export function loadPayload(driver, options = {}) {
   if (!isDriver(driver)) throw new Error("主题只能是 asuka 或 rei");
   const css = fs.readFileSync(path.join(ASSETS, "eva-skin.css"), "utf8");
   const linework = svgDataUrl(path.join(ASSETS, "linework.svg"));
-  const mark = svgDataUrl(path.join(ASSETS, driver === "rei" ? "rei-mark.svg" : "asuka-mark.svg"));
+  const marks = {
+    asuka: svgDataUrl(path.join(ASSETS, "asuka-mark.svg")),
+    rei: svgDataUrl(path.join(ASSETS, "rei-mark.svg")),
+  };
+  const mark = marks[driver];
   const bootId = options.bootId ?? null;
   const bootPack = options.bootPack ?? null;
+  const forceDriverToken = options.forceDriverToken ?? null;
   const bootCss = bootId
     ? fs.readFileSync(path.join(ASSETS, bootPack ? "dsh-boot.css" : "boot.css"), "utf8")
     : "";
@@ -1021,9 +1183,11 @@ export function loadPayload(driver, options = {}) {
     css,
     linework,
     mark,
+    marks,
     bootCss,
     bootId,
     bootPack,
+    forceDriverToken,
   });
 }
 
@@ -1301,7 +1465,11 @@ async function runWatch(options) {
   options.bootId = options.bootId || crypto.randomUUID();
   const bootPack = bootPackFrom(options);
   let driver = options.driver || readDriverFromState(stateDir);
-  let current = loadPayload(driver, { bootId: options.bootId, bootPack });
+  let current = loadPayload(driver, {
+    bootId: options.bootId,
+    bootPack,
+    forceDriverToken: options.forceDriverToken,
+  });
   let stamp = driverStamp(stateDir);
   const sessions = new Map();
   const failures = new Map();
@@ -1321,7 +1489,11 @@ async function runWatch(options) {
       const nextDriver = readDriverFromState(stateDir, driver);
       if (nextDriver !== driver) {
         driver = nextDriver;
-        current = loadPayload(driver, { bootId: options.bootId, bootPack });
+        current = loadPayload(driver, {
+          bootId: options.bootId,
+          bootPack,
+          forceDriverToken: options.forceDriverToken,
+        });
         for (const [id, record] of sessions) {
           try {
             if (record.earlyScriptId) {
@@ -1420,6 +1592,24 @@ async function runWatch(options) {
       }
     }
 
+    for (const record of sessions.values()) {
+      try {
+        const activeDriver = await record.session.evaluate(buildActiveDriverExpression());
+        if (!isDriver(activeDriver) || activeDriver === driver) continue;
+        driver = activeDriver;
+        current = loadPayload(driver, {
+          bootId: options.bootId,
+          bootPack,
+          forceDriverToken: options.forceDriverToken,
+        });
+        await fsp.writeFile(path.join(stateDir, "driver.txt"), `${driver}\n`, "utf8");
+        stamp = driverStamp(stateDir);
+        for (const sessionRecord of sessions.values()) {
+          sessionRecord.driver = driver;
+        }
+      } catch {}
+    }
+
     const sessionState = [...sessions.entries()].map(([id, record]) => ({
       targetId: id,
       title: record.session.target.title || "",
@@ -1474,7 +1664,7 @@ async function runVerify(options) {
     mode: "verify",
     version: SKIN_VERSION,
     port: options.port,
-    driver,
+    driver: results.map((entry) => entry.result?.driver).find(isDriver) || driver,
     targets: results,
   };
   console.log(JSON.stringify(payload, null, 2));
@@ -1513,6 +1703,7 @@ async function runOnce(options) {
   const current = loadPayload(driver, {
     bootId: options.bootId,
     bootPack: bootPackFrom(options),
+    forceDriverToken: options.forceDriverToken,
   });
   const targets = (await listTargets(options.port))
     .filter((target) => classifyTarget(target) === "main");
@@ -1546,7 +1737,7 @@ async function runOnce(options) {
     mode: "once",
     version: SKIN_VERSION,
     port: options.port,
-    driver,
+    driver: results.map((entry) => entry.result?.driver).find(isDriver) || driver,
     targets: results,
   }, null, 2));
   if (!results.length || results.some((entry) => !entry.result?.pass)) process.exitCode = 2;
@@ -1558,6 +1749,7 @@ export function parseArgs(argv) {
     driver: null,
     stateDir: null,
     bootId: null,
+    forceDriverToken: null,
     bootPack: null,
     probeTimeoutMs: 15000,
     verifyTimeoutMs: 15000,
@@ -1579,6 +1771,7 @@ export function parseArgs(argv) {
     else if (arg === "--driver") options.driver = next();
     else if (arg === "--state-dir") options.stateDir = next();
     else if (arg === "--boot-id") options.bootId = next();
+    else if (arg === "--force-token") options.forceDriverToken = next();
     else if (arg === "--boot-pack") options.bootPack = next();
     else if (arg === "--probe-timeout-ms") options.probeTimeoutMs = Number(next());
     else if (arg === "--timeout-ms") options.verifyTimeoutMs = Number(next());
@@ -1594,6 +1787,14 @@ export function parseArgs(argv) {
   }
   if (options.bootId !== null && !BOOT_ID_PATTERN.test(options.bootId)) {
     throw new Error("Boot id must contain only letters, digits, dot, dash or underscore");
+  }
+  if (
+    options.forceDriverToken !== null &&
+    !FORCE_DRIVER_TOKEN_PATTERN.test(options.forceDriverToken)
+  ) {
+    throw new Error(
+      "Force token must contain only letters, digits, dot, dash or underscore",
+    );
   }
   for (const key of ["probeTimeoutMs", "verifyTimeoutMs"]) {
     if (!Number.isInteger(options[key]) || options[key] < 1000 || options[key] > 120000) {
@@ -1615,6 +1816,7 @@ Usage:
 Options:
   --driver <asuka|rei>       select the EVA palette
   --boot-id <id>             stable ID for one official Codex launch
+  --force-token <id>         one-shot launcher override for the saved theme
   --boot-pack <path>         local DSH boot asset pack
   --state-dir <path>         runtime state directory
   --probe-timeout-ms <ms>    wait for the Codex shell

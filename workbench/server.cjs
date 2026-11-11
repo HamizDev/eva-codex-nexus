@@ -7,7 +7,7 @@ const {instanceId}=require('./instance-id.cjs');
 const {AttachmentStore}=require('./attachments.cjs');const {normalizeModel,turnOptions}=require('./model-options.cjs');
 const {TerminalManager}=require('./terminal.cjs'),{GitService}=require('./git-service.cjs'),{PluginManager}=require('./plugins.cjs');
 const terminals=new TerminalManager(),git=new GitService(),plugins=new PluginManager(process.env.HACKCLAW_CODEX||'codex.exe');
-const ROOT=__dirname,INSTANCE=instanceId(__dirname),VERSION='0.2.2',DATA=path.resolve(process.env.HACKCLAW_DATA_DIR||path.join(ROOT,'data')),PORT=Number(process.env.HACKCLAW_PORT||43137),ORIGIN=`http://127.0.0.1:${PORT}`;
+const ROOT=__dirname,INSTANCE=instanceId(__dirname),VERSION='0.3.0',DATA=path.resolve(process.env.HACKCLAW_DATA_DIR||path.join(ROOT,'data')),PORT=Number(process.env.HACKCLAW_PORT||43137),ORIGIN=`http://127.0.0.1:${PORT}`;
 const attachments=new AttachmentStore(path.join(DATA,'attachments')),sendingThreads=new Set();
 const token=crypto.randomBytes(32).toString('hex'),subscribers=new Set(),approvals=new Map(),loaded=new Set();
 const terminalStyleNonce=crypto.randomBytes(18).toString('base64');

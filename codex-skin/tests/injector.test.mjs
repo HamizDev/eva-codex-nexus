@@ -9,6 +9,7 @@ import { fileURLToPath } from "node:url";
 import {
   EXACT_MAIN_URL,
   SKIN_VERSION,
+  buildActiveDriverExpression,
   buildBootSource,
   buildEarlySource,
   buildInstallSource,
@@ -61,7 +62,7 @@ test("主题与 payload 版本稳定且可切换", () => {
   assert.equal(isDriver("asuka"), true);
   assert.equal(isDriver("rei"), true);
   assert.equal(isDriver("system"), false);
-  assert.equal(SKIN_VERSION, "0.2.2");
+  assert.equal(SKIN_VERSION, "0.3.0");
   const asuka = loadPayload("asuka");
   const rei = loadPayload("rei");
   assert.equal(asuka.driver, "asuka");
@@ -70,6 +71,17 @@ test("主题与 payload 版本稳定且可切换", () => {
   assert.match(asuka.source, /EVA-02 \/\/ NEXUS LINK/);
   assert.match(rei.source, /EVA-00 \/\/ NEXUS LINK/);
   assert.match(asuka.source, /pointer-events/);
+  assert.match(asuka.source, /eva-driver-switch/);
+  assert.match(asuka.source, /eva-codex-skin-driver-v1/);
+  assert.match(asuka.source, /data-eva-driver="asuka"/);
+  assert.match(asuka.source, /data-eva-driver="rei"/);
+  assert.match(asuka.source, /asuka-mark|data:image\/svg\+xml;base64/);
+  assert.match(asuka.source, /eva-skin-driver-change/);
+  assert.match(asuka.source, /pending|排队消息操作/);
+  const activeDriver = buildActiveDriverExpression();
+  assert.match(activeDriver, /dataset\?\.evaSkin/);
+  assert.match(activeDriver, /"asuka"/);
+  assert.match(activeDriver, /"rei"/);
 });
 
 test("注入和恢复都只使用 EVA 自有节点", () => {
@@ -206,6 +218,35 @@ test("安装脚本不会接管鼠标事件", () => {
   assert.match(source, /aria-hidden/);
   assert.match(source, /class="eva-scan"/);
   assert.match(source, /MutationObserver/);
+  assert.match(source, /class="eva-driver-switch"/);
+  assert.match(source, /aria-pressed/);
+  assert.match(source, /setDriver/);
+});
+
+test("启动器显式主题只覆盖一次，应用内选择继续持久化", () => {
+  const token = "launch-override-abc-123";
+  const payload = buildPayloadFromStrings({
+    driver: "rei",
+    css: "html{background:#fff}",
+    linework: "data:image/svg+xml;base64,AA==",
+    mark: "data:image/svg+xml;base64,AA==",
+    forceDriverToken: token,
+  });
+  assert.equal(payload.forceDriverToken, token);
+  assert.ok(payload.source.includes(token));
+  assert.match(payload.source, /eva-codex-skin-force-driver-token-v1/);
+  assert.match(payload.source, /localStorage\.getItem\(forceDriverTokenKey\)/);
+  assert.match(payload.source, /localStorage\.setItem\(driverStorageKey, requestedDriver\)/);
+  assert.throws(
+    () => buildInstallSource({
+      driver: "rei",
+      css: "",
+      linework: "",
+      mark: "",
+      forceDriverToken: "bad token",
+    }),
+    /Force driver token/,
+  );
 });
 
 test("皮肤 CSS 使用稳定选择器并禁用远程资源", () => {
@@ -219,10 +260,16 @@ test("皮肤 CSS 使用稳定选择器并禁用远程资源", () => {
     "[class*=\"_ComposerLayoutRoot_\"]",
     "[class*=\"bg-surface-elevated-secondary\"]",
     "[class*=\"bg-background-neutral-soft-alpha\"]",
+    "[class*=\"rail-\"]:has([aria-label=\"排队消息操作\"])",
+    "[aria-label=\"删除排队的消息\"]",
     "[role=\"tooltip\"]",
     ".bg-user-message",
     ".bg-composer-primary",
     "#eva-codex-skin-overlay",
+    "#eva-codex-skin-overlay .eva-driver-switch",
+    "-webkit-app-region: no-drag",
+    "pointer-events: auto !important",
+    "@media (max-width: 900px)",
     "pointer-events: none !important",
     "@media (prefers-reduced-motion: reduce)",
   ]) {
@@ -274,6 +321,9 @@ test("选择器合同保留稳定锚点", () => {
   assert.equal(selectors.selectors.neutralSoftAction, "[class*=\"bg-background-neutral-soft-alpha\"]");
   assert.equal(selectors.selectors.userMessage, ".bg-user-message");
   assert.equal(selectors.selectors.composerPrimary, ".bg-composer-primary");
+  assert.match(selectors.selectors.changeSummaryPill, /rounded-3xl/);
+  assert.match(selectors.selectors.queuedRail, /排队消息操作/);
+  assert.match(selectors.selectors.queuedAction, /删除排队的消息/);
   assert.match(selectors.selectors.shellMain, /_MainContentSurface_/);
   assert.match(selectors.selectors.composer, /_ComposerLayoutRoot_/);
   assert.equal(
@@ -288,15 +338,18 @@ test("CLI 参数边界", () => {
     "--port", "9456",
     "--driver", "rei",
     "--boot-id", "launch-9456",
+    "--force-token", "override-9456",
     "--boot-pack", "C:\\Temp\\dsh-boot",
   ]);
   assert.equal(options.mode, "verify");
   assert.equal(options.port, 9456);
   assert.equal(options.driver, "rei");
   assert.equal(options.bootId, "launch-9456");
+  assert.equal(options.forceDriverToken, "override-9456");
   assert.equal(options.bootPack, "C:\\Temp\\dsh-boot");
   assert.throws(() => parseArgs(["--port", "80"]), /between/);
   assert.throws(() => parseArgs(["--driver", "system"]), /asuka or rei/);
   assert.throws(() => parseArgs(["--boot-id", "bad id"]), /Boot id/);
+  assert.throws(() => parseArgs(["--force-token", "bad token"]), /Force token/);
   assert.throws(() => parseArgs(["--wat"]), /Unknown argument/);
 });

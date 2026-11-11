@@ -27,7 +27,10 @@
     "elevatedSurface": "[class*=\"bg-surface-elevated-secondary\"]",
     "neutralSoftAction": "[class*=\"bg-background-neutral-soft-alpha\"]",
     "userMessage": ".bg-user-message",
-    "composerPrimary": ".bg-composer-primary"
+    "composerPrimary": ".bg-composer-primary",
+    "changeSummaryPill": "[class*=\"bg-surface-elevated-secondary\"][class*=\"rounded-3xl\"]:has(button span.truncate-text)",
+    "queuedRail": "[class*=\"rail-\"]:has([aria-label=\"排队消息操作\"]), [class*=\"rail-\"]:has([aria-label=\"删除排队的消息\"]), [class*=\"rail-\"]:has([aria-label=\"引导\"])",
+    "queuedAction": "button[aria-label=\"引导\"], button[aria-label=\"删除排队的消息\"], button[aria-label=\"排队消息操作\"]"
   },
   "excludedTargets": {
     "avatarOverlay": "app://-/index.html?initialRoute=/avatar-overlay"

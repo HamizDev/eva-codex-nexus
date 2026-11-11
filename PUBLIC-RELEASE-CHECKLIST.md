@@ -1,6 +1,6 @@
-# v0.2.2 公开源码验收清单
+# v0.3.0 公开源码验收清单
 
-- [x] 根 / workbench package 与 lockfile 均为 v0.2.2
+- [x] 根 / workbench package 与 lockfile 均为 v0.3.0
 - [x] README、CHANGELOG、上游来源与素材声明更新
 - [x] 主题跟随系统、Markdown、状态提示测试纳入 `npm test`
 - [x] 官方 Codex 皮肤启动器、CDP 目标校验、Asuka/Rei 注入和恢复测试纳入 `npm run test:skin`
@@ -12,6 +12,10 @@
 - [x] DSH 媒体未进入公开仓库；公开包仅含导入器、自有 CSS 和说明
 - [x] Windows PowerShell 5.1 的 CDP `/json/list` 嵌套数组兼容修复已验证
 - [x] 侧栏悬浮说明、改动汇总卡片、文件变更提示、用户气泡与发送按钮已适配 EVA 面板色
+- [x] 应用内 02 明日香 / 00 绫波丽切换、选择持久化和状态文件同步已验证
+- [x] 排队消息导轨与操作按钮适配已验证，测试消息已删除
+- [x] 真实窗口 `1000×700`、`760×600` 缩放与拖动位置验证通过
+- [x] 文件变更胶囊实时 DOM 背景、边框与强调线验证通过
 - [x] `--remove` 同时清理启动层、启动样式与皮肤节点
 - [ ] 新设备 Windows 10 / 11 启动与 Codex CLI 真实联调
 - [ ] 角色插画、语音与音乐等授权素材最终确认

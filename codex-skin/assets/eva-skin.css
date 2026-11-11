@@ -16,6 +16,7 @@ html[data-eva-skin="asuka"] {
   --eva-border-strong: #75402b;
   --eva-accent: #f06a22;
   --eva-accent-strong: #b62026;
+  --eva-on-accent: #100908;
   --eva-warn: #e7bc35;
   --eva-text: #e8e2d7;
   --eva-text-strong: #fff4e6;
@@ -42,6 +43,7 @@ html[data-eva-skin="rei"] {
   --eva-border-strong: #8fb8d3;
   --eva-accent: #236c9d;
   --eva-accent-strong: #326f9f;
+  --eva-on-accent: #f7fbff;
   --eva-warn: #4d99c2;
   --eva-text: #243748;
   --eva-text-strong: #17364d;
@@ -277,6 +279,53 @@ html[data-eva-skin] [class*="bg-background-neutral-soft-alpha"] {
 html[data-eva-skin] [class*="bg-background-neutral-soft-alpha"]:hover {
   background-color: color-mix(in srgb, var(--eva-accent) 16%, var(--eva-panel-raised)) !important;
   border-color: var(--eva-accent) !important;
+}
+
+html[data-eva-skin] [class*="bg-surface-elevated-secondary"][class*="rounded-3xl"]:has(
+  button span.truncate-text
+) {
+  border-color: var(--eva-border-strong) !important;
+  box-shadow:
+    inset 2px 0 0 var(--eva-accent-strong),
+    0 8px 24px var(--eva-shadow) !important;
+  backdrop-filter: blur(14px);
+}
+
+html[data-eva-skin] :is(
+  [class*="rail-"]:has([aria-label="排队消息操作"]),
+  [class*="rail-"]:has([aria-label="删除排队的消息"]),
+  [class*="rail-"]:has([aria-label="引导"])
+) {
+  color: var(--eva-text) !important;
+}
+
+html[data-eva-skin] :is(
+  [class*="rail-"]:has([aria-label="排队消息操作"]),
+  [class*="rail-"]:has([aria-label="删除排队的消息"]),
+  [class*="rail-"]:has([aria-label="引导"])
+) :is(
+  [class*="bg-surface-elevated-secondary"],
+  [class*="bg-background-neutral-soft-alpha"]
+) {
+  border-color: var(--eva-border-strong) !important;
+  box-shadow: inset 2px 0 0 var(--eva-accent-strong) !important;
+}
+
+html[data-eva-skin] :is(
+  [class*="rail-"]:has([aria-label="排队消息操作"]),
+  [class*="rail-"]:has([aria-label="删除排队的消息"]),
+  [class*="rail-"]:has([aria-label="引导"])
+) button {
+  color: var(--eva-muted) !important;
+}
+
+html[data-eva-skin] :is(
+  [class*="rail-"]:has([aria-label="排队消息操作"]),
+  [class*="rail-"]:has([aria-label="删除排队的消息"]),
+  [class*="rail-"]:has([aria-label="引导"])
+) button:hover {
+  background: color-mix(in srgb, var(--eva-accent) 14%, transparent) !important;
+  color: var(--eva-accent) !important;
 }
 
 html[data-eva-skin] [role="tooltip"] {
@@ -569,6 +618,104 @@ html[data-eva-skin="rei"] #eva-codex-skin-overlay .eva-art {
   opacity: 0.32;
 }
 
+#eva-codex-skin-overlay .eva-driver-switch {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  right: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 92px;
+  padding: 5px;
+  transform: translateY(-50%);
+  pointer-events: auto !important;
+  -webkit-app-region: no-drag;
+  color: var(--eva-text);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--eva-panel) 94%, transparent), color-mix(in srgb, var(--eva-bg-soft) 88%, transparent));
+  border: 1px solid var(--eva-border-strong);
+  box-shadow:
+    0 12px 32px var(--eva-shadow),
+    inset 0 1px 0 color-mix(in srgb, var(--eva-accent) 36%, transparent);
+  backdrop-filter: blur(12px);
+  clip-path: polygon(0 8px, 8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%);
+}
+
+#eva-codex-skin-overlay .eva-driver-switch:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 2px;
+  background: var(--eva-accent);
+  box-shadow: 0 0 10px var(--eva-accent);
+}
+
+#eva-codex-skin-overlay .eva-driver-switch-label {
+  padding: 0 4px 3px;
+  color: var(--eva-muted);
+  font: 700 7px/1 "Bahnschrift", "Segoe UI", sans-serif;
+  letter-spacing: 0.24em;
+  text-align: right;
+}
+
+#eva-codex-skin-overlay .eva-driver-button {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  align-items: center;
+  min-height: 29px;
+  padding: 4px 6px;
+  pointer-events: auto !important;
+  -webkit-app-region: no-drag;
+  color: var(--eva-text);
+  background: color-mix(in srgb, var(--eva-panel-raised) 74%, transparent);
+  border: 1px solid color-mix(in srgb, var(--eva-border) 82%, transparent);
+  border-radius: 1px;
+  cursor: pointer;
+  font-family: "Bahnschrift", "Segoe UI", sans-serif;
+  text-align: left;
+  transition:
+    color 140ms ease,
+    background-color 140ms ease,
+    border-color 140ms ease;
+}
+
+#eva-codex-skin-overlay .eva-driver-button:hover {
+  color: var(--eva-text-strong);
+  background: color-mix(in srgb, var(--eva-accent) 14%, var(--eva-panel-raised));
+  border-color: var(--eva-border-strong);
+}
+
+#eva-codex-skin-overlay .eva-driver-button[aria-pressed="true"] {
+  color: var(--eva-on-accent);
+  background: var(--eva-accent);
+  border-color: var(--eva-accent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--eva-on-accent) 20%, transparent);
+}
+
+#eva-codex-skin-overlay .eva-driver-button:focus-visible {
+  outline: 2px solid var(--eva-warn);
+  outline-offset: 2px;
+}
+
+#eva-codex-skin-overlay .eva-driver-switch-unit {
+  color: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+}
+
+#eva-codex-skin-overlay .eva-driver-button small {
+  min-width: 0;
+  color: inherit;
+  font-size: 7px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-align: right;
+}
+
 @keyframes eva-skin-scan {
   0% {
     top: -18vh;
@@ -579,6 +726,10 @@ html[data-eva-skin="rei"] #eva-codex-skin-overlay .eva-art {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  #eva-codex-skin-overlay .eva-driver-button {
+    transition: none;
+  }
+
   #eva-codex-skin-overlay .eva-scan:after {
     animation: none;
     top: 32vh;
@@ -591,6 +742,41 @@ html[data-eva-skin="rei"] #eva-codex-skin-overlay .eva-art {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 900px) {
+  #eva-codex-skin-overlay .eva-driver-switch {
+    right: 5px;
+    width: 72px;
+    padding: 4px;
+  }
+
+  #eva-codex-skin-overlay .eva-driver-switch-label,
+  #eva-codex-skin-overlay .eva-driver-button small {
+    display: none;
+  }
+
+  #eva-codex-skin-overlay .eva-driver-button {
+    grid-template-columns: 1fr;
+    min-height: 29px;
+    padding: 4px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 760px) {
+  #eva-codex-skin-overlay .eva-driver-switch {
+    right: 4px;
+    width: 60px;
+  }
+
+  #eva-codex-skin-overlay .eva-driver-button {
+    min-height: 27px;
+  }
+
+  #eva-codex-skin-overlay .eva-driver-switch-unit {
+    font-size: 12px;
   }
 }
 

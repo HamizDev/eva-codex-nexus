@@ -13,7 +13,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-$SkinVersion = '0.2.2'
+$SkinVersion = '0.3.0'
 $PortExplicit = $PSBoundParameters.ContainsKey('Port')
 $StateRoot = Join-Path $env:LOCALAPPDATA 'EVACodexSkin'
 $StatePath = Join-Path $StateRoot 'state.json'
@@ -423,7 +423,8 @@ function Start-Injector {
     [Parameter(Mandatory)][string]$NodePath,
     [Parameter(Mandatory)][int]$CdpPort,
     [Parameter(Mandatory)][string]$SelectedDriver,
-    [Parameter(Mandatory)][string]$BootId
+    [Parameter(Mandatory)][string]$BootId,
+    [string]$ForceToken
   )
   New-Item -ItemType Directory -Force -Path $StateRoot | Out-Null
   Set-Content -LiteralPath $InjectorLog -Value '' -Encoding UTF8
@@ -435,7 +436,11 @@ function Start-Injector {
     '--driver', $SelectedDriver,
     '--boot-id', $BootId,
     '--state-dir', ('"{0}"' -f $StateRoot)
-  ) -join ' '
+  )
+  if ($ForceToken) {
+    $argumentLine += @('--force-token', $ForceToken)
+  }
+  $argumentLine = $argumentLine -join ' '
   $process = Start-Process -FilePath $NodePath -ArgumentList $argumentLine `
     -WindowStyle Hidden -PassThru `
     -RedirectStandardOutput $InjectorLog -RedirectStandardError $InjectorErrorLog
@@ -515,7 +520,13 @@ try {
 
   Stop-RecordedInjector -State $saved
   $bootId = Get-CodexLaunchId -Install $install
-  $injector = Start-Injector -NodePath $node.Path -CdpPort $Port -SelectedDriver $selectedDriver -BootId $bootId
+  $forceToken = if ($Driver -in @('asuka', 'rei')) {
+    [guid]::NewGuid().ToString('N')
+  } else {
+    $null
+  }
+  $injector = Start-Injector -NodePath $node.Path -CdpPort $Port `
+    -SelectedDriver $selectedDriver -BootId $bootId -ForceToken $forceToken
   $state = [ordered]@{
     schemaVersion = 1
     app = 'EVA-CODEX-SKIN'
@@ -541,6 +552,14 @@ try {
   $runtime = $null
   if (Test-Path -LiteralPath $RuntimePath -PathType Leaf) {
     try { $runtime = Get-Content -LiteralPath $RuntimePath -Raw -Encoding UTF8 | ConvertFrom-Json } catch {}
+  }
+  if ($runtime -and $runtime.driver -in @('asuka', 'rei') -and $runtime.driver -ne $selectedDriver) {
+    $selectedDriver = $runtime.driver
+    Set-Content -LiteralPath $DriverPath -Value $selectedDriver -Encoding ASCII
+    $state.driver = $selectedDriver
+    $temporary = "$StatePath.$PID.tmp"
+    $state | ConvertTo-Json | Set-Content -LiteralPath $temporary -Encoding UTF8
+    Move-Item -LiteralPath $temporary -Destination $StatePath -Force
   }
   Write-Host ''
   if ($runtime -and $runtime.status -eq 'applied') {

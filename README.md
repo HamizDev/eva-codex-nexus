@@ -1,9 +1,9 @@
 # EVA Codex Nexus
 
 > 给**官方 Codex 客户端**换上一层 EVA 皮肤，而不是另做一个 Codex 工作台。
-> **当前版本：v0.2.2（开发预览）**。非官方项目，与 OpenAI、Studio Khara、Gainax 及相关权利方均无关联。
+> **当前版本：v0.3.0（开发预览）**。非官方项目，与 OpenAI、Studio Khara、Gainax 及相关权利方均无关联。
 
-从 v0.1.0 开始，默认入口启动的是**你电脑上已安装的官方 Codex**。侧栏、项目、会话、输入框、审批、菜单和快捷键仍然是 Codex 原生的，只额外叠加 EVA 的配色、线框和装饰层。v0.2.0 增加了无控制台启动、官方 Codex 图标的桌面快捷方式，以及可选的 DSH 启动动画本地资源包；v0.2.1 修复了 Windows PowerShell 5.1 下 CDP 目标列表误判、导致启动器拒绝注入的问题；v0.2.2 补齐了侧栏悬浮说明、改动汇总卡片、文件变更提示、用户气泡和发送按钮的面板配色。现有独立工作台保留为备用入口，不再抢占默认启动方式。
+从 v0.1.0 开始，默认入口启动的是**你电脑上已安装的官方 Codex**。侧栏、项目、会话、输入框、审批、菜单和快捷键仍然是 Codex 原生的，只额外叠加 EVA 的配色、线框和装饰层。v0.2.0 增加了无控制台启动、官方 Codex 图标的桌面快捷方式，以及可选的 DSH 启动动画本地资源包；v0.2.1 修复了 Windows PowerShell 5.1 下 CDP 目标列表误判、导致启动器拒绝注入的问题；v0.2.2 补齐了侧栏悬浮说明、改动汇总卡片、文件变更提示、用户气泡和发送按钮的面板配色；v0.3.0 增加应用内明日香/绫波丽切换、排队消息导轨适配，并完成真实窗口缩放验证。现有独立工作台保留为备用入口，不再抢占默认启动方式。
 
 ## 两种入口
 
@@ -13,6 +13,7 @@
 | `Start-EVA.cmd` | 兼容入口：通过隐藏的 `Start-EVA.vbs` 启动；命令行窗口只短暂出现 |
 | `Start-EVA.cmd rei` | 官方 Codex + 00 绫波丽皮肤 |
 | `Start-EVA.cmd asuka` | 官方 Codex + 02 明日香皮肤 |
+| 应用内右侧 `PILOT` 切换条 | 不重启 Codex，直接切换 02 明日香 / 00 绫波丽；选择会持久化 |
 | `Start-EVA-Rei.cmd` | 双击切换到 00 绫波丽皮肤 |
 | `Restore-EVA.cmd` | 移除当前皮肤，不关闭 Codex；官方文件不被修改 |
 | `Install-EVA-DesktopShortcut.cmd` | 重新创建桌面快捷方式；图标取自官方 Codex 客户端 |
@@ -47,6 +48,8 @@ Import-DSH-Boot.cmd "D:\path\to\dsh-plugin-eva-theme"
 
 皮肤不是独立客户端，也不是网页套壳。它向官方 renderer 注入配色 CSS、常驻的 `pointer-events: none` 装饰层，以及启动时短暂显示的启动层；启动层结束后会完全释放输入。它不会替换 React 组件，不会修改 `app.asar`，不会改签名，也不会绕过登录或订阅配额。
 
+常驻装饰层本身仍为 `pointer-events: none`；右侧驾驶员切换条是唯一例外，只有两个按钮接收点击，并使用 `-webkit-app-region: no-drag`，不会拖拽或遮挡原生窗口控制。窗口移动或缩放后，覆盖层跟随当前视口重新铺满，切换条在窄窗口自动压缩为编号按钮。
+
 ## 环境要求
 
 - Windows 10/11；
@@ -63,7 +66,7 @@ Import-DSH-Boot.cmd "D:\path\to\dsh-plugin-eva-theme"
 4. 只连接 URL 为 `app://-/index.html` 的页面，拒绝 `avatar-overlay` 宠物层和非回环 WebSocket；
 5. 从官方 Codex 主进程的启动时间生成一次性启动指纹；若本机存在已校验的 DSH 启动包，则注入 `assets/dsh-boot.css` 和 DSH 序列，否则注入抽象启动层；
 6. 注入 `codex-skin/assets/eva-skin.css` 和常驻抽象装饰层；
-7. 监视页面重载和主题切换，自动重新应用，但同一 Codex 进程不重播启动层；
+7. 监视页面重载和应用内主题切换，自动重新应用，并把最后选择同步到本地状态；同一 Codex 进程不重播启动层；
 8. `Restore-EVA.cmd` 删除样式、启动层、装饰节点和注入器进程。
 
 实现参考了现有 Codex 换肤项目的回环 CDP、目标校验、`Page.addScriptToEvaluateOnNewDocument` 和 watcher 架构；没有把它们的角色图片、音轨或主题素材打包进本仓库。选择器和适配边界记录在 `codex-skin/selectors.json`。
@@ -85,7 +88,10 @@ Import-DSH-Boot.cmd "D:\path\to\dsh-plugin-eva-theme"
 - 刷新页面不重播启动层，`Esc` 可跳过，完整序列结束后自动清理，“减少动态效果”下不显示；
 - 侧栏、主区、输入框、原生按钮仍可交互；
 - 皮肤层 `pointer-events: none`；
-- 切换 driver 后 watcher 能重新应用；
+- 应用内点击 `02 ASUKA` / `00 REI` 可即时换肤，`localStorage` 与 `driver.txt` 同步；
+- 真实窗口缩放到 `1000×700`、`760×600` 后，覆盖层仍与视口等大，切换器保持在窗口内且无横向溢出；
+- 真实排队消息导轨使用 EVA 面板色和强调线，测试消息已删除；
+- 文件变更胶囊为深色面板、EVA 边框与左侧强调线；
 - `--remove` 后样式、覆盖层和 dataset 标记均消失；
 - `--verify` 能识别注入前后的状态。
 

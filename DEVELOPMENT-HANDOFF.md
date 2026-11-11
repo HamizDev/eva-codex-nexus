@@ -1,4 +1,4 @@
-# EVA Codex Nexus · v0.2.2 开发交接
+# EVA Codex Nexus · v0.3.0 开发交接
 
 基线日期 2026-11-11。当前默认形态为**官方 Codex Desktop + EVA 皮肤**；旧的独立工作台保留为备用入口，不再作为默认启动方式。
 
@@ -11,7 +11,8 @@
 - 启动器根据官方 Codex 主进程启动时间生成 `bootId`；若 `%LOCALAPPDATA%\EVACodexSkin\dsh-boot\manifest.json` 存在，注入器读取本地 DSH 启动包并注入 `assets/dsh-boot.css`，否则回退到 `assets/boot.css`；同一进程只显示一次，刷新和主题切换不重播；点击、`Esc`、`Space` 或 `prefers-reduced-motion` 可跳过；
 - `Import-DSH-Boot.ps1` 只从本机 DSH 仓库读取 7 个启动素材，按 DSH `assets/manifest.json` 校验字节数与 SHA-256；媒体不进入公开仓库；
 - 隐藏启动模式使用 `-GuiPrompt`，以 Windows 对话框处理重启确认和错误，避免不可见的 `Read-Host`。
-- CSS 与装饰层由 `Page.addScriptToEvaluateOnNewDocument` 和 `Page.loadEventFired` 维持，watcher 在页面重载和 driver 切换时重新应用；
+- CSS 与装饰层由 `Page.addScriptToEvaluateOnNewDocument` 和 `Page.loadEventFired` 维持，watcher 在页面重载和应用内 driver 切换时重新应用；
+- 应用内切换条直接更新 `html[data-eva-skin]`，写入 `localStorage`，并由 watcher 同步 `driver.txt`；`Start-EVA.cmd asuka|rei` 使用一次性 token 显式覆盖，不会覆盖之后的页面内选择；
 - `Restore-EVA.ps1` 清理启动层、样式、覆盖层、dataset 标记，并在校验 PID/命令行后停止注入器；
 - 不修改 WindowsApps、`app.asar`、签名、认证、Base URL、API Key 或 Codex 协议。
 
