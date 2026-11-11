@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "project": "eva-codex-nexus",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "files": [
     {
       "path": ".editorconfig",
@@ -21,17 +21,17 @@
     {
       "path": "ASSET-TODO.md",
       "bytes": 902,
-      "sha256": "307f1893c9f5fd796c5be9a5797fbc410c8664dad19f5cf5bf08f73c51a02607"
+      "sha256": "524623042738f641b762d1b7353ff2c7b41a686b5fb2308a1cb25986987cd764"
     },
     {
       "path": "ASSETS.md",
       "bytes": 1013,
-      "sha256": "15e02dd7b478b08cb3cdc86b66f111816d8fff81c592f340b7444f1e80fb5129"
+      "sha256": "0bc21164f8997f1ff168ea2bf1a1fd61a33b8eabd69e9f8d0b280d0b89242ff4"
     },
     {
       "path": "CHANGELOG.md",
-      "bytes": 1877,
-      "sha256": "8ca790f6d9be70f080bc04de4fb9b088c1e346f6e175042126cc1f0afd1be6a7"
+      "bytes": 2632,
+      "sha256": "73443e63cfe17e83a356ea48f987a73b754b6cd862fa067e55a3cf5d0d502d24"
     },
     {
       "path": "CODE-ORIGINS.md",
@@ -49,11 +49,6 @@
       "sha256": "37e942dcd7347582db00969496444791e400a12bc8e2c3158c659c531cfa5c4d"
     },
     {
-      "path": "GITHUB-SETUP.md",
-      "bytes": 1776,
-      "sha256": "20bbe116cc7bfd4a5b8316e0d21f7432b63fa87e7e675c00f0e2725a5524971a"
-    },
-    {
       "path": "Install-Dependencies.cmd",
       "bytes": 163,
       "sha256": "ccefe6317fec9785bc5bc3bec07e80d2d68783444555a95ddd9b7f9c0407f51d"
@@ -66,22 +61,22 @@
     {
       "path": "LICENSE-STATUS.md",
       "bytes": 548,
-      "sha256": "0382eb2114e6d2fbc115599bf64936b71ebe8aa10b75fbaf33d43101661fa4ba"
+      "sha256": "cdc385e1b4c1d6c7a7a776235b9c082a2df33c59d3ccb95e0d287983d0309d46"
     },
     {
       "path": "PROVENANCE.md",
-      "bytes": 1319,
-      "sha256": "f9b8f4c616d298eea800b725667e513b1b1b5431214c448f8c2934ed13f26284"
+      "bytes": 1318,
+      "sha256": "89c1d049ae687da4a36723b513be0c2dffba467be6701876d7b7cd6d56fb20c8"
     },
     {
       "path": "PUBLIC-RELEASE-CHECKLIST.md",
       "bytes": 662,
-      "sha256": "0195727b47d1dad0bfa5ff3bb936cbfa63b11083b370923fab5c0b5011e29fe5"
+      "sha256": "d989b2ac0f2c4c9458c521e641939b2f64c73bf8f448cdde17359e3719e00e1d"
     },
     {
       "path": "README.md",
-      "bytes": 4263,
-      "sha256": "ef6863375def70c01b94503a55f4c66d25f37062ee273a1c13bf536aa39f33b5"
+      "bytes": 4288,
+      "sha256": "dd0d57c51e6c8c9d0814f12e1f5142fc46d585e372ec1b1edcf2394a89b22e4f"
     },
     {
       "path": "Start-EVA.cmd",
@@ -111,7 +106,7 @@
     {
       "path": "package.json",
       "bytes": 433,
-      "sha256": "3c9fcba45b107a58bdfcefca1dd544f91cd3bebcb98249ff17e2529d728c8acb"
+      "sha256": "5c0a383687e64ed65cdc8520afb723e53ed87b028df3ee48d6ff42bbf70d2fd6"
     },
     {
       "path": "scripts/check-release.cjs",
@@ -129,6 +124,11 @@
       "sha256": "b34ee371c90589884f464a40da759b2e546cf7fe0a04bac9fae39e7254b60ec8"
     },
     {
+      "path": "workbench/approval-decision.cjs",
+      "bytes": 355,
+      "sha256": "ab8a458e6f1de825e43efbc54a060ea942342a1249c4700b17fc3c7e83903e29"
+    },
+    {
       "path": "workbench/attachments.cjs",
       "bytes": 3027,
       "sha256": "06f42bbe10907c14bf9cb9dcb04ff0e9876d94be4ab310b52cd431c309b66b40"
@@ -136,7 +136,7 @@
     {
       "path": "workbench/bridge.cjs",
       "bytes": 3543,
-      "sha256": "e27d1742a88bb1fb59c432aae41f71c422af406b398fba3c5f907d5118bde610"
+      "sha256": "7b67fe74e1472bb61beef8a9f373a0d3bf603878bcb7cd6ce331e79c06589def"
     },
     {
       "path": "workbench/git-service.cjs",
@@ -156,12 +156,12 @@
     {
       "path": "workbench/package-lock.json",
       "bytes": 1734,
-      "sha256": "6b802edcae9076cd26913eaff808d4dba88e9895f27ca2f885a5290f7c04e43f"
+      "sha256": "73df6d353c367ea8f3c0b0d9efa49f3166475f39dff7a6da75008a0055cd67b2"
     },
     {
       "path": "workbench/package.json",
       "bytes": 332,
-      "sha256": "05698d4cbb64a56f46c6a9791bd2398ecbbe4b21ea1512b8d1a784d25950c780"
+      "sha256": "964bb445627da024135035e51ca7fe29e209024d3ce3bf3443feac8378a2be33"
     },
     {
       "path": "workbench/plugins.cjs",
@@ -180,13 +180,13 @@
     },
     {
       "path": "workbench/public/boot-atmosphere.js",
-      "bytes": 2013,
-      "sha256": "9b4523ac9bc2186bf3524a7901ac3224efec9899b6a93e86cb114c4c852932ec"
+      "bytes": 1989,
+      "sha256": "9887d44d6deaddd1b2d7c4fed15dfaa109bcd6f77a52f735c7130c2e8bdaeec8"
     },
     {
       "path": "workbench/public/codex-link.js",
-      "bytes": 829,
-      "sha256": "4a4d8b47261a7f49d4a25f9abaa4427b605995249d40c9c0e4ff6bf78e9f8ab1"
+      "bytes": 817,
+      "sha256": "51a90d2f056dd102136beae723390b99ef95015271e8fae65a0236c15fa636d6"
     },
     {
       "path": "workbench/public/dev-tools.css",
@@ -235,8 +235,8 @@
     },
     {
       "path": "workbench/public/intro.css",
-      "bytes": 8561,
-      "sha256": "8b8abe467b09fb87d3bc023a928ae463acdde77da34f6dafc10b17ecd229b459"
+      "bytes": 8524,
+      "sha256": "9e663ffbbf9db506dbb25cb6a6674a54689f41b362c93ac2e17b9b9fd9c99e9f"
     },
     {
       "path": "workbench/public/intro.html",
@@ -260,13 +260,13 @@
     },
     {
       "path": "workbench/public/media/audio-unit02-fluid/VOICE-NOTES.txt",
-      "bytes": 273,
-      "sha256": "5c888276e91e8797a3f134cca8003f63f11975fc515e85662b9a1b2ae5c6ba8e"
+      "bytes": 272,
+      "sha256": "f2e3afc4f2222268e4a3117a14f8f928972ac65a171f5f64c869e9239f652508"
     },
     {
       "path": "workbench/public/media/audio-unit02-fluid/timeline.json",
-      "bytes": 1125,
-      "sha256": "fdb087d8edcb465603757f27bed0d25d682448d8290f63ef6e20b156c40bd684"
+      "bytes": 1079,
+      "sha256": "cd07d619f9a608c63759c4d597888231c62f26b2ed0c9aa5be8f9e77c2dd24b9"
     },
     {
       "path": "workbench/public/media/eva/nerv-mark.svg",
@@ -320,8 +320,8 @@
     },
     {
       "path": "workbench/public/scan-workbench.js",
-      "bytes": 4535,
-      "sha256": "98a6d5fe2df8a1db2559f4bb8f7fba4cca256d9cb44d722f3d285c62cce69ff6"
+      "bytes": 4511,
+      "sha256": "093e0cdcace9219181709376e2eb6b581fe2f636c21c61d41f8fad46857a2d95"
     },
     {
       "path": "workbench/public/sequence-audio.js",
@@ -340,8 +340,8 @@
     },
     {
       "path": "workbench/public/style.css",
-      "bytes": 25175,
-      "sha256": "f86b8b204bcc607e7697a413e224813beafa9430a9f69dc1b5f4b4e00aeecf84"
+      "bytes": 25125,
+      "sha256": "06bcc4cfdabdd429282682256cf621a3f6cd82f0fb3396f1bedc2f7b6e36063f"
     },
     {
       "path": "workbench/public/system-clock.js",
@@ -355,8 +355,8 @@
     },
     {
       "path": "workbench/public/unified-sequence.js",
-      "bytes": 6734,
-      "sha256": "66bf429d460a0653fe2eb030d196891ce8b67cbf7ac4bbb26564fea4af578b88"
+      "bytes": 6681,
+      "sha256": "3985f91221bdbf65bce6f0ac6513e641901c24928520a050419fec40c0cf086c"
     },
     {
       "path": "workbench/public/unit00.css",
@@ -365,8 +365,8 @@
     },
     {
       "path": "workbench/public/unit02.css",
-      "bytes": 11245,
-      "sha256": "e2689c91d4a47a7566fb1f81726b96340dba95cdabbf1bcd4dcb8e5ae0d702e5"
+      "bytes": 11192,
+      "sha256": "f103042bbb9edeb5ddc45439b38acc0a33628673c069ec32afbbb069bf77c25d"
     },
     {
       "path": "workbench/public/vendor/HTML-TO-IMAGE-LICENSE.txt",
@@ -395,13 +395,13 @@
     },
     {
       "path": "workbench/server.cjs",
-      "bytes": 18843,
-      "sha256": "705389b2fefa4d6c0600a7dd99db40beb3b6e7cc0ed031eb9b9df4975297a04a"
+      "bytes": 18902,
+      "sha256": "1f2894e7a39106e2e09cb2c477e1a1f77366421598bd0b409263eebb631fd47e"
     },
     {
       "path": "workbench/start.ps1",
-      "bytes": 4453,
-      "sha256": "3f258e6b57a575331da208b5493c037236037659d96bd0c6b1d4b22c228de59d"
+      "bytes": 4519,
+      "sha256": "2662a2a8242a71b07d78d98a8fbeff4486799b639afa400647c7ab38601dcc66"
     },
     {
       "path": "workbench/state.cjs",
@@ -414,19 +414,24 @@
       "sha256": "53417f08c67a4a1ebc615357828c11a1260646534f06d58a8466c7866ddbf941"
     },
     {
+      "path": "workbench/tests/approval-decision.test.cjs",
+      "bytes": 717,
+      "sha256": "74f97ed54a7bae49b59027e53bae2fac4c76247a4335ac51be51602cc1cfb7bb"
+    },
+    {
       "path": "workbench/tests/audio-announcements.test.cjs",
       "bytes": 2021,
       "sha256": "fd1e10ca38024accf54008b1d6ac63ad6114b9e121a704dd9a3f2f6c4d4d8032"
     },
     {
       "path": "workbench/tests/boot-atmosphere.test.cjs",
-      "bytes": 1536,
-      "sha256": "1dd76802cefe43ecc4b035e006e89f7343caa65619f37721c1418c8f40e913fc"
+      "bytes": 1532,
+      "sha256": "bdf9cc93f48faedb66d3a48ed463bca03de0ae7a5eed5e291dcc563ef569462b"
     },
     {
       "path": "workbench/tests/bridge-lifecycle.test.cjs",
-      "bytes": 2742,
-      "sha256": "0820b439b0903e13577a28a2b24acec0b509f26387f2a1958039608299b586ee"
+      "bytes": 2709,
+      "sha256": "a9673cc746882d4339379927dd8e97c20c11d1129222ff6f909dcae0c3ebf159"
     },
     {
       "path": "workbench/tests/dev-tools.test.cjs",
@@ -440,8 +445,8 @@
     },
     {
       "path": "workbench/tests/motion-v12.test.cjs",
-      "bytes": 1264,
-      "sha256": "840a35c11f6d2272b5d4d13fbb272f3af8f5ddb2686687a6b979028739d504e7"
+      "bytes": 1259,
+      "sha256": "10ed26b96c2a0c24346c5c7e501b00a515022dc9af2cdd378ae962a86f61f96e"
     },
     {
       "path": "workbench/tests/pilot-alerts.test.cjs",
@@ -472,16 +477,6 @@
       "path": "workbench/tests/workbench-features.test.cjs",
       "bytes": 2790,
       "sha256": "161cf5de7ed43271e06239208c1efc5c5680d89bc007824a815e19f53e526b82"
-    },
-    {
-      "path": "首次推送到GitHub.cmd",
-      "bytes": 212,
-      "sha256": "239fbea90bded250f2c7be701b62aae0288acd263a3e9d4c3a69dd821b4fb829"
-    },
-    {
-      "path": "首次推送到GitHub.ps1",
-      "bytes": 2863,
-      "sha256": "13462f8145b247017dffcc73a3b9d8be85c5f7e2956e7f1de5b27bd20b490012"
     }
   ]
 }
