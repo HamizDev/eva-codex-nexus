@@ -1,29 +1,77 @@
 # EVA Codex Nexus
 
-> 非官方、本地运行的 Codex 开发工作台。灵感来自 EVA 作品及 [DSH EVA Theme](https://github.com/seaison/dsh-plugin-eva-theme)。**当前版本：v0.0.2（开发预览）**；首个版本为 v0.0.1。
+> 给**官方 Codex 客户端**换上一层 EVA 皮肤，而不是另做一个 Codex 工作台。
+> **当前版本：v0.1.0（开发预览）**。非官方项目，与 OpenAI、Studio Khara、Gainax 及相关权利方均无关联。
 
-使用自己电脑上的 **官方 Codex CLI / app-server**，不修改官方 Codex 客户端，不逆向认证，不绕过订阅配额。现有 Windows 本地界面具备 Codex 聊天与流式输出、图片、项目与会话管理、权限审批、停止任务、PowerShell 终端、Git 操作和插件管理等基础能力。
+从 v0.1.0 开始，默认入口 `Start-EVA.cmd` 启动的是**你电脑上已安装的官方 Codex**。侧栏、项目、会话、输入框、审批、菜单和快捷键仍然是 Codex 原生的，只额外叠加 EVA 的配色、线框和装饰层。现有独立工作台保留为备用入口，不再抢占默认启动方式。
 
-## EVA 主题
+## 两种入口
 
-- **02 / 明日香**：红黑工作台、NERV 风格界面、现有二号机启动动画。
-- **00 / 绫波丽**：白蓝工作台配色预览（**00 号机的专用开场尚未实现**）。
-- 支持手动切换，或跟随 Windows 系统深色/浅色模式；偏好仅保存到本机浏览器。
-- 本地系统时钟、轻量版 Markdown/代码块/表格阅读；任务完成和人工审批有可开关的本地合成提示音，**默认关闭**，不包含原作语音或音乐。
-- 使用现代浏览器的 `prefers-reduced-motion` 选项降低动画干扰。
+| 入口 | 行为 |
+| --- | --- |
+| `Start-EVA.cmd` | **默认入口**：官方 Codex + EVA 皮肤（默认 02 明日香） |
+| `Start-EVA.cmd rei` | 官方 Codex + 00 绫波丽皮肤 |
+| `Start-EVA.cmd asuka` | 官方 Codex + 02 明日香皮肤 |
+| `Start-EVA-Rei.cmd` | 双击切换到 00 绫波丽皮肤 |
+| `Restore-EVA.cmd` | 移除当前皮肤，不关闭 Codex；官方文件不被修改 |
+| `Start-EVA-Workbench.cmd` | 旧的独立 EVA 工作台，继续保留 |
 
-## Windows 启动
+首次使用默认入口时，如果 Codex 已经打开，脚本会提示**重启一次**，因为当前窗口没有开启本地调试端口。重启后会继续使用官方 Codex 的账号和会话数据；本工具不读取、不修改 `auth.json`、API Key、Base URL 或模型配置。
 
-**依赖**：Windows 10/11、Microsoft Edge、Node.js 20+（含 npm）、官方 Codex CLI；需要 Git 功能时安装 Git for Windows。
+## 使用流程
 
-1. [安装官方 Codex CLI](https://developers.openai.com/codex/cli/)，在 PowerShell 中确认 `codex --version`，并完成你自己的账号登录。
-2. 确认 `node --version`、`npm --version` 可用。
-3. 下载源码 ZIP 并完整解压（或 `git clone`）。**不要直接从压缩包双击启动**。
-4. 双击 `Install-Dependencies.cmd`，或在项目根目录执行 `npm run setup`。
-5. 双击 `Start-EVA.cmd`，首次启动按提示进入本地工作台。默认服务地址为 `http://127.0.0.1:43137`。
-6. 在工作台中添加你的项目文件夹。默认是只读会话；如允许更改文件，请在新会话中选择“允许项目写入”，需要额外权限时必须人工确认。
+默认入口的日常流程和官方 Codex 一致：
 
-调试可运行：
+- 用官方侧栏切换项目、置顶和最近会话；
+- 新建聊天、选择模型、附加文件、发送任务；
+- 使用原生审批、停止、回滚和设置；
+- 使用原生菜单、搜索、快捷键和窗口行为；
+- 关闭窗口即退出本次皮肤会话。
+
+皮肤不是独立客户端，也不是网页套壳。它只向官方 renderer 注入一份 CSS 和一层 `pointer-events: none` 的装饰节点；不会替换 React 组件，不会修改 `app.asar`，不会改签名，也不会绕过登录或订阅配额。
+
+## 环境要求
+
+- Windows 10/11；
+- 官方 Codex 桌面客户端（Microsoft Store 安装，Appx）；
+- Node.js 22 或更高版本（官方皮肤使用内置 WebSocket；旧工作台仍可用 Node.js 20+）；
+- Windows PowerShell 5.1 或 PowerShell 7；
+- 无需安装浏览器插件，也无需修改系统权限。
+
+## 工作方式
+
+1. 通过 `Get-AppxPackage OpenAI.Codex` 找到已签名、已注册的官方客户端；
+2. 以 `--remote-debugging-address=127.0.0.1 --remote-debugging-port=9345` 启动一个受控实例；
+3. 使用独立的 Chromium 配置目录 `%LOCALAPPDATA%\EVACodexSkin\cdp-profile`，避免污染官方默认配置；
+4. 只连接 URL 为 `app://-/index.html` 的页面，拒绝 `avatar-overlay` 宠物层和非回环 WebSocket；
+5. 注入 `codex-skin/assets/eva-skin.css` 和抽象装饰层；
+6. 监视页面重载和主题切换，自动重新应用；
+7. `Restore-EVA.cmd` 删除样式、装饰节点和注入器进程。
+
+实现参考了现有 Codex 换肤项目的回环 CDP、目标校验、`Page.addScriptToEvaluateOnNewDocument` 和 watcher 架构；没有把它们的角色图片、音轨或主题素材打包进本仓库。选择器和适配边界记录在 `codex-skin/selectors.json`。
+
+## 安全边界
+
+- CDP 只绑定 `127.0.0.1`，但调试通道本身没有额外认证。皮肤运行期间，本机其他程序理论上可以连接该端口。
+- 不要把端口转发到局域网或公网；不要在运行皮肤时执行来路不明的本机程序。
+- 退出皮肤：运行 `Restore-EVA.cmd`，或直接关闭该 Codex 窗口。
+- 不修改 WindowsApps、`app.asar`、官方签名、账号令牌、网络代理或 Codex 配置。
+- 如果官方客户端更新导致选择器失效，皮肤会降级为只注入颜色层；不会接管输入和审批。
+
+## 验证状态
+
+已在 `OpenAI.Codex 26.1106.6628.0`、Chromium `157.0.8103.51` 的真实 `app://-/index.html` renderer 上做过受控实例冒烟：
+
+- 02 明日香与 00 绫波丽两套皮肤均能注入；
+- 侧栏、主区、输入框、原生按钮仍可交互；
+- 皮肤层 `pointer-events: none`；
+- 切换 driver 后 watcher 能重新应用；
+- `--remove` 后样式、覆盖层和 dataset 标记均消失；
+- `--verify` 能识别注入前后的状态。
+
+没有在本次会话中强行重启你正在使用的 Codex 窗口；`Start-EVA.cmd` 的完整“关闭当前窗口→Appx 激活→重新打开”路径需要你在方便时执行一次。如果 Appx 激活丢弃 CDP 参数，脚本会自动回退到直接启动已签名的 Store 可执行文件。
+
+## 开发与发布检查
 
 ```powershell
 npm test
@@ -31,29 +79,45 @@ npm run manifest
 npm run verify:public
 ```
 
-工作台退出按钮会停止后台服务。不要公开 `workbench/data/`：里面可能保存会话、附件和运行日志。升级前请备份该目录，不要把你的个人数据打包上传到 GitHub。
+只跑皮肤测试：
 
-## 目前的限制
+```powershell
+npm run test:skin
+```
 
-- 这是 Windows 本地开发预览，**尚未在全新 Windows 设备与最新 CLI 的完整登录、审批和任务闭环中验收**。
-- 本工作台的会话存储不等同于官方 Codex 完整历史；没有保证跨设备同步。
-- 00 号机尚未实现完整动画、角色头像与角色声线；时钟不代表真实 TPS。
-- Markdown 渲染是轻量子集，不是完整 CommonMark/GFM；不会执行原始 HTML。
-- Git 操作不提供强推或危险回滚；插件需要本机 Codex CLI 支持相应命令。
-- 暂无安装器、自动更新和 macOS/Linux 完整支持。
+手动检查注入状态：
 
+```powershell
+node codex-skin\injector.mjs --verify --port 9345
+node codex-skin\injector.mjs --remove --port 9345
+```
 
-## 中文社区维护约定
+## 目录
 
-- GitHub 仓库描述、README、更新日志、Issue 与 Release 公告优先使用简体中文；保留 API、命令、路径、技术术语和第三方授权文本的原文。
-- Git 提交消息采用中文，建议格式：`新增：支持驾驶员主题切换`、`修复：解决启动失败`、`优化：降低会话刷新开销`、`文档：完善安装说明`。
-- 版本从 `v0.0.1` 开始管理；公开发布前执行 `npm test`、`npm run manifest` 和 `npm run verify:public`。
-- 欢迎中文 Issue；报告问题时请隐去账号、令牌、聊天记录及项目敏感信息。
+```text
+codex-skin/
+  Start-EVA.ps1          # 官方 Codex 启动/重启/注入
+  Restore-EVA.ps1        # 移除皮肤
+  injector.mjs           # CDP 目标校验、注入、watcher、verify/remove
+  selectors.json         # 稳定 DOM 锚点合同
+  assets/
+    eva-skin.css         # 两套配色和装饰层
+    asuka-mark.svg
+    rei-mark.svg
+    linework.svg
+  tests/
+workbench/               # 旧独立工作台，保留
+```
 
-## 开源与来源
+## 已知限制
 
-项目基于 [Iris-change/eva-codex-workbench](https://github.com/Iris-change/eva-codex-workbench) 的 MIT 授权源码继续开发，保留原作者版权声明。DSH EVA 项目提供了主题色板、双驾驶员、视觉组件及性能处理的设计参考。详细见 [UPSTREAM.md](UPSTREAM.md)、[CODE-ORIGINS.md](CODE-ORIGINS.md) 和 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
+- Codex 更新可能改变 DOM 和 CSS Module 前缀；届时需要先运行 `--verify`，再更新 `selectors.json` 和皮肤 CSS。
+- 独立配置目录首次进入时可能需要登录一次；不同环境和版本不保证一定自动复用已有会话。
+- 没有实现自动更新、托盘控制、安装器或 macOS/Linux 版本。
+- 皮肤不改变模型、账户、计费、配额或任务执行逻辑。
 
-**代码 MIT 不代表 EVA 角色、商标、原声、音乐可以自由转载**。当前公开版不包含 DSH 原始角色贴图、MP3、GIF 或背景音乐。替换流程见 [ASSET-TODO.md](ASSET-TODO.md) 与 [ASSETS.md](ASSETS.md)。
+## 素材与许可
 
-此项目与 OpenAI、Studio Khara、Gainax 和相关权利方均无官方关联。
+代码采用 MIT；原工作台底座 `Iris-change/eva-codex-workbench` 的版权声明继续保留。公开包只包含抽象线框、编号和调色板，不包含 DSH 角色 PNG、GIF、语音、音乐或动画片段。
+
+MIT 不覆盖 EVA 角色形象、NERV/EVA 商标、原作音乐或语音。素材边界见 `ASSETS.md`、`ASSET-TODO.md` 和 `codex-skin/assets/README.md`；第三方参考见 `THIRD_PARTY_NOTICES.md`。

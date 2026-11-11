@@ -1,5 +1,28 @@
 # 更新日志
 
+## v0.1.0 · 2026-11-11
+
+### 架构变更
+
+- 默认入口从独立 Web 工作台切换为**官方 Codex + EVA 皮肤**：保留官方侧栏、项目、会话、输入框、审批、菜单和快捷键，只叠加 EVA 配色与非交互装饰层。
+- 新增 `codex-skin/`：Appx 发现与签名校验、回环 CDP 启动、renderer 目标识别、CSS/JS 注入、页面重载重注入、主题切换和恢复。
+- `Start-EVA.cmd` 改为官方皮肤入口；新增 `Restore-EVA.cmd`；旧的独立工作台保留为 `Start-EVA-Workbench.cmd`。
+- 使用 `%LOCALAPPDATA%\EVACodexSkin\cdp-profile` 隔离 Chromium 配置，不修改 WindowsApps、`app.asar`、签名、认证或 API 配置。
+
+### 新增
+
+- 02 明日香红黑主题与 00 绫波丽白蓝主题，支持 `Start-EVA.cmd asuka` / `Start-EVA.cmd rei` 切换。
+- `codex-skin/selectors.json` 稳定选择器合同，覆盖 `_MainContentSurface_`、`ComposerLayoutRoot`、`ConversationSidebar`、header、菜单和 dialog。
+- 回环 WebSocket 校验、宠物 overlay 排除、Codex shell 探针、`Page.addScriptToEvaluateOnNewDocument` 早期注入和 `Page.loadEventFired` 重注入。
+- `Restore-EVA.cmd` 通过 CDP 清理 DOM 节点，并校验 PID 后停止注入器。
+- 皮肤测试：目标识别、CDP URL 拒绝、选择器合同、CSS 安全边界、PowerShell BOM/启动契约、恢复流程和版本一致性。
+
+### 验证
+
+- 在 `OpenAI.Codex 26.1106.6628.0` / Chromium `157.0.8103.51` 的受控第二实例上完成 Asuka、Rei 注入、watcher 切换、`--verify` 和 `--remove` 冒烟。
+- 当前正在使用的 Codex 窗口没有被强制关闭；完整 Appx 重启路径仍需用户在方便时执行一次。
+- `npm test`、`npm run manifest`、`npm run verify:public` 结果见本次发布提交。
+
 ## v0.0.2 · 2026-11-11
 
 ### 修复

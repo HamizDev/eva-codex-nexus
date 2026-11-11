@@ -6,7 +6,9 @@
 
 此前“整个底座来源未知”的描述已被这条开发记录更新。这不是完整的 Git 历史或所有代码的独立相似性审计，不能把第三方组件和素材一起称为原创。
 
-当前包的启动链：Start-EVA.cmd → start.ps1 → Node server.cjs → 官方 codex app-server；前端为网页、Canvas 和 Three.js。没有打包或调用原交接包的 DragonCodexBoot.cs/WPF 启动器、上游 MP4 或快捷方式替换工具。
+`v0.1.0` 的默认启动链：Start-EVA.cmd → codex-skin/Start-EVA.ps1 → 官方 Appx Codex（回环 CDP）→ codex-skin/injector.mjs → 官方 renderer 的 CSS/装饰层。该链路不修改 WindowsApps、`app.asar`、签名、认证或 API 配置。
+
+备用启动链仍为：Start-EVA-Workbench.cmd → workbench/start.ps1 → Node server.cjs → 官方 codex app-server；前端为网页、Canvas 和 Three.js。两条链都没有打包或调用原交接包的 DragonCodexBoot.cs/WPF 启动器、上游 MP4 或快捷方式替换工具。
 
 Dragon Codex Boot：https://github.com/yushua0808-cpu/dragon-codex-boot 。2026-11-04 核对上游为 MIT，许可证全文在 licenses/DragonCodexBoot-MIT.txt。保留参考来源和许可，不自动将其用于整个工作台。
 

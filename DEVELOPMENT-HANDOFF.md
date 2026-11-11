@@ -1,27 +1,40 @@
-# EVA Codex Nexus · v0.0.1 开发交接
+# EVA Codex Nexus · v0.1.0 开发交接
 
-基线日期 2026-11-09。以 `0.4.0-preview` 本地开发包为程序基础，重新开启 v0.0.1 版本线，并对照 GitHub `Iris-change/eva-codex-workbench` 及 `seaison/dsh-plugin-eva-theme` 的公开 `main` 分支。
+基线日期 2026-11-11。当前默认形态为**官方 Codex Desktop + EVA 皮肤**；旧的独立工作台保留为备用入口，不再作为默认启动方式。
 
-## 当前架构
+## 官方皮肤链
 
-- `workbench/bridge.cjs`：通过官方 Codex CLI 的 `codex app-server --listen stdio://` 进行连接，不修改官方客户端。
-- `workbench/server.cjs`：localhost HTTP、项目状态、会话和审批接口。
-- `workbench/public/index.html`、`app.js`：主 UI；`theme.js` 和 `unit00.css` 管理主题。
-- `workbench/public/markdown-lite.js`：安全 Markdown 子集，不接受可执行 HTML。
-- `workbench/public/pilot-alerts.js`：状态变化通知，默认静音；`system-clock.js`：本机时间。
-- `scripts/generate-manifest.cjs` 与 `check-release.cjs`：发布物清单和私人文件阻断。
+- `Start-EVA.cmd` → `codex-skin/Start-EVA.ps1`；
+- `Start-EVA.ps1` 通过 `Get-AppxPackage OpenAI.Codex` 发现已签名的官方客户端，校验 Authenticode，并验证 CDP 监听进程确实属于该安装；
+- 以 `--remote-debugging-address=127.0.0.1 --remote-debugging-port=9345 --user-data-dir=%LOCALAPPDATA%\EVACodexSkin\cdp-profile` 启动受控实例；
+- `codex-skin/injector.mjs` 只接受 `app://-/index.html`，拒绝 `avatar-overlay`、非回环 WebSocket 和非官方页面；
+- CSS 与装饰层由 `Page.addScriptToEvaluateOnNewDocument` 和 `Page.loadEventFired` 维持，watcher 在页面重载和 driver 切换时重新应用；
+- `Restore-EVA.ps1` 清理样式、覆盖层、dataset 标记，并在校验 PID/命令行后停止注入器；
+- 不修改 WindowsApps、`app.asar`、签名、认证、Base URL、API Key 或 Codex 协议。
+
+## 备用工作台链
+
+- `Start-EVA-Workbench.cmd` → `workbench/start.ps1` → `workbench/server.cjs` → 官方 `codex app-server`；
+- 前端在 `workbench/public/`；主题、Markdown、终端、Git、插件和审批逻辑继续沿用 v0.0.2 的实现。
 
 ## 关键验收规则
 
-1. `npm test` 全通过（v0.0.1 当前 31 个 Node 自动测试）。
-2. `npm run manifest && npm run verify:public` 无错误，所有构件版本一致，公开 ZIP 无凭据 / 原素材 / 本地运行数据。
-3. Windows 实机另需验证：登录、断线重连、消息流、图片、审批允许/拒绝、终端、Git、插件和退出。
-4. 开场当前仍为二号机：绫波丽仅工作台配色预览，不能宣称 DSH 双角色启动完整移植。
-5. 所有上传的影音素材都要独立核对授权。MIT 软件许可不覆盖原作角色、声音和音乐。
+1. `npm test` 全通过（含 workbench 和 `codex-skin/tests`）。
+2. `npm run manifest && npm run verify:public` 无错误，公开源码不包含 `%LOCALAPPDATA%\EVACodexSkin`、CDP 配置、凭据、原素材或本地运行数据。
+3. 官方 renderer 更新后先运行 `node codex-skin/injector.mjs --verify --port 9345`，再更新 `codex-skin/selectors.json` 和 `assets/eva-skin.css`。
+4. 完整启动路径应在用户方便时执行一次：关闭当前 Codex → `Start-EVA.cmd` → 自动重开 → 确认侧栏、聊天、输入框和审批可交互。
+5. 所有上传的影音素材都要独立核对授权。MIT 软件许可不覆盖原作角色、声音、音乐和商标。
+
+## 已验证与未验证
+
+- 已验证：`OpenAI.Codex 26.1106.6628.0` / Chromium `157.0.8103.51` 的受控第二实例上，Asuka/Rei 注入、watcher 切换、`--verify`、`--remove` 均通过；当前正在使用的 Codex 未被强制关闭。
+- 未验证：从“当前 Codex 正在运行且没有 CDP”到“关闭→Appx 激活→重开”的完整交互路径；需要在真实日常窗口上再跑一次。
+- 未验证：Store 自动更新到新 DOM 后的选择器兼容性。
 
 ## 后续优先级
 
-1. Windows 最新 Codex CLI 真实运行验收及协议覆盖。
-2. 减少全量 SSE 和长聊天 DOM 重建，增加历史分页/内存上限。
-3. 完善两名驾驶员的统一启动状态机、系统减少动态效果及媒体同步。
-4. 视觉资源库、版权追溯、测试截图、可配置 HUD 和 Windows 安装器。
+1. 在真实日常窗口执行完整重启路径，并记录 Appx 激活是否保留 CDP 参数；若丢弃则确认直接可执行文件回退。
+2. 为设置页、菜单、弹窗、代码块和审批面板补截图级回归。
+3. 增加可选的“暂停皮肤但不关闭 Codex”控制（当前恢复需要 `Restore-EVA.cmd` 或关闭窗口）。
+4. 为 Store 更新做选择器 doctor 和降级提示。
+5. 继续保留原工作台，不将官方皮肤的选择器假设反向写进旧工作台。

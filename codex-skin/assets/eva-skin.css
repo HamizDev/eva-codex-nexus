@@ -1,0 +1,574 @@
+/*
+ * EVA Codex Nexus skin
+ * This sheet is injected into the official Codex renderer.
+ * It changes colour and decoration only; native layout and controls stay intact.
+ */
+
+html[data-eva-skin="asuka"] {
+  color-scheme: dark;
+  --eva-bg: #0a0b0d;
+  --eva-bg-soft: #101113;
+  --eva-panel: #141517;
+  --eva-panel-raised: #1b1b1c;
+  --eva-sidebar-top: #3a1117;
+  --eva-sidebar-bottom: #101113;
+  --eva-border: #49312c;
+  --eva-border-strong: #75402b;
+  --eva-accent: #f06a22;
+  --eva-accent-strong: #b62026;
+  --eva-warn: #e7bc35;
+  --eva-text: #e8e2d7;
+  --eva-text-strong: #fff4e6;
+  --eva-muted: #a29e97;
+  --eva-muted-soft: #817a72;
+  --eva-user: #d8e0e5;
+  --eva-code: #111315;
+  --eva-code-border: #37352f;
+  --eva-selection: #b6202666;
+  --eva-shadow: #00000066;
+  --eva-frame-alpha: #f06a2244;
+  --eva-art-opacity: 0.10;
+}
+
+html[data-eva-skin="rei"] {
+  color-scheme: light;
+  --eva-bg: #f2f7fb;
+  --eva-bg-soft: #edf4fa;
+  --eva-panel: #f7fbff;
+  --eva-panel-raised: #e8f2f9;
+  --eva-sidebar-top: #d9eaf6;
+  --eva-sidebar-bottom: #f7fbfd;
+  --eva-border: #b7cbdc;
+  --eva-border-strong: #8fb8d3;
+  --eva-accent: #236c9d;
+  --eva-accent-strong: #326f9f;
+  --eva-warn: #4d99c2;
+  --eva-text: #243748;
+  --eva-text-strong: #17364d;
+  --eva-muted: #647f94;
+  --eva-muted-soft: #7b93a5;
+  --eva-user: #426279;
+  --eva-code: #e8f2f9;
+  --eva-code-border: #b6cbdc;
+  --eva-selection: #347da966;
+  --eva-shadow: #7ca5bf2e;
+  --eva-frame-alpha: #347da944;
+  --eva-art-opacity: 0.08;
+}
+
+html[data-eva-skin] {
+  background: var(--eva-bg) !important;
+  --color-text: var(--eva-text);
+  --color-text-primary: var(--eva-text);
+  --color-text-secondary: var(--eva-muted);
+  --color-text-tertiary: var(--eva-muted);
+  --color-text-emphasis: var(--eva-text-strong);
+  --color-surface: var(--eva-bg);
+  --color-surface-secondary: var(--eva-bg-soft);
+  --color-surface-tertiary: var(--eva-panel);
+  --color-background-composer-action-bar: var(--eva-panel);
+  --color-background-segmented-selected: color-mix(in oklab, var(--eva-accent) 10%, transparent);
+  --color-background-segmented-selected-hover: color-mix(in oklab, var(--eva-accent) 17%, transparent);
+  --color-border: var(--eva-border);
+  --color-border-subtle: color-mix(in oklab, var(--eva-border) 62%, transparent);
+  --color-border-strong: var(--eva-border-strong);
+  --color-codex-description: var(--eva-muted);
+  --app-color-background-surface: var(--eva-bg);
+  --app-color-background-surface-under: var(--eva-bg-soft);
+  --app-color-background-elevated-primary: var(--eva-panel);
+  --color-background-execution-output: var(--eva-bg-soft);
+  --color-background-page-search: var(--eva-panel);
+  --color-background-primary-soft-alpha: var(--eva-panel);
+  --color-codex-terminal-background: var(--eva-code);
+  --color-codex-terminal-foreground: var(--eva-text);
+  --color-codex-terminal-selection: var(--eva-selection);
+  --color-codex-terminal-selection-inactive: var(--eva-selection);
+  --color-text-execution-output: var(--eva-text);
+  --color-text-execution-output-label: var(--eva-muted);
+  --wb-surface-primary: var(--eva-bg);
+  --wb-surface-secondary: var(--eva-bg-soft);
+  --wb-text-primary: var(--eva-text);
+  --wb-text-secondary: var(--eva-muted);
+  --wb-text-tertiary: var(--eva-muted-soft);
+  --wb-border: var(--eva-border);
+  --wb-border-hover: var(--eva-border-strong);
+}
+
+html[data-eva-skin] body {
+  background:
+    radial-gradient(circle at 88% 14%, var(--eva-selection), transparent 32rem),
+    var(--eva-bg) !important;
+  color: var(--eva-text) !important;
+  accent-color: var(--eva-accent);
+  scrollbar-color: var(--eva-border-strong) transparent;
+}
+
+html[data-eva-skin] #root,
+html[data-eva-skin] .app-shell {
+  background: transparent !important;
+}
+
+html[data-eva-skin] main,
+html[data-eva-skin] main:is(
+  .main-surface,
+  [data-app-shell-main-surface],
+  [class*="_MainContentSurface_"],
+  [class*="MainContentSurface"]
+) {
+  background-color: var(--eva-bg) !important;
+  color: var(--eva-text) !important;
+}
+
+html[data-eva-skin] aside.app-shell-left-panel,
+html[data-eva-skin] aside.app-shell-left-panel > div {
+  background:
+    linear-gradient(165deg, var(--eva-sidebar-top) 0, var(--eva-sidebar-bottom) 340px)
+    !important;
+  border-color: var(--eva-border) !important;
+}
+
+html[data-eva-skin] aside.app-shell-left-panel {
+  border-right: 1px solid var(--eva-border-strong) !important;
+  box-shadow: inset 3px 0 0 var(--eva-accent-strong);
+}
+
+html[data-eva-skin] [class*="ConversationSidebar"] {
+  background-color: transparent !important;
+  color: var(--eva-text) !important;
+}
+
+html[data-eva-skin] :is(
+  [class*="Sidebar"],
+  [class*="sidebar"]
+) :is(button, a, span, p, div) {
+  color: inherit;
+}
+
+html[data-eva-skin] header:is(
+  .app-header-tint,
+  [data-app-shell-header-edge-scroll],
+  [class*="_Header_"]
+) {
+  background: color-mix(in srgb, var(--eva-bg-soft) 94%, transparent) !important;
+  border-bottom: 1px solid var(--eva-border) !important;
+  color: var(--eva-text) !important;
+}
+
+html[data-eva-skin] header:is(
+  .app-header-tint,
+  [data-app-shell-header-edge-scroll],
+  [class*="_Header_"]
+):after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    125deg,
+    var(--eva-warn) 0 9px,
+    transparent 9px 18px
+  );
+  opacity: 0.58;
+}
+
+html[data-eva-skin] :is(
+  .composer-surface-chrome,
+  [class*="_ComposerLayoutRoot_"],
+  [class*="ComposerLayoutRoot"],
+  [data-composer-surface-variant][data-composer-radius-variant]
+) {
+  background: color-mix(in srgb, var(--eva-panel) 96%, transparent) !important;
+  border-color: var(--eva-border-strong) !important;
+  box-shadow: 0 18px 48px var(--eva-shadow), inset 0 2px 0 var(--eva-accent-strong)
+    !important;
+}
+
+html[data-eva-skin] :is(
+  .composer-surface-chrome,
+  [class*="_ComposerLayoutRoot_"],
+  [class*="ComposerLayoutRoot"],
+  [data-composer-surface-variant][data-composer-radius-variant]
+):focus-within {
+  border-color: var(--eva-accent) !important;
+  box-shadow: 0 18px 48px var(--eva-shadow), 0 0 0 1px var(--eva-accent) !important;
+}
+
+html[data-eva-skin] :is(
+  [class*="ComposerLayoutBody"],
+  [class*="ComposerLayoutAttachments"],
+  [class*="ComposerLayoutFooter"]
+) {
+  background-color: transparent !important;
+  color: var(--eva-text) !important;
+}
+
+html[data-eva-skin] :is(
+  [class*="ComposerFooter"],
+  [class*="ComposerDropdown"],
+  [class*="ComposerLayout"]
+) {
+  color: var(--eva-text) !important;
+}
+
+html[data-eva-skin] :is(
+  [class*="ComposerFooter"] button,
+  [class*="ComposerFooter"] span,
+  [class*="ComposerLayout"] button,
+  [class*="ComposerLayout"] span
+) {
+  color: var(--eva-text) !important;
+}
+
+html[data-eva-skin] :is(textarea, input, [contenteditable="true"], [role="textbox"]) {
+  color: var(--eva-text) !important;
+  caret-color: var(--eva-accent);
+}
+
+html[data-eva-skin] :is(textarea, input, [contenteditable="true"], [role="textbox"])::placeholder {
+  color: var(--eva-muted-soft) !important;
+}
+
+html[data-eva-skin] :is(input, textarea, select) {
+  background-color: var(--eva-panel) !important;
+  border-color: var(--eva-border) !important;
+}
+
+html[data-eva-skin] ::selection {
+  background: var(--eva-selection);
+  color: var(--eva-text-strong);
+}
+
+html[data-eva-skin] :is(a, [data-testid*="link"]) {
+  color: var(--eva-accent) !important;
+}
+
+html[data-eva-skin] :is(button, [role="button"]):focus-visible,
+html[data-eva-skin] :is(a, input, textarea, [contenteditable="true"]):focus-visible {
+  outline: 2px solid var(--eva-warn) !important;
+  outline-offset: 2px !important;
+}
+
+html[data-eva-skin] .bg-surface {
+  background-color: var(--eva-bg) !important;
+}
+
+html[data-eva-skin] .bg-surface-secondary {
+  background-color: var(--eva-bg-soft) !important;
+}
+
+html[data-eva-skin] .bg-surface-tertiary,
+html[data-eva-skin] .bg-background-composer-action-bar {
+  background-color: var(--eva-panel) !important;
+}
+
+html[data-eva-skin] :is(.text-default, .text-primary) {
+  color: var(--eva-text) !important;
+}
+
+html[data-eva-skin] :is(.text-secondary, .text-tertiary) {
+  color: var(--eva-muted) !important;
+}
+
+html[data-eva-skin] .text-emphasis {
+  color: var(--eva-text-strong) !important;
+}
+
+html[data-eva-skin] aside.app-shell-left-panel button:hover,
+html[data-eva-skin] header button:hover {
+  background: color-mix(in srgb, var(--eva-accent) 15%, transparent) !important;
+}
+
+html[data-eva-skin] [aria-current="page"],
+html[data-eva-skin] [data-state="active"] {
+  background: color-mix(in srgb, var(--eva-accent-strong) 17%, transparent) !important;
+  box-shadow: inset 2px 0 0 var(--eva-accent);
+}
+
+html[data-eva-skin] :is(
+  [role="menu"],
+  [role="dialog"],
+  [data-radix-popper-content-wrapper] > *,
+  [data-testid*="popover"]
+) {
+  background-color: var(--eva-panel) !important;
+  border-color: var(--eva-border-strong) !important;
+  color: var(--eva-text) !important;
+  box-shadow: 0 24px 70px var(--eva-shadow) !important;
+}
+
+html[data-eva-skin] [role="dialog"] {
+  border-top: 3px solid var(--eva-accent-strong) !important;
+}
+
+html[data-eva-skin] :is([role="menuitem"], [role="option"]):hover,
+html[data-eva-skin] :is([role="menuitem"], [role="option"])[data-highlighted] {
+  background: color-mix(in srgb, var(--eva-accent) 14%, transparent) !important;
+}
+
+html[data-eva-skin] :is(pre, code) {
+  border-color: var(--eva-code-border) !important;
+}
+
+html[data-eva-skin] pre {
+  background: var(--eva-code) !important;
+  color: var(--eva-text) !important;
+}
+
+html[data-eva-skin] :is([class*="_markdown"], .thread-scroll-container) {
+  color: var(--eva-text);
+}
+
+html[data-eva-skin] :is(
+  [data-message-author-role],
+  [data-local-conversation-user-anchor],
+  [data-local-conversation-final-assistant]
+) {
+  border-color: var(--eva-border) !important;
+}
+
+html[data-eva-skin] [data-message-author-role="user"] :is(
+  [class*="_markdown"],
+  .prose
+) {
+  color: var(--eva-user) !important;
+}
+
+html[data-eva-skin] :is(
+  .thread-scroll-container,
+  [role="main"],
+  [class*="_MainContentSurface_"]
+)::-webkit-scrollbar,
+html[data-eva-skin] body::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+html[data-eva-skin] ::-webkit-scrollbar-thumb {
+  background: var(--eva-border-strong);
+  border-radius: 999px;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+}
+
+html[data-eva-skin] ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+html[data-eva-skin] :is(h1, h2, h3) {
+  color: var(--eva-text-strong);
+}
+
+html[data-eva-skin] :is(
+  [data-testid="home-icon"],
+  [data-testid*="project"],
+  [data-testid*="thread"]
+) {
+  color: var(--eva-text);
+}
+
+html[data-eva-skin] [data-testid="home-icon"] {
+  color: var(--eva-accent) !important;
+}
+
+html[data-eva-skin] :is(.home-banners, [data-feature="game-source"]) {
+  border-color: var(--eva-border) !important;
+}
+
+html[data-eva-skin] :is(
+  [class*="_homeUtilityBar_"],
+  [class*="_ComposerHomeUtilityBar_"]
+) {
+  border-color: var(--eva-border) !important;
+}
+
+html[data-eva-skin] :is(.group\/home-suggestions, [class*="home-suggestion"]) button {
+  background: color-mix(in srgb, var(--eva-panel) 94%, transparent) !important;
+  border-color: var(--eva-border) !important;
+  color: var(--eva-text) !important;
+}
+
+html[data-eva-skin] :is(.group\/home-suggestions, [class*="home-suggestion"]) button:hover {
+  background: color-mix(in srgb, var(--eva-accent) 12%, var(--eva-panel)) !important;
+  border-color: var(--eva-accent) !important;
+}
+
+/* Decorative layer. Never receives pointer events. */
+#eva-codex-skin-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  overflow: hidden;
+  pointer-events: none !important;
+  user-select: none;
+  contain: strict;
+}
+
+#eva-codex-skin-overlay .eva-frame {
+  position: absolute;
+  inset: 7px;
+  border: 1px solid var(--eva-frame-alpha);
+  clip-path: polygon(
+    0 0,
+    96px 0,
+    96px 1px,
+    calc(100% - 96px) 1px,
+    calc(100% - 96px) 0,
+    100% 0,
+    100% 96px,
+    calc(100% - 1px) 96px,
+    calc(100% - 1px) calc(100% - 96px),
+    100% calc(100% - 96px),
+    100% 100%,
+    calc(100% - 96px) 100%,
+    calc(100% - 96px) calc(100% - 1px),
+    96px calc(100% - 1px),
+    96px 100%,
+    0 100%,
+    0 calc(100% - 96px),
+    1px calc(100% - 96px),
+    1px 96px,
+    0 96px
+  );
+}
+
+#eva-codex-skin-overlay .eva-frame:before,
+#eva-codex-skin-overlay .eva-frame:after {
+  content: "";
+  position: absolute;
+  width: 46px;
+  height: 46px;
+  border-color: var(--eva-accent);
+  opacity: 0.58;
+}
+
+#eva-codex-skin-overlay .eva-frame:before {
+  left: 0;
+  top: 0;
+  border-left: 2px solid;
+  border-top: 2px solid;
+}
+
+#eva-codex-skin-overlay .eva-frame:after {
+  right: 0;
+  bottom: 0;
+  border-right: 2px solid;
+  border-bottom: 2px solid;
+}
+
+#eva-codex-skin-overlay .eva-scan {
+  position: absolute;
+  inset: 0;
+  opacity: 0.42;
+  background: repeating-linear-gradient(
+    180deg,
+    transparent 0 3px,
+    color-mix(in srgb, var(--eva-accent) 6%, transparent) 3px 4px
+  );
+  mix-blend-mode: soft-light;
+}
+
+#eva-codex-skin-overlay .eva-scan:after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 12vh;
+  background: linear-gradient(
+    transparent,
+    color-mix(in srgb, var(--eva-accent) 11%, transparent),
+    transparent
+  );
+  animation: eva-skin-scan 9s linear infinite;
+}
+
+#eva-codex-skin-overlay .eva-art {
+  position: absolute;
+  right: -9vw;
+  top: 5vh;
+  width: min(74vw, 1080px);
+  height: 90vh;
+  background-image: var(--eva-linework);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  opacity: var(--eva-art-opacity);
+  filter: drop-shadow(0 0 18px var(--eva-selection));
+  mix-blend-mode: screen;
+  mask-image: linear-gradient(90deg, transparent 4%, #000 38%, #000 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 4%, #000 38%, #000 100%);
+}
+
+html[data-eva-skin="rei"] #eva-codex-skin-overlay .eva-art {
+  mix-blend-mode: multiply;
+  filter: hue-rotate(168deg);
+}
+
+#eva-codex-skin-overlay .eva-unit {
+  position: absolute;
+  right: clamp(22px, 4vw, 62px);
+  bottom: clamp(42px, 7vh, 90px);
+  color: var(--eva-accent-strong);
+  font: 700 clamp(64px, 10vw, 150px)/0.8 "Bahnschrift", "Segoe UI", sans-serif;
+  letter-spacing: -0.06em;
+  opacity: 0.12;
+}
+
+#eva-codex-skin-overlay .eva-label {
+  position: absolute;
+  left: clamp(20px, 3vw, 46px);
+  bottom: 16px;
+  color: var(--eva-muted);
+  font: 600 9px/1 "Bahnschrift", "Segoe UI", sans-serif;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  opacity: 0.64;
+}
+
+#eva-codex-skin-overlay .eva-mark {
+  position: absolute;
+  left: clamp(18px, 3vw, 42px);
+  top: 18px;
+  width: 34px;
+  height: 34px;
+  background: var(--eva-mark) center / contain no-repeat;
+  opacity: 0.32;
+}
+
+@keyframes eva-skin-scan {
+  0% {
+    top: -18vh;
+  }
+  100% {
+    top: 112vh;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #eva-codex-skin-overlay .eva-scan:after {
+    animation: none;
+    top: 32vh;
+    opacity: 0.2;
+  }
+
+  html[data-eva-skin] *,
+  html[data-eva-skin] *:before,
+  html[data-eva-skin] *:after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 760px) {
+  #eva-codex-skin-overlay .eva-art {
+    right: -38vw;
+    width: 120vw;
+    opacity: calc(var(--eva-art-opacity) * 0.72);
+  }
+
+  #eva-codex-skin-overlay .eva-unit {
+    right: 18px;
+    bottom: 56px;
+  }
+}

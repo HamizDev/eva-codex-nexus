@@ -2,6 +2,17 @@
 
 更新时间：2026-11-05。
 
+## 2026-11-11 官方 Codex 皮肤层
+
+`v0.1.0` 新增 `codex-skin/`，默认启动官方 Codex Desktop 并通过回环 CDP 注入 EVA CSS 和非交互装饰层。实现前审阅了以下 MIT 项目的公开架构：
+
+- `Fei-Away/Codex-Dream-Skin`：CDP 启动参数、早期脚本、目标探针和 watcher；
+- `zhulin025/Codex-QQ-Skin`：Windows Appx 激活、进程归属和端口检查；
+- `HeiGeAi/heige-codex-skin-studio`：`app://-/index.html` 目标分类和 overlay 排除；
+- `freestylefly/codex-themes`：Electron watcher、平台发现和恢复流程。
+
+本仓库的 `injector.mjs`、PowerShell 启动器和 CSS 为面向本项目的重新实现；没有把上述项目的角色素材、主题包、音轨或安装器直接打包。Dream Skin 的 MIT 文本保存在 `licenses/Codex-Dream-Skin-MIT.txt`。这些代码许可不覆盖 OpenAI/Codex 商标或 EVA 角色、声音、音乐和图像的再分发权。
+
 ## 用户补充的开发记录
 
 用户提供了原“制作骇爪终端启动动画”对话的截图。截图中的原开发说明将以下部分区分：

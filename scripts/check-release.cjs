@@ -9,7 +9,7 @@ assert.equal(version,JSON.parse(fs.readFileSync(path.join(root,'workbench/packag
 const expected=files().map(entry);
 assert.equal(new Set(expected.map(x=>x.path)).size,expected.length,'duplicate release files');
 assert.deepEqual(manifest.files,expected,'MANIFEST.json is stale; run npm run manifest');
-for(const rel of ['LICENSE','LICENSE-STATUS.md','THIRD_PARTY_NOTICES.md','.gitignore','.gitattributes','README.md','ASSETS.md','CODE-ORIGINS.md','workbench/start.ps1']){
+for(const rel of ['LICENSE','LICENSE-STATUS.md','THIRD_PARTY_NOTICES.md','.gitignore','.gitattributes','README.md','ASSETS.md','CODE-ORIGINS.md','workbench/start.ps1','codex-skin/Start-EVA.ps1','codex-skin/Restore-EVA.ps1','codex-skin/injector.mjs','codex-skin/assets/eva-skin.css']){
  assert(fs.existsSync(path.join(root,rel)),'Missing release requirement: '+rel);
 }
 const all=[];function crawl(dir,base=''){
