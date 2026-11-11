@@ -6,7 +6,7 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
-export const SKIN_VERSION = "0.3.2";
+export const SKIN_VERSION = "0.4.0";
 export const SKIN_ID = "eva-codex-skin";
 export const DEFAULT_PORT = 9345;
 export const EXACT_MAIN_URL = "app://-/index.html";
@@ -18,6 +18,7 @@ const ASSETS = path.join(__dirname, "assets");
 const SELECTOR_FILE = path.join(__dirname, "selectors.json");
 const SELECTORS = JSON.parse(fs.readFileSync(SELECTOR_FILE, "utf8"));
 const SELECTOR_MAP = SELECTORS.selectors;
+const SKIN_UI_RUNTIME = fs.readFileSync(path.join(ASSETS, "skin-ui.js"), "utf8");
 const STYLE_ID = "eva-codex-skin-style";
 const OVERLAY_ID = "eva-codex-skin-overlay";
 const BOOT_ID = "eva-codex-skin-boot";
@@ -27,14 +28,48 @@ const EARLY_GENERATION_KEY = "__EVA_CODEX_SKIN_EARLY_GENERATION__";
 const EARLY_APPLIED_KEY = "__EVA_CODEX_SKIN_EARLY_APPLIED__";
 const BOOT_RUNTIME_KEY = "__EVA_CODEX_SKIN_BOOT__";
 const BOOT_FINISH_KEY = "__EVA_CODEX_SKIN_BOOT_FINISH__";
+const BOOT_RESULT_KEY = "__EVA_CODEX_SKIN_BOOT_RESULT__";
+const WELCOME_CONSUMED_KEY = "__EVA_CODEX_SKIN_WELCOME_CONSUMED__";
 const BOOT_ID_PATTERN = /^[A-Za-z0-9._-]{1,128}$/;
 const DSH_BOOT_PACK_NAME = "dsh-eva-theme-boot-pack";
 const DSH_BOOT_REQUIRED_ASSETS = ["boot", "emergency", "entryPlug", "asukaHead", "reiHead"];
-const DSH_BOOT_OPTIONAL_ASSETS = ["asukaVoice", "reiVoice"];
+const DSH_BOOT_OPTIONAL_ASSETS = [
+  "asukaVoice",
+  "reiVoice",
+  "asukaPortrait",
+  "reiPortrait",
+  "asukaPickVoice",
+  "reiPickVoice",
+  "asukaWelcome",
+  "reiWelcome",
+  "asukaApproval",
+  "reiApproval",
+  "asukaComplete",
+  "reiComplete",
+  "typing",
+];
 const DSH_BOOT_MAX_BYTES = 16 * 1024 * 1024;
 const DRIVER_STORAGE_KEY = "eva-codex-skin-driver-v1";
+const OPTIONS_STORAGE_KEY = "eva-codex-skin-options-v1";
 const FORCE_DRIVER_TOKEN_KEY = "eva-codex-skin-force-driver-token-v1";
 const FORCE_DRIVER_TOKEN_PATTERN = /^[A-Za-z0-9._-]{1,128}$/;
+const UI_MEDIA_IDS = [
+  "asukaPortrait",
+  "reiPortrait",
+  "asukaHead",
+  "reiHead",
+  "asukaVoice",
+  "reiVoice",
+  "asukaPickVoice",
+  "reiPickVoice",
+  "asukaWelcome",
+  "reiWelcome",
+  "asukaApproval",
+  "reiApproval",
+  "asukaComplete",
+  "reiComplete",
+  "typing",
+];
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -165,11 +200,8 @@ export function buildVerifyExpression() {
     const sidebar = document.querySelector(${JSON.stringify(SELECTOR_MAP.sidebar)});
     const main = document.querySelector(${JSON.stringify(SELECTOR_MAP.shellMain)});
     const settings = document.querySelector(${JSON.stringify(SELECTOR_MAP.settingsPanel)});
-    const browserPanel = document.querySelector(${JSON.stringify(SELECTOR_MAP.browserPanel)});
-    const switcher = overlay?.querySelector(".eva-driver-switch") || null;
-    const switchButtons = switcher
-      ? [...switcher.querySelectorAll("[data-eva-driver]")]
-      : [];
+    const settingsButton = overlay?.querySelector(".eva-settings-button") || null;
+    const configPanel = overlay?.querySelector(".eva-config-panel") || null;
     const box = (node) => {
       if (!node) return null;
       const rect = node.getBoundingClientRect();
@@ -182,16 +214,16 @@ export function buildVerifyExpression() {
       };
     };
     const overlayBox = box(overlay);
-    const switcherBox = box(switcher);
-    const switcherPointerEvents = switcher
-      ? getComputedStyle(switcher).pointerEvents
+    const settingsBox = box(settingsButton);
+    const settingsPointerEvents = settingsButton
+      ? getComputedStyle(settingsButton).pointerEvents
       : null;
-    const switcherInsideViewport = Boolean(
-      switcherBox &&
-      switcherBox.x >= 0 &&
-      switcherBox.y >= 0 &&
-      switcherBox.x + switcherBox.width <= innerWidth + 1 &&
-      switcherBox.y + switcherBox.height <= innerHeight + 1
+    const settingsInsideViewport = Boolean(
+      settingsBox &&
+      settingsBox.x >= 0 &&
+      settingsBox.y >= 0 &&
+      settingsBox.x + settingsBox.width <= innerWidth + 1 &&
+      settingsBox.y + settingsBox.height <= innerHeight + 1
     );
     const result = {
       installed: Boolean(root && root.dataset.evaSkin),
@@ -200,20 +232,18 @@ export function buildVerifyExpression() {
       stylePresent: Boolean(style),
       overlayPresent: Boolean(overlay),
       overlayPointerEvents: overlay ? getComputedStyle(overlay).pointerEvents : null,
-      switcher: {
-        present: Boolean(switcher),
-        visible: switcherBox?.visible === true,
-        pointerEvents: switcherPointerEvents,
-        insideViewport: switcherInsideViewport,
-        hiddenForBrowserPanel: Boolean(browserPanel),
-        activeDriver: switchButtons.find(
-          (button) => button.getAttribute("aria-pressed") === "true",
-        )?.dataset.evaDriver || null,
-        buttonCount: switchButtons.length,
+      settingsUi: {
+        buttonPresent: Boolean(settingsButton),
+        buttonVisible: settingsBox?.visible === true,
+        buttonPointerEvents: settingsPointerEvents,
+        buttonInsideViewport: settingsInsideViewport,
+        panelPresent: Boolean(configPanel),
+        panelHidden: configPanel?.hidden === true,
+        pilotButtonCount: configPanel?.querySelectorAll("[data-eva-ui-driver]").length || 0,
+        previewButtonCount: configPanel?.querySelectorAll(".eva-config-preview").length || 0,
       },
       layout: {
         overlay: overlayBox,
-        switcher: switcherBox,
         fillsViewport: Boolean(
           overlayBox &&
           Math.abs(overlayBox.x) <= 1 &&
@@ -236,17 +266,13 @@ export function buildVerifyExpression() {
       result.stylePresent === true &&
       result.overlayPresent === true &&
       result.overlayPointerEvents === "none" &&
-      result.switcher.present === true &&
-      (
-        result.switcher.hiddenForBrowserPanel === true ||
-        (
-          result.switcher.visible === true &&
-          result.switcher.pointerEvents === "auto" &&
-          result.switcher.insideViewport === true
-        )
-      ) &&
-      result.switcher.buttonCount === 2 &&
-      result.switcher.activeDriver === result.driver &&
+      result.settingsUi.buttonPresent === true &&
+      result.settingsUi.buttonVisible === true &&
+      result.settingsUi.buttonPointerEvents === "auto" &&
+      result.settingsUi.buttonInsideViewport === true &&
+      result.settingsUi.panelPresent === true &&
+      result.settingsUi.pilotButtonCount === 2 &&
+      result.settingsUi.previewButtonCount === 5 &&
       result.layout.fillsViewport === true &&
       (result.sidebar?.visible || result.main?.visible || result.settings?.visible) &&
       result.overflowX === false
@@ -489,6 +515,14 @@ export function buildBootSource({ driver, css, bootId }) {
     const storageKey = "eva-codex-skin-boot-launch";
     const runtimeKey = ${JSON.stringify(BOOT_RUNTIME_KEY)};
     const finishKey = ${JSON.stringify(BOOT_FINISH_KEY)};
+    const optionsKey = ${JSON.stringify(OPTIONS_STORAGE_KEY)};
+    let bootOptions = {};
+    try {
+      bootOptions = JSON.parse(localStorage.getItem(optionsKey) || "{}") || {};
+    } catch {}
+    if (bootOptions.boot === false) {
+      return { played: false, reason: "disabled" };
+    }
     if (window[runtimeKey]?.bootId === bootId) {
       return { played: false, reason: "already-installed" };
     }
@@ -642,7 +676,16 @@ export function buildDshBootSource({ driver, css, bootId, pack }) {
     const storageKey = "eva-codex-skin-boot-launch";
     const runtimeKey = ${JSON.stringify(BOOT_RUNTIME_KEY)};
     const finishKey = ${JSON.stringify(BOOT_FINISH_KEY)};
+    const resultKey = ${JSON.stringify(BOOT_RESULT_KEY)};
+    const optionsKey = ${JSON.stringify(OPTIONS_STORAGE_KEY)};
     const source = ${JSON.stringify(source)};
+    let bootOptions = {};
+    try {
+      bootOptions = JSON.parse(localStorage.getItem(optionsKey) || "{}") || {};
+    } catch {}
+    if (bootOptions.boot === false) {
+      return { played: false, reason: "disabled" };
+    }
     if (window[runtimeKey]?.bootId === bootId) {
       return { played: false, reason: "already-installed" };
     }
@@ -676,6 +719,7 @@ export function buildDshBootSource({ driver, css, bootId, pack }) {
     let cleanupTimer = null;
     let progressFrame = null;
     let syncStarted = 0;
+    let resultAnnounced = false;
     const timers = new Set();
     const later = (fn, ms) => {
       const timer = setTimeout(() => {
@@ -728,6 +772,19 @@ export function buildDshBootSource({ driver, css, bootId, pack }) {
       if (leaving) return;
       leaving = true;
       stopAudio();
+      if (!resultAnnounced) {
+        resultAnnounced = true;
+        const detail = {
+          bootId,
+          driver,
+          completed: Boolean(sequenceDone),
+          endedAt: Date.now(),
+        };
+        try { window[resultKey] = detail; } catch {}
+        try {
+          window.dispatchEvent(new CustomEvent("eva-skin-boot-finished", { detail }));
+        } catch {}
+      }
       boot.dataset.phase = "handoff";
       boot.classList.add("is-leaving");
       boot.style.pointerEvents = "none";
@@ -782,7 +839,7 @@ export function buildDshBootSource({ driver, css, bootId, pack }) {
       setPhase("sync");
       syncStarted = performance.now();
       const voice = boot.querySelector(".eva-dsh-voice");
-      if (voice) {
+      if (voice && bootOptions.bootVoice !== false) {
         voice.volume = 0.75;
         try { Promise.resolve(voice.play()).catch(() => {}); } catch {}
       }
@@ -861,6 +918,9 @@ export function buildInstallSource({
   marks = null,
   version = SKIN_VERSION,
   forceDriverToken = null,
+  media = {},
+  packVersion = null,
+  packCommit = null,
 }) {
   if (!isDriver(driver)) throw new Error(`Unknown EVA driver: ${String(driver)}`);
   if (
@@ -876,6 +936,7 @@ export function buildInstallSource({
     ? marks
     : { asuka: mark, rei: mark };
   return `(() => {
+    ${SKIN_UI_RUNTIME}
     const previous = window[${JSON.stringify(RUNTIME_KEY)}];
     if (previous?.cleanup) {
       try { previous.cleanup(); } catch {}
@@ -933,16 +994,10 @@ export function buildInstallSource({
       '<div class="eva-unit" aria-hidden="true">' + (initialDriver === "rei" ? "00" : "02") + '</div>',
       '<div class="eva-label" aria-hidden="true">' + (initialDriver === "rei" ? "EVA-00 // NEXUS LINK" : "EVA-02 // NEXUS LINK") + '</div>',
       '<div class="eva-mark" aria-hidden="true"></div>',
-      '<div class="eva-driver-switch" role="group" aria-label="EVA 驾驶员主题">',
-      '<span class="eva-driver-switch-label" aria-hidden="true">PILOT</span>',
-      '<button type="button" class="eva-driver-button" data-eva-driver="asuka" aria-label="切换到明日香主题（EVA-02）" aria-pressed="' + (initialDriver === "asuka") + '">',
-      '<span class="eva-driver-switch-unit">02</span><small>ASUKA</small></button>',
-      '<button type="button" class="eva-driver-button" data-eva-driver="rei" aria-label="切换到绫波丽主题（EVA-00）" aria-pressed="' + (initialDriver === "rei") + '">',
-      '<span class="eva-driver-switch-unit">00</span><small>REI</small></button>',
-      '</div>'
     ].join("");
     (document.body || root).appendChild(overlay);
     let runtime = null;
+    let ui = null;
     const applyDriver = (next, persist) => {
       if (!isDriver(next)) return false;
       root.dataset.evaSkin = next;
@@ -955,12 +1010,6 @@ export function buildInstallSource({
         label.textContent = next === "rei"
           ? "EVA-00 // NEXUS LINK"
           : "EVA-02 // NEXUS LINK";
-      }
-      for (const button of overlay.querySelectorAll("[data-eva-driver]")) {
-        button.setAttribute(
-          "aria-pressed",
-          String(button.dataset.evaDriver === next),
-        );
       }
       if (runtime) runtime.driver = next;
       if (persist) persistDriver(next);
@@ -984,6 +1033,8 @@ export function buildInstallSource({
       observer.observe(document.body, { childList: true });
     }
     const cleanup = () => {
+      try { ui?.cleanup?.(); } catch {}
+      ui = null;
       try { observer?.disconnect(); } catch {}
       observer = null;
       document.getElementById(${JSON.stringify(STYLE_ID)})?.remove();
@@ -1009,14 +1060,22 @@ export function buildInstallSource({
       cleanup,
     };
     window[${JSON.stringify(RUNTIME_KEY)}] = runtime;
-    for (const button of overlay.querySelectorAll("[data-eva-driver]")) {
-      button.addEventListener("click", (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        applyDriver(button.dataset.evaDriver, true);
-      });
-    }
     applyDriver(initialDriver, false);
+    try {
+      ui = installEvaSkinUi({
+        root,
+        overlay,
+        media: ${JSON.stringify(media || {})},
+        setDriver: (next) => applyDriver(next, true),
+        optionsKey: ${JSON.stringify(OPTIONS_STORAGE_KEY)},
+        welcomeConsumedKey: ${JSON.stringify(WELCOME_CONSUMED_KEY)},
+        bootResultKey: ${JSON.stringify(BOOT_RESULT_KEY)},
+        packVersion: ${JSON.stringify(packVersion)},
+        packCommit: ${JSON.stringify(packCommit)},
+      });
+    } catch (error) {
+      console.error("[eva-skin] settings UI failed", error);
+    }
     return { installed: true, driver: initialDriver, version };
   })()`;
 }
@@ -1117,6 +1176,12 @@ export function buildPayloadFromStrings({
   forceDriverToken = null,
 }) {
   const markSet = marks ?? { asuka: mark, rei: mark };
+  const media = {};
+  if (bootPack?.assets) {
+    for (const id of UI_MEDIA_IDS) {
+      if (typeof bootPack.assets[id] === "string") media[id] = bootPack.assets[id];
+    }
+  }
   const source = buildInstallSource({
     driver,
     css,
@@ -1125,6 +1190,9 @@ export function buildPayloadFromStrings({
     marks: markSet,
     version,
     forceDriverToken,
+    media,
+    packVersion: bootPack?.manifest?.sourceVersion || null,
+    packCommit: bootPack?.manifest?.sourceCommit || null,
   });
   const bootSource = bootId
     ? bootPack
@@ -1139,6 +1207,8 @@ export function buildPayloadFromStrings({
     .update("\0")
     .update(css)
     .update("\0")
+    .update(SKIN_UI_RUNTIME)
+    .update("\0")
     .update(linework)
     .update("\0")
     .update(JSON.stringify(markSet))
@@ -1150,6 +1220,8 @@ export function buildPayloadFromStrings({
     .update(bootId || "")
     .update("\0")
     .update(bootPack?.revision || "")
+    .update("\0")
+    .update(JSON.stringify(media))
     .digest("hex")
     .slice(0, 24);
   return {

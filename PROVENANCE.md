@@ -6,9 +6,9 @@
 
 此前“整个底座来源未知”的描述已被这条开发记录更新。这不是完整的 Git 历史或所有代码的独立相似性审计，不能把第三方组件和素材一起称为原创。
 
-`v0.3.2` 的推荐启动链：桌面 EVA Codex.lnk → wscript.exe → Start-EVA.vbs → codex-skin/Start-EVA.ps1 → 官方 Appx Codex（回环 CDP）→ codex-skin/injector.mjs → 官方 renderer 的单次启动层、CSS、摘要面板装饰层与驾驶员切换条。该链路不修改 WindowsApps、`app.asar`、签名、认证或 API 配置。
+`v0.4.0` 的推荐启动链：桌面 EVA Codex.lnk → wscript.exe → Start-EVA.vbs → codex-skin/Start-EVA.ps1 → 官方 Appx Codex（回环 CDP）→ codex-skin/injector.mjs → 官方 renderer 的单次启动层、CSS、摘要面板装饰层与 `表示設定`。该链路不修改 WindowsApps、`app.asar`、签名、认证或 API 配置。
 
-DSH 启动媒体由 `Import-DSH-Boot.ps1` 从用户本机的 `dsh-plugin-eva-theme` 仓库导入到 `%LOCALAPPDATA%\EVACodexSkin\dsh-boot`，导入时按 DSH `assets/manifest.json` 校验字节数和 SHA-256。公开仓库只包含导入器、自有 CSS 和说明，不包含 DSH 的 GIF、角色头像、语音或音乐。受控验证来源为 DSH commit `f8b96381ceda724c58e79ec375e0dfe08d244349`（v0.51.2）。
+DSH 启动媒体由 `Import-DSH-Boot.ps1` 从用户本机的 `dsh-plugin-eva-theme` 仓库导入到 `%LOCALAPPDATA%\EVACodexSkin\dsh-boot`，导入时按 DSH `assets/manifest.json` 校验字节数和 SHA-256。v0.4.0 的受控包包含 18 个素材、合计 5,170,918 字节。公开仓库只包含导入器、自有 CSS、设置/试听逻辑和说明，不包含 DSH 的 GIF、角色头像、立绘、语音、音效或音乐。受控验证来源为 DSH commit `f8b96381ceda724c58e79ec375e0dfe08d244349`（v0.51.2）。
 
 README 顶部 NERV 标志取自 DSH EVA Theme 的 `assets/svg/nerv-logo.svg`，本地副本 SHA-256 为 `C517C9BC95B38017912AD42F0D7CB0770A0ED15298A881BAF2AAE484185A18AC`。该图形只用于同人主题展示，不随项目代码的 MIT 许可重新授权。
 

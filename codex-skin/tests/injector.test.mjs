@@ -63,7 +63,7 @@ test("主题与 payload 版本稳定且可切换", () => {
   assert.equal(isDriver("asuka"), true);
   assert.equal(isDriver("rei"), true);
   assert.equal(isDriver("system"), false);
-  assert.equal(SKIN_VERSION, "0.3.2");
+  assert.equal(SKIN_VERSION, "0.4.0");
   const asuka = loadPayload("asuka");
   const rei = loadPayload("rei");
   assert.equal(asuka.driver, "asuka");
@@ -72,12 +72,24 @@ test("主题与 payload 版本稳定且可切换", () => {
   assert.match(asuka.source, /EVA-02 \/\/ NEXUS LINK/);
   assert.match(rei.source, /EVA-00 \/\/ NEXUS LINK/);
   assert.match(asuka.source, /pointer-events/);
-  assert.match(asuka.source, /eva-driver-switch/);
   assert.match(asuka.source, /eva-codex-skin-driver-v1/);
-  assert.match(asuka.source, /data-eva-driver="asuka"/);
-  assert.match(asuka.source, /data-eva-driver="rei"/);
+  assert.match(asuka.source, /dataset\.evaUiDriver = driver\.id/);
+  assert.match(asuka.source, /id: "asuka"/);
+  assert.match(asuka.source, /id: "rei"/);
   assert.match(asuka.source, /asuka-mark|data:image\/svg\+xml;base64/);
   assert.match(asuka.source, /eva-skin-driver-change/);
+  assert.match(asuka.source, /installEvaSkinUi/);
+  assert.match(asuka.source, /eva-codex-skin-options-v1/);
+  assert.match(asuka.source, /eva-config-panel/);
+  assert.match(asuka.source, /eva-portrait/);
+  assert.match(asuka.source, /approvalVoice: false/);
+  assert.match(asuka.source, /completeVoice: false/);
+  assert.match(asuka.source, /data-codex-approval-surface/);
+  assert.match(asuka.source, /data-local-conversation-final-assistant/);
+  assert.match(asuka.source, /isTaskRunning/);
+  assert.match(asuka.source, /scheduleCompletionCheck/);
+  assert.match(asuka.source, /seenApprovals/);
+  assert.match(asuka.source, /seenCompletions/);
   assert.match(asuka.source, /pending|排队消息操作/);
   const activeDriver = buildActiveDriverExpression();
   assert.match(activeDriver, /dataset\?\.evaSkin/);
@@ -117,6 +129,8 @@ test("首次启动动画只播放一次并可跳过", () => {
     "EVANGELION UNIT-02",
     "Escape",
     "localStorage",
+    "eva-codex-skin-options-v1",
+    "bootOptions.boot === false",
     "requestAnimationFrame",
   ]) {
     assert.ok(boot.includes(fragment), `missing boot contract: ${fragment}`);
@@ -157,6 +171,19 @@ test("DSH 启动包按清单校验并生成本地启动序列", () => {
     },
     asukaHead: { file: "assets/asuka.png", type: "image/png", data: Buffer.from("89504e470d0a1a0a", "hex") },
     reiHead: { file: "assets/rei.png", type: "image/png", data: Buffer.from("89504e470d0a1a0a", "hex") },
+    asukaVoice: { file: "assets/asuka-boot.mp3", type: "audio/mpeg", data: Buffer.from("ID3asuka") },
+    reiVoice: { file: "assets/rei-boot.mp3", type: "audio/mpeg", data: Buffer.from("ID3rei") },
+    asukaPortrait: { file: "assets/asuka-portrait.png", type: "image/png", data: Buffer.from("89504e470d0a1a0a", "hex") },
+    reiPortrait: { file: "assets/rei-portrait.png", type: "image/png", data: Buffer.from("89504e470d0a1a0a", "hex") },
+    asukaPickVoice: { file: "assets/asuka-pick.mp3", type: "audio/mpeg", data: Buffer.from("ID3pick-asuka") },
+    reiPickVoice: { file: "assets/rei-pick.mp3", type: "audio/mpeg", data: Buffer.from("ID3pick-rei") },
+    asukaWelcome: { file: "assets/asuka-welcome.mp3", type: "audio/mpeg", data: Buffer.from("ID3welcome-asuka") },
+    reiWelcome: { file: "assets/rei-welcome.mp3", type: "audio/mpeg", data: Buffer.from("ID3welcome-rei") },
+    asukaApproval: { file: "assets/asuka-approval.mp3", type: "audio/mpeg", data: Buffer.from("ID3approval-asuka") },
+    reiApproval: { file: "assets/rei-approval.mp3", type: "audio/mpeg", data: Buffer.from("ID3approval-rei") },
+    asukaComplete: { file: "assets/asuka-complete.mp3", type: "audio/mpeg", data: Buffer.from("ID3complete-asuka") },
+    reiComplete: { file: "assets/rei-complete.mp3", type: "audio/mpeg", data: Buffer.from("ID3complete-rei") },
+    typing: { file: "assets/typing.mp3", type: "audio/mpeg", data: Buffer.from("ID3typing") },
   };
   const assets = [];
   for (const [id, value] of Object.entries(contents)) {
@@ -181,6 +208,9 @@ test("DSH 启动包按清单校验并生成本地启动序列", () => {
   try {
     const pack = loadDshBootPack(packRoot);
     assert.equal(pack.assets.boot.startsWith("data:image/gif;base64,"), true);
+    assert.equal(Object.keys(pack.assets).length, 18);
+    assert.equal(pack.assets.asukaPortrait.startsWith("data:image/png;base64,"), true);
+    assert.equal(pack.assets.asukaPickVoice.startsWith("data:audio/mpeg;base64,"), true);
     assert.equal(pack.revision.length, 24);
     const payload = buildPayloadFromStrings({
       driver: "asuka",
@@ -193,6 +223,33 @@ test("DSH 启动包按清单校验并生成本地启动序列", () => {
     });
     assert.equal(payload.bootPack.sourceVersion, "9.9.9");
     for (const fragment of [
+      "eva-settings-button",
+      "eva-config-panel",
+      "eva-config-preview",
+      "eva-portrait",
+      "dataset.evaPortrait",
+      "eva-skin-boot-finished",
+      "eva-codex-skin-options-v1",
+      "onTypingInput",
+      "portraitStrength",
+      "approvalVoice",
+      "completeVoice",
+      "审核自动语音",
+      "完成自动语音",
+      "data-codex-approval-surface",
+      "data-local-conversation-final-assistant",
+      "isTaskRunning",
+      "scheduleCompletionCheck",
+      "0.03",
+      "0.28",
+      "asukaPickVoice",
+      "reiWelcome",
+    ]) {
+      assert.ok(payload.source.includes(fragment), `missing settings UI contract: ${fragment}`);
+    }
+    assert.match(payload.source, /data:image\/png;base64,/);
+    assert.match(payload.source, /data:audio\/mpeg;base64,/);
+    for (const fragment of [
       "eva-dsh-layer",
       "dataset.phase",
       "NERV",
@@ -200,6 +257,10 @@ test("DSH 启动包按清单校验并生成本地启动序列", () => {
       "DSH BOOT 9.9.9",
       "app-ready",
       "prefers-reduced-motion",
+      "eva-codex-skin-options-v1",
+      "bootOptions.boot === false",
+      "bootOptions.bootVoice !== false",
+      "eva-skin-boot-finished",
     ]) {
       assert.ok(payload.bootSource.includes(fragment), `missing DSH boot contract: ${fragment}`);
     }
@@ -219,12 +280,15 @@ test("安装脚本不会接管鼠标事件", () => {
   assert.match(source, /aria-hidden/);
   assert.match(source, /class="eva-scan"/);
   assert.match(source, /MutationObserver/);
-  assert.match(source, /class="eva-driver-switch"/);
+  assert.match(source, /settingsButton\.className = "eva-settings-button"/);
   assert.match(source, /aria-pressed/);
   assert.match(source, /setDriver/);
   const verify = buildVerifyExpression();
-  assert.match(verify, /hiddenForBrowserPanel/);
-  assert.match(verify, /browserPanel/);
+  assert.match(verify, /eva-settings-button/);
+  assert.match(verify, /eva-config-panel/);
+  assert.match(verify, /settingsUi/);
+  assert.match(verify, /pilotButtonCount/);
+  assert.match(verify, /previewButtonCount/);
 });
 
 test("启动器显式主题只覆盖一次，应用内选择继续持久化", () => {
@@ -281,11 +345,19 @@ test("皮肤 CSS 使用稳定选择器并禁用远程资源", () => {
     "section[role=\"presentation\"]::after",
     ".bg-composer-primary",
     "#eva-codex-skin-overlay",
-    "#eva-codex-skin-overlay .eva-driver-switch",
+    "#eva-codex-skin-overlay .eva-settings-button",
+    "#eva-codex-skin-overlay .eva-config-panel",
+    "#eva-codex-skin-overlay .eva-portrait",
+    "html[data-eva-portrait=\"off\"]",
+    "html[data-eva-portrait=\"on\"]",
+    ".eva-config-pilot",
+    ".eva-config-preview",
+    ".eva-config-range",
     "-webkit-app-region: no-drag",
     "pointer-events: auto !important",
     "html[data-eva-skin]:has([data-browser-sidebar-address-input])",
     "@media (max-width: 900px)",
+    "@media (max-width: 760px)",
     "pointer-events: none !important",
     "@media (prefers-reduced-motion: reduce)",
   ]) {
@@ -318,6 +390,20 @@ test("皮肤 CSS 使用稳定选择器并禁用远程资源", () => {
   assert.ok(!/url\(\s*https?:/i.test(dshBootCss));
 });
 
+test("内置浏览器打开时重新定位设置入口且不隐藏设置面板", () => {
+  const css = fs.readFileSync(path.join(root, "assets", "eva-skin.css"), "utf8");
+  assert.match(
+    css,
+    /html\[data-eva-skin\]:has\(\[data-browser-sidebar-address-input\]\)[\s\S]*?\.eva-settings-button\s*\{[\s\S]*?bottom:\s*64px;/i,
+  );
+  assert.ok(!css.includes(".eva-driver-switch"));
+  assert.doesNotMatch(css, /\.eva-config-panel\s*\{[^}]*display:\s*none/i);
+  assert.match(
+    css,
+    /#eva-codex-skin-overlay \.eva-config-panel\s*\{[\s\S]*?max-height:\s*min\(810px,\s*calc\(100vh - 20px\)\);/i,
+  );
+});
+
 test("主题资源不包含角色图片或远程引用", () => {
   for (const name of ["asuka-mark.svg", "rei-mark.svg", "linework.svg"]) {
     const svg = fs.readFileSync(path.join(root, "assets", name), "utf8");
@@ -337,6 +423,15 @@ test("选择器合同保留稳定锚点", () => {
   assert.equal(selectors.selectors.neutralSoftAction, "[class*=\"bg-background-neutral-soft-alpha\"]");
   assert.equal(selectors.selectors.userMessage, ".bg-user-message");
   assert.match(selectors.selectors.userMessageRichText, /rich-text-user-turn/);
+  assert.equal(
+    selectors.selectors.finalAssistantMessage,
+    "[data-local-conversation-final-assistant=\"true\"]",
+  );
+  assert.match(selectors.selectors.runStopButton, /aria-label="停止"/);
+  assert.equal(
+    selectors.selectors.approvalSurface,
+    "[data-codex-approval-surface=\"true\"]",
+  );
   assert.match(selectors.selectors.browserPanel, /right-panel/);
   assert.match(selectors.selectors.browserPanel, /data-browser-sidebar-address-input/);
   assert.equal(selectors.selectors.browserAddressInput, "[data-browser-sidebar-address-input]");

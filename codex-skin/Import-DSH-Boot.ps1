@@ -71,7 +71,7 @@ try {
   if ($LASTEXITCODE -ne 0) { $commit = $null }
 } catch {}
 
-$assetIds = @(
+$requiredAssetIds = @(
   'boot',
   'emergency',
   'entryPlug',
@@ -80,10 +80,30 @@ $assetIds = @(
   'asukaVoice',
   'reiVoice'
 )
+$optionalAssetIds = @(
+  'asukaPortrait',
+  'reiPortrait',
+  'asukaPickVoice',
+  'reiPickVoice',
+  'asukaWelcome',
+  'reiWelcome',
+  'asukaApproval',
+  'reiApproval',
+  'asukaComplete',
+  'reiComplete',
+  'typing'
+)
 $assets = @()
-foreach ($id in $assetIds) {
+foreach ($id in $requiredAssetIds) {
   $sourceEntry = $assetManifest.assets.$id
   if (-not $sourceEntry -or -not $sourceEntry.file) {
+    throw "DSH 资源清单缺少 $id。"
+  }
+}
+foreach ($id in $requiredAssetIds + $optionalAssetIds) {
+  $sourceEntry = $assetManifest.assets.$id
+  if (-not $sourceEntry -or -not $sourceEntry.file) {
+    if ($optionalAssetIds -contains $id) { continue }
     throw "DSH 资源清单缺少 $id。"
   }
   $relative = [string]$sourceEntry.file
@@ -144,6 +164,17 @@ $manifest = [ordered]@{
   sourceVersion = if ($package) { [string]$package.version } else { $null }
   importedAt = [DateTime]::UtcNow.ToString('o')
   redistribution = 'local-only; original DSH media license applies'
+  features = @(
+    'boot-sequence',
+    'boot-voice',
+    'driver-select-voice',
+    'welcome-voice',
+    'approval-voice',
+    'complete-voice',
+    'typing-sound',
+    'character-portrait',
+    'display-settings'
+  )
   assets = $assets | ForEach-Object {
     [ordered]@{
       id = $_.id

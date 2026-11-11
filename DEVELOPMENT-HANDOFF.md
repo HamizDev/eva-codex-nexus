@@ -1,4 +1,4 @@
-# EVA Codex Nexus · v0.3.2 开发交接
+# EVA Codex Nexus · v0.4.0 开发交接
 
 基线日期 2026-11-11。当前默认形态为**官方 Codex Desktop + EVA 皮肤**；旧的独立工作台保留为备用入口，不再作为默认启动方式。
 
@@ -9,11 +9,13 @@
 - 以 `--remote-debugging-address=127.0.0.1 --remote-debugging-port=9345 --user-data-dir=%LOCALAPPDATA%\EVACodexSkin\cdp-profile` 启动受控实例；
 - `codex-skin/injector.mjs` 只接受 `app://-/index.html`，拒绝 `avatar-overlay`、非回环 WebSocket 和非官方页面；
 - 启动器根据官方 Codex 主进程启动时间生成 `bootId`；若 `%LOCALAPPDATA%\EVACodexSkin\dsh-boot\manifest.json` 存在，注入器读取本地 DSH 启动包并注入 `assets/dsh-boot.css`，否则回退到 `assets/boot.css`；同一进程只显示一次，刷新和主题切换不重播；点击、`Esc`、`Space` 或 `prefers-reduced-motion` 可跳过；
-- `Import-DSH-Boot.ps1` 只从本机 DSH 仓库读取 7 个启动素材，按 DSH `assets/manifest.json` 校验字节数与 SHA-256；媒体不进入公开仓库；
+- `Import-DSH-Boot.ps1` 从本机 DSH 仓库读取 7 个必需和 11 个可选媒体（合计 18 个），按 DSH `assets/manifest.json` 校验字节数与 SHA-256；媒体不进入公开仓库；
 - 隐藏启动模式使用 `-GuiPrompt`，以 Windows 对话框处理重启确认和错误，避免不可见的 `Read-Host`。
 - CSS 与装饰层由 `Page.addScriptToEvaluateOnNewDocument` 和 `Page.loadEventFired` 维持，watcher 在页面重载和应用内 driver 切换时重新应用；
-- 应用内切换条直接更新 `html[data-eva-skin]`，写入 `localStorage`，并由 watcher 同步 `driver.txt`；`Start-EVA.cmd asuka|rei` 使用一次性 token 显式覆盖，不会覆盖之后的页面内选择；
-- 用户气泡通过 `--color-text-user-message` 和 `.rich-text-user-turn` 双层覆盖保证对比度；内置浏览器打开时只适配右侧 Codex 外壳，并对 `PILOT` 切换条自动收起，关闭浏览器后恢复；
+- `表示設定` 面板直接更新 `html[data-eva-skin]`，写入 `localStorage`，并由 watcher 同步 `driver.txt`；`Start-EVA.cmd asuka|rei` 使用一次性 token 显式覆盖，不会覆盖之后的页面内选择；
+- `skin-ui.js` 提供驾驶员选择、开机动画/启动语音/选择应答/欢迎语音/打字音开关、审核/完成自动提醒、五类语音试听、角色立绘与 3%–28% 背景强度；设置持久化到 `eva-codex-skin-options-v1`；自动提醒默认关闭；
+- 自动提醒通过 `MutationObserver` 观察官方 renderer 的审批卡、最终回复和“停止”按钮锚点；审批按文字/按钮哈希去重，完成语音只在真实运行过且出现新完成回复时播放，初始化时会把已有历史和审批标记为已见；
+- 用户气泡通过 `--color-text-user-message` 和 `.rich-text-user-turn` 双层覆盖保证对比度；内置浏览器打开时只适配右侧 Codex 外壳，并将 `設` 设置入口下移到不遮挡网页的位置；
 - 右上角摘要面板通过 `.group/summary-panel` 和稳定的 `thread-summary-panel-*` 数据槽位适配标题、分组线、文件行与缩略图，不改面板布局或文件操作逻辑；
 - `Restore-EVA.ps1` 清理启动层、样式、覆盖层、dataset 标记，并在校验 PID/命令行后停止注入器；
 - 不修改 WindowsApps、`app.asar`、签名、认证、Base URL、API Key 或 Codex 协议。
@@ -33,9 +35,10 @@
 
 ## 已验证与未验证
 
-- 已验证：`OpenAI.Codex 26.1106.6628.0` / Chromium `157.0.8103.51` 的受控第二实例上，DSH GIF、警报、插入栓、Asuka/Rei 头像、同步环与启动语音、刷新不重播、Esc 跳过、减少动态效果、自动清理均通过；桌面快捷方式的目标、参数、图标和工作目录已校验；当前正在使用的 Codex 未被强制关闭。
+- 已验证：`OpenAI.Codex 26.1106.6628.0` / Chromium `157.0.8103.51` 的受控实例上，DSH GIF、警报、插入栓、Asuka/Rei 头像、同步环与启动语音、刷新不重播、Esc 跳过、减少动态效果、自动清理均通过；18 个本地媒体导入与校验通过；设置面板、立绘、试听、驾驶员切换和浏览器入口已完成热注入验证；审核/完成自动语音状态机在隔离 DOM 样例中完成历史去重、单次审批、单次完成和音源区分验证；桌面快捷方式的目标、参数、图标和工作目录已校验；当前正在使用的 Codex 未被强制关闭。
 - 未验证：从“当前 Codex 正在运行且没有 CDP”到“关闭→Appx 激活→重开”的完整交互路径；需要在真实日常窗口上再跑一次。
 - 未验证：Store 自动更新到新 DOM 后的选择器兼容性。
+- 未验证：自动语音在真实 Codex 审批和任务完成事件上的实机播放；当前以官方 renderer DOM 锚点和隔离事件样例验证，默认关闭以避免误播。
 
 ## 后续优先级
 
@@ -43,4 +46,5 @@
 2. 为设置页、菜单、弹窗、代码块和审批面板补截图级回归。
 3. 增加可选的“暂停皮肤但不关闭 Codex”控制（当前恢复需要 `Restore-EVA.cmd` 或关闭窗口）。
 4. 为 Store 更新做选择器 doctor 和降级提示。
-5. 继续保留原工作台，不将官方皮肤的选择器假设反向写进旧工作台。
+5. 在用户方便时用一次真实审批与任务完成事件复核自动语音，不影响默认关闭策略。
+6. 继续保留原工作台，不将官方皮肤的选择器假设反向写进旧工作台。

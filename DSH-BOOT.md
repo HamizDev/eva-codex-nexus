@@ -26,12 +26,23 @@ Import-DSH-Boot.cmd "D:\path\to\dsh-plugin-eva-theme"
     rei-avatar-closed-eyes.png
     asuka-voice-boot.mp3
     rei-voice-boot.mp3
+    asuka-portrait-lineart.png
+    rei-portrait-lineart.png
+    asuka-voice-select.mp3
+    rei-voice-select.mp3
+    asuka-voice-welcome.mp3
+    rei-voice-welcome.mp3
+    asuka-voice-approval.mp3
+    rei-voice-approval.mp3
+    asuka-voice-complete.mp3
+    rei-voice-complete.mp3
+    nerv-ui-typing.mp3
 ```
 
 ## 导入时校验
 
 - 读取 DSH `assets/manifest.json`；
-- 只允许清单中的 7 个启动素材；
+- 读取清单中的 7 个必需素材和 11 个可选扩展素材；
 - 校验源文件字节数和 SHA-256；
 - 复制后再次校验目标文件 SHA-256；
 - 记录 DSH 版本、Git commit、来源路径和导入时间；
@@ -46,9 +57,20 @@ Import-DSH-Boot.cmd "D:\path\to\dsh-plugin-eva-theme"
 2. 播放 NERV 六边形紧急警报，约 3 秒；
 3. 显示插入栓、当前驾驶员头像和同步环；
 4. 播放当前驾驶员的 `voice-boot.mp3`，同步进度按其时长展示；
-5. 完成淡出并恢复官方 Codex 交互。
+5. 完成淡出、恢复官方 Codex 交互，并触发一次欢迎语音事件。
 
 `Esc`、`Space`、点击背景或“跳过 / ESC”按钮可立即跳过。启动指纹绑定一次官方 Codex 进程；刷新 renderer 不重播。系统启用“减少动态效果”时不显示启动层。
+
+## 表示設定与角色媒体
+
+导入扩展素材后，右侧 `設 / SETTINGS` 会打开仿 DSH 的 `表示設定`：
+
+- 直接切换 02 明日香 / 00 绫波丽，并持久化选择；
+- 单独开关开机动画、启动语音、选择应答、欢迎语音、输入打字音、审核自动语音和完成自动语音；
+- 试听启动、选择、欢迎、审核、完成五类驾驶员语音；
+- 开关角色立绘并调整 3%–28% 的背景强度。
+
+欢迎语音在本次启动动画完成并交接给 Codex 后播放一次。审核自动语音与完成自动语音默认关闭；开启后，前者在待审批出现时播放一次，后者在主任务从运行中转为完成时播放一次。初始化、刷新或打开旧会话时不会为历史审批和旧完成回复补播。
 
 ## 音频边界
 
@@ -61,6 +83,6 @@ Import-DSH-Boot.cmd "D:\path\to\dsh-plugin-eva-theme"
 - 仓库：`https://github.com/seaison/dsh-plugin-eva-theme`
 - commit：`f8b96381ceda724c58e79ec375e0dfe08d244349`
 - DSH 版本：`0.51.2`
-- 素材：7 个，合计 2,988,499 字节
+- 素材：18 个，合计 5,170,918 字节
 
-该快照的 GIF、角色头像、SVG 与语音在导入时全部通过 DSH 清单的字节数和 SHA-256 校验。
+该快照的 GIF、角色头像、角色立绘、SVG、五类语音与打字音在导入时全部通过 DSH 清单的字节数和 SHA-256 校验。旧的 7 文件本地包仍可加载，缺少的立绘、试听和打字音会自动禁用。

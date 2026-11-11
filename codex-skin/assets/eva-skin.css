@@ -821,6 +821,39 @@ html[data-eva-skin="rei"] #eva-codex-skin-overlay .eva-art {
   filter: hue-rotate(168deg);
 }
 
+#eva-codex-skin-overlay .eva-portrait {
+  position: absolute;
+  right: -3vw;
+  top: 9vh;
+  width: min(46vw, 620px);
+  height: 78vh;
+  pointer-events: none;
+  background: var(--eva-accent);
+  opacity: var(--eva-portrait-strength, 0.11);
+  filter: drop-shadow(0 0 22px var(--eva-selection));
+  mix-blend-mode: screen;
+  mask-image: var(--eva-portrait-image);
+  mask-position: right center;
+  mask-repeat: no-repeat;
+  mask-size: contain;
+  -webkit-mask-image: var(--eva-portrait-image);
+  -webkit-mask-position: right center;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+}
+
+html[data-eva-skin="rei"] #eva-codex-skin-overlay .eva-portrait {
+  mix-blend-mode: multiply;
+}
+
+html[data-eva-portrait="off"] #eva-codex-skin-overlay .eva-portrait {
+  display: none;
+}
+
+html[data-eva-portrait="on"] #eva-codex-skin-overlay .eva-art {
+  opacity: calc(var(--eva-art-opacity) * 0.28);
+}
+
 #eva-codex-skin-overlay .eva-unit {
   position: absolute;
   right: clamp(22px, 4vw, 62px);
@@ -852,20 +885,21 @@ html[data-eva-skin="rei"] #eva-codex-skin-overlay .eva-art {
   opacity: 0.32;
 }
 
-#eva-codex-skin-overlay .eva-driver-switch {
+#eva-codex-skin-overlay .eva-settings-button {
   position: absolute;
   z-index: 2;
   top: 50%;
   right: 6px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  align-items: center;
   width: 92px;
-  padding: 5px;
+  min-height: 38px;
+  padding: 6px 7px;
   transform: translateY(-50%);
   pointer-events: auto !important;
   -webkit-app-region: no-drag;
-  color: var(--eva-text);
+  color: var(--eva-muted);
   background:
     linear-gradient(135deg, color-mix(in srgb, var(--eva-panel) 94%, transparent), color-mix(in srgb, var(--eva-bg-soft) 88%, transparent));
   border: 1px solid var(--eva-border-strong);
@@ -874,45 +908,6 @@ html[data-eva-skin="rei"] #eva-codex-skin-overlay .eva-art {
     inset 0 1px 0 color-mix(in srgb, var(--eva-accent) 36%, transparent);
   backdrop-filter: blur(12px);
   clip-path: polygon(0 8px, 8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%);
-}
-
-#eva-codex-skin-overlay .eva-driver-switch:before {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 2px;
-  background: var(--eva-accent);
-  box-shadow: 0 0 10px var(--eva-accent);
-}
-
-html[data-eva-skin]:has([data-browser-sidebar-address-input])
-  #eva-codex-skin-overlay
-  .eva-driver-switch {
-  display: none !important;
-}
-
-#eva-codex-skin-overlay .eva-driver-switch-label {
-  padding: 0 4px 3px;
-  color: var(--eva-muted);
-  font: 700 7px/1 "Bahnschrift", "Segoe UI", sans-serif;
-  letter-spacing: 0.24em;
-  text-align: right;
-}
-
-#eva-codex-skin-overlay .eva-driver-button {
-  display: grid;
-  grid-template-columns: 24px minmax(0, 1fr);
-  align-items: center;
-  min-height: 29px;
-  padding: 4px 6px;
-  pointer-events: auto !important;
-  -webkit-app-region: no-drag;
-  color: var(--eva-text);
-  background: color-mix(in srgb, var(--eva-panel-raised) 74%, transparent);
-  border: 1px solid color-mix(in srgb, var(--eva-border) 82%, transparent);
-  border-radius: 1px;
   cursor: pointer;
   font-family: "Bahnschrift", "Segoe UI", sans-serif;
   text-align: left;
@@ -922,38 +917,375 @@ html[data-eva-skin]:has([data-browser-sidebar-address-input])
     border-color 140ms ease;
 }
 
-#eva-codex-skin-overlay .eva-driver-button:hover {
+#eva-codex-skin-overlay .eva-settings-button:before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 2px;
+  background: var(--eva-accent);
+  box-shadow: 0 0 10px var(--eva-accent);
+}
+
+#eva-codex-skin-overlay .eva-settings-button span {
+  color: var(--eva-accent);
+  font-size: 12px;
+  font-weight: 800;
+  text-align: center;
+}
+
+#eva-codex-skin-overlay .eva-settings-button small {
+  color: inherit;
+  font-size: 7px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-align: right;
+}
+
+#eva-codex-skin-overlay .eva-settings-button:hover,
+#eva-codex-skin-overlay .eva-settings-button[aria-expanded="true"] {
   color: var(--eva-text-strong);
-  background: color-mix(in srgb, var(--eva-accent) 14%, var(--eva-panel-raised));
+  background: color-mix(in srgb, var(--eva-accent) 13%, var(--eva-panel-raised));
   border-color: var(--eva-border-strong);
 }
 
-#eva-codex-skin-overlay .eva-driver-button[aria-pressed="true"] {
-  color: var(--eva-on-accent);
-  background: var(--eva-accent);
-  border-color: var(--eva-accent);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--eva-on-accent) 20%, transparent);
-}
-
-#eva-codex-skin-overlay .eva-driver-button:focus-visible {
+#eva-codex-skin-overlay .eva-settings-button:focus-visible {
   outline: 2px solid var(--eva-warn);
   outline-offset: 2px;
 }
 
-#eva-codex-skin-overlay .eva-driver-switch-unit {
-  color: inherit;
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0.03em;
+html[data-eva-skin]:has([data-browser-sidebar-address-input])
+  #eva-codex-skin-overlay
+  .eva-settings-button {
+    top: auto;
+    right: 8px;
+    bottom: 64px;
+    width: 78px;
+    transform: none;
 }
 
-#eva-codex-skin-overlay .eva-driver-button small {
+#eva-codex-skin-overlay .eva-config-panel {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  right: 108px;
+  display: flex;
+  width: min(342px, calc(100vw - 132px));
+  max-height: min(810px, calc(100vh - 20px));
+  flex-direction: column;
+  transform: translateY(-50%);
+  pointer-events: auto !important;
+  -webkit-app-region: no-drag;
+  color: var(--eva-text);
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--eva-panel) 96%, transparent), var(--eva-bg-soft));
+  border: 1px solid var(--eva-border-strong);
+  box-shadow:
+    0 22px 58px var(--eva-shadow),
+    inset 0 1px 0 color-mix(in srgb, var(--eva-accent) 38%, transparent);
+  backdrop-filter: blur(18px);
+  clip-path: polygon(0 10px, 10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
+}
+
+#eva-codex-skin-overlay .eva-config-panel[hidden] {
+  display: none !important;
+}
+
+#eva-codex-skin-overlay .eva-config-panel:before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 2px;
+  background: var(--eva-accent);
+  box-shadow: 0 0 12px var(--eva-accent);
+}
+
+#eva-codex-skin-overlay .eva-config-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 12px 10px 15px;
+  color: var(--eva-on-accent);
+  background: var(--eva-accent);
+  border-bottom: 1px solid var(--eva-border-strong);
+}
+
+#eva-codex-skin-overlay .eva-config-head div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
   min-width: 0;
+}
+
+#eva-codex-skin-overlay .eva-config-head b {
+  font: 800 14px/1 "Bahnschrift", "Microsoft YaHei UI", sans-serif;
+  letter-spacing: 0.04em;
+}
+
+#eva-codex-skin-overlay .eva-config-head small {
+  font: 600 7px/1 "Bahnschrift", "Segoe UI", sans-serif;
+  letter-spacing: 0.18em;
+  opacity: 0.8;
+}
+
+#eva-codex-skin-overlay .eva-config-close {
+  display: grid;
+  width: 25px;
+  height: 25px;
+  place-items: center;
+  pointer-events: auto;
   color: inherit;
-  font-size: 7px;
-  font-weight: 600;
+  background: transparent;
+  border: 1px solid currentColor;
+  cursor: pointer;
+  font: 500 17px/1 "Segoe UI", sans-serif;
+}
+
+#eva-codex-skin-overlay .eva-config-close:hover,
+#eva-codex-skin-overlay .eva-config-close:focus-visible {
+  color: var(--eva-accent);
+  background: var(--eva-on-accent);
+  outline: none;
+}
+
+#eva-codex-skin-overlay .eva-config-body {
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-color: var(--eva-border-strong) transparent;
+}
+
+#eva-codex-skin-overlay .eva-config-group {
+  padding: 6px 14px 4px 16px;
+  border-bottom: 1px solid color-mix(in srgb, var(--eva-border) 78%, transparent);
+}
+
+#eva-codex-skin-overlay .eva-config-group h2 {
+  margin: 0 0 7px;
+  color: var(--eva-accent);
+  font: 800 10px/1.2 "Bahnschrift", "Microsoft YaHei UI", sans-serif;
+  letter-spacing: 0.08em;
+}
+
+#eva-codex-skin-overlay .eva-config-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  border-top: 1px solid color-mix(in srgb, var(--eva-border) 44%, transparent);
+}
+
+#eva-codex-skin-overlay .eva-config-row:first-of-type {
+  border-top: 0;
+}
+
+#eva-codex-skin-overlay .eva-config-copy {
+  min-width: 0;
+}
+
+#eva-codex-skin-overlay .eva-config-copy b {
+  display: block;
+  color: var(--eva-text-strong);
+  font: 600 11px/1.3 "Microsoft YaHei UI", "Segoe UI", sans-serif;
+}
+
+#eva-codex-skin-overlay .eva-config-copy small {
+  display: block;
+  margin-top: 2px;
+  color: var(--eva-muted);
+  font: 400 9px/1.35 "Microsoft YaHei UI", "Segoe UI", sans-serif;
+}
+
+#eva-codex-skin-overlay .eva-config-switch {
+  min-width: 48px;
+  height: 23px;
+  pointer-events: auto;
+  color: var(--eva-muted);
+  background: var(--eva-bg-soft);
+  border: 1px solid var(--eva-border);
+  cursor: pointer;
+  font: 700 9px/1 "Microsoft YaHei UI", "Segoe UI", sans-serif;
+  letter-spacing: 0.06em;
+}
+
+#eva-codex-skin-overlay .eva-config-switch[aria-checked="true"] {
+  color: var(--eva-on-accent);
+  background: var(--eva-accent);
+  border-color: var(--eva-accent);
+}
+
+#eva-codex-skin-overlay .eva-config-switch:disabled,
+#eva-codex-skin-overlay .eva-config-preview:disabled,
+#eva-codex-skin-overlay .eva-config-range button:disabled {
+  cursor: not-allowed;
+  opacity: 0.36;
+}
+
+#eva-codex-skin-overlay .eva-config-switch:focus-visible,
+#eva-codex-skin-overlay .eva-config-preview:focus-visible,
+#eva-codex-skin-overlay .eva-config-range button:focus-visible,
+#eva-codex-skin-overlay .eva-config-pilot:focus-visible,
+#eva-codex-skin-overlay .eva-config-reset:focus-visible {
+  outline: 2px solid var(--eva-warn);
+  outline-offset: 2px;
+}
+
+#eva-codex-skin-overlay .eva-config-pilots {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  padding-bottom: 5px;
+}
+
+#eva-codex-skin-overlay .eva-config-pilot {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr);
+  align-items: center;
+  min-height: 47px;
+  padding: 5px 8px;
+  pointer-events: auto;
+  color: var(--eva-text);
+  background: color-mix(in srgb, var(--eva-panel-raised) 70%, transparent);
+  border: 1px solid var(--eva-border);
+  cursor: pointer;
+  text-align: left;
+}
+
+#eva-codex-skin-overlay .eva-config-pilot[aria-pressed="true"] {
+  color: var(--eva-on-accent);
+  background: var(--eva-accent);
+  border-color: var(--eva-accent);
+}
+
+#eva-codex-skin-overlay .eva-config-face {
+  width: 31px;
+  height: 35px;
+  background: currentColor;
+  mask: var(--eva-config-face) center / contain no-repeat;
+  -webkit-mask: var(--eva-config-face) center / contain no-repeat;
+}
+
+#eva-codex-skin-overlay .eva-config-pilot b {
+  display: block;
+  font: 800 17px/1 "Bahnschrift", "Segoe UI", sans-serif;
+}
+
+#eva-codex-skin-overlay .eva-config-pilot small {
+  display: block;
+  margin-top: 3px;
+  font: 600 7px/1 "Bahnschrift", "Segoe UI", sans-serif;
   letter-spacing: 0.14em;
-  text-align: right;
+}
+
+#eva-codex-skin-overlay .eva-config-value {
+  color: var(--eva-accent);
+  font: 700 10px/1 "Bahnschrift", "Segoe UI", sans-serif;
+}
+
+#eva-codex-skin-overlay .eva-config-range-row {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+#eva-codex-skin-overlay .eva-config-range {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 27px minmax(0, 1fr) 27px;
+  align-items: center;
+  gap: 7px;
+}
+
+#eva-codex-skin-overlay .eva-config-range button {
+  height: 23px;
+  padding: 0;
+  pointer-events: auto;
+  color: var(--eva-text);
+  background: var(--eva-panel-raised);
+  border: 1px solid var(--eva-border);
+  cursor: pointer;
+  font: 700 13px/1 "Segoe UI", sans-serif;
+}
+
+#eva-codex-skin-overlay .eva-config-range input {
+  width: 100%;
+  accent-color: var(--eva-accent);
+}
+
+#eva-codex-skin-overlay .eva-config-previews {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+  padding-bottom: 6px;
+}
+
+#eva-codex-skin-overlay .eva-config-preview {
+  min-height: 42px;
+  padding: 6px 7px;
+  pointer-events: auto;
+  color: var(--eva-text);
+  background: color-mix(in srgb, var(--eva-panel-raised) 66%, transparent);
+  border: 1px solid var(--eva-border);
+  cursor: pointer;
+  text-align: left;
+}
+
+#eva-codex-skin-overlay .eva-config-preview b {
+  display: block;
+  color: var(--eva-text-strong);
+  font: 600 10px/1.2 "Microsoft YaHei UI", "Segoe UI", sans-serif;
+}
+
+#eva-codex-skin-overlay .eva-config-preview small {
+  display: block;
+  margin-top: 3px;
+  color: var(--eva-muted);
+  font: 400 8px/1.25 "Microsoft YaHei UI", "Segoe UI", sans-serif;
+}
+
+#eva-codex-skin-overlay .eva-config-preview:hover {
+  border-color: var(--eva-border-strong);
+}
+
+#eva-codex-skin-overlay .eva-config-preview[aria-pressed="true"] {
+  color: var(--eva-on-accent);
+  background: var(--eva-accent);
+  border-color: var(--eva-accent);
+}
+
+#eva-codex-skin-overlay .eva-config-preview[aria-pressed="true"] :is(b, small) {
+  color: inherit;
+}
+
+#eva-codex-skin-overlay .eva-config-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 9px 12px 9px 15px;
+  border-top: 1px solid var(--eva-border);
+  background: color-mix(in srgb, var(--eva-bg-soft) 86%, transparent);
+}
+
+#eva-codex-skin-overlay .eva-config-pack {
+  overflow: hidden;
+  color: var(--eva-muted);
+  font: 600 7px/1 "Bahnschrift", "Segoe UI", sans-serif;
+  letter-spacing: 0.1em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#eva-codex-skin-overlay .eva-config-reset {
+  flex: 0 0 auto;
+  min-height: 25px;
+  padding: 4px 9px;
+  pointer-events: auto;
+  color: var(--eva-text);
+  background: var(--eva-panel-raised);
+  border: 1px solid var(--eva-border-strong);
+  cursor: pointer;
+  font: 600 9px/1 "Microsoft YaHei UI", "Segoe UI", sans-serif;
 }
 
 @keyframes eva-skin-scan {
@@ -966,7 +1298,7 @@ html[data-eva-skin]:has([data-browser-sidebar-address-input])
 }
 
 @media (prefers-reduced-motion: reduce) {
-  #eva-codex-skin-overlay .eva-driver-button {
+  #eva-codex-skin-overlay .eva-settings-button {
     transition: none;
   }
 
@@ -986,37 +1318,39 @@ html[data-eva-skin]:has([data-browser-sidebar-address-input])
 }
 
 @media (max-width: 900px) {
-  #eva-codex-skin-overlay .eva-driver-switch {
+  #eva-codex-skin-overlay .eva-settings-button {
     right: 5px;
     width: 72px;
+    min-height: 34px;
     padding: 4px;
+    grid-template-columns: 1fr;
+    text-align: center;
   }
 
-  #eva-codex-skin-overlay .eva-driver-switch-label,
-  #eva-codex-skin-overlay .eva-driver-button small {
+  #eva-codex-skin-overlay .eva-settings-button small {
     display: none;
   }
 
-  #eva-codex-skin-overlay .eva-driver-button {
-    grid-template-columns: 1fr;
-    min-height: 29px;
-    padding: 4px;
-    text-align: center;
+  #eva-codex-skin-overlay .eva-config-panel {
+    right: 84px;
+    width: min(308px, calc(100vw - 98px));
   }
 }
 
 @media (max-width: 760px) {
-  #eva-codex-skin-overlay .eva-driver-switch {
+  #eva-codex-skin-overlay .eva-settings-button {
     right: 4px;
     width: 60px;
   }
 
-  #eva-codex-skin-overlay .eva-driver-button {
-    min-height: 27px;
-  }
-
-  #eva-codex-skin-overlay .eva-driver-switch-unit {
-    font-size: 12px;
+  #eva-codex-skin-overlay .eva-config-panel {
+    top: auto;
+    right: 8px;
+    bottom: 8px;
+    left: 8px;
+    width: auto;
+    max-height: 74vh;
+    transform: none;
   }
 }
 
@@ -1025,6 +1359,12 @@ html[data-eva-skin]:has([data-browser-sidebar-address-input])
     right: -38vw;
     width: 120vw;
     opacity: calc(var(--eva-art-opacity) * 0.72);
+  }
+
+  #eva-codex-skin-overlay .eva-portrait {
+    right: -38vw;
+    width: 120vw;
+    opacity: calc(var(--eva-portrait-strength, 0.11) * 0.75);
   }
 
   #eva-codex-skin-overlay .eva-unit {

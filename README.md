@@ -9,17 +9,17 @@
 为**官方 Codex 桌面客户端**打造的 EVA 双角色皮肤，不是另做一个 Codex 工作台。<br />
 明日香的红与黑，绫波丽的白与蓝；侧栏、项目、会话、输入框、审批与快捷键仍保持 Codex 原生。
 
-[![Release](https://img.shields.io/badge/release-v0.3.2-b62026)](https://github.com/HamizDev/eva-codex-nexus/tree/v0.3.2) [![License](https://img.shields.io/badge/code-MIT-176b91)](LICENSE) [![Platform](https://img.shields.io/badge/platform-Windows-236c9d)](#环境要求)
+[![Release](https://img.shields.io/badge/release-v0.4.0-b62026)](https://github.com/HamizDev/eva-codex-nexus/tree/v0.4.0) [![License](https://img.shields.io/badge/code-MIT-176b91)](LICENSE) [![Platform](https://img.shields.io/badge/platform-Windows-236c9d)](#环境要求)
 
-[**下载最新版本**](https://github.com/HamizDev/eva-codex-nexus/archive/refs/tags/v0.3.2.zip) · [使用流程](#使用流程) · [启动动画](#dsh-启动动画) · [更新日志](CHANGELOG.md) · [问题反馈](https://github.com/HamizDev/eva-codex-nexus/issues)
+[**下载最新版本**](https://github.com/HamizDev/eva-codex-nexus/archive/refs/tags/v0.4.0.zip) · [使用流程](#使用流程) · [启动动画](#dsh-启动动画) · [更新日志](CHANGELOG.md) · [问题反馈](https://github.com/HamizDev/eva-codex-nexus/issues)
 
-`eva-codex-nexus` · 当前版本 **v0.3.2（开发预览）**
+`eva-codex-nexus` · 当前版本 **v0.4.0（开发预览）**
 
 </div>
 
 > 非官方项目，与 OpenAI、Studio Khara、Gainax 及相关权利方均无关联。
 
-从 v0.1.0 开始，默认入口启动的是**你电脑上已安装的官方 Codex**。侧栏、项目、会话、输入框、审批、菜单和快捷键仍然是 Codex 原生的，只额外叠加 EVA 的配色、线框和装饰层。v0.2.0 增加了无控制台启动、官方 Codex 图标的桌面快捷方式，以及可选的 DSH 启动动画本地资源包；v0.2.1 修复了 Windows PowerShell 5.1 下 CDP 目标列表误判、导致启动器拒绝注入的问题；v0.2.2 补齐了侧栏悬浮说明、改动汇总卡片、文件变更提示、用户气泡和发送按钮的面板配色；v0.3.0 增加应用内明日香/绫波丽切换、排队消息导轨适配，并完成真实窗口缩放验证；v0.3.1 修复用户消息气泡对比度，适配内置浏览器的标签、导航、地址栏、导入横幅和工具卡片，并在浏览器打开时自动收起驾驶员切换条；v0.3.2 适配右上角摘要面板的标题、分组线、文件行、缩略图和操作状态。现有独立工作台保留为备用入口，不再抢占默认启动方式。
+从 v0.1.0 开始，默认入口启动的是**你电脑上已安装的官方 Codex**。侧栏、项目、会话、输入框、审批、菜单和快捷键仍然是 Codex 原生的，只额外叠加 EVA 的配色、线框和装饰层。v0.2.0 增加了无控制台启动、官方 Codex 图标的桌面快捷方式，以及可选的 DSH 启动动画本地资源包；v0.2.1 修复了 Windows PowerShell 5.1 下 CDP 目标列表误判、导致启动器拒绝注入的问题；v0.2.2 补齐了侧栏悬浮说明、改动汇总卡片、文件变更提示、用户气泡和发送按钮的面板配色；v0.3.0 增加应用内明日香/绫波丽切换、排队消息导轨适配，并完成真实窗口缩放验证；v0.3.1 修复用户消息气泡对比度，适配内置浏览器的标签、导航、地址栏、导入横幅和工具卡片，并在浏览器打开时自动收起驾驶员切换条；v0.3.2 适配右上角摘要面板的标题、分组线、文件行、缩略图和操作状态；v0.4.0 把 DSH 的角色立绘、选择语音、欢迎语音、审核/完成提醒和打字音接入本地媒体包，新增两类自动提醒开关、`表示設定` 面板、立绘透明度、主题内切换与完整媒体开关。现有独立工作台保留为备用入口，不再抢占默认启动方式。
 
 ## 两种入口
 
@@ -29,7 +29,7 @@
 | `Start-EVA.cmd` | 兼容入口：通过隐藏的 `Start-EVA.vbs` 启动；命令行窗口只短暂出现 |
 | `Start-EVA.cmd rei` | 官方 Codex + 00 绫波丽皮肤 |
 | `Start-EVA.cmd asuka` | 官方 Codex + 02 明日香皮肤 |
-| 应用内右侧 `PILOT` 切换条 | 不重启 Codex，直接切换 02 明日香 / 00 绫波丽；选择会持久化 |
+| 应用内右侧 `設 / SETTINGS` | 打开 `表示設定`：切换 02 明日香 / 00 绫波丽、开关动画/语音/打字音与审核/完成自动提醒、试听五类语音、调整立绘透明度；选择会持久化 |
 | `Start-EVA-Rei.cmd` | 双击切换到 00 绫波丽皮肤 |
 | `Restore-EVA.cmd` | 移除当前皮肤，不关闭 Codex；官方文件不被修改 |
 | `Install-EVA-DesktopShortcut.cmd` | 重新创建桌面快捷方式；图标取自官方 Codex 客户端 |
@@ -40,17 +40,17 @@ Windows 的 `.cmd` 文件不能可靠地自定义图标。本项目的做法是�
 
 首次使用默认入口时，如果 Codex 已经打开，脚本会提示**重启一次**，因为当前窗口没有开启本地调试端口。重启后会继续使用官方 Codex 的账号和会话数据；本工具不读取、不修改 `auth.json`、API Key、Base URL 或模型配置。
 
-每次启动一个新的 Codex 进程时，会先播放一次启动层。导入 DSH 资源包后使用 `nerv-boot.gif → NERV 警报 → 插入栓/驾驶员同步` 序列，并播放当前驾驶员的本机启动语音，约 13.5 秒；没有资源包时回退到 v0.1.1 的抽象线框启动层。点击、`Esc` 或 `Space` 可跳过，刷新 renderer、切换主题或重新附加注入器不会重播；系统开启“减少动态效果”时直接跳过。
+每次启动一个新的 Codex 进程时，会先播放一次启动层。导入 DSH 资源包后使用 `nerv-boot.gif → NERV 警报 → 插入栓/驾驶员同步` 序列，并播放当前驾驶员的本机启动语音，约 13.5 秒；没有资源包时回退到 v0.1.1 的抽象线框启动层。点击、`Esc` 或 `Space` 可跳过，刷新 renderer、切换主题或重新附加注入器不会重播；系统开启“减少动态效果”时直接跳过。启动动画、启动语音、选择应答、欢迎语音和打字音都可在 `表示設定` 中单独关闭。审核自动语音与完成自动语音默认关闭；手动打开后，待审批出现时播放一次审核提醒，主任务从运行中转为完成时播放一次完成提醒，刷新页面、打开旧会话或浏览历史消息不会误播。
 
 ## DSH 启动动画
 
-仓库不会提交 DSH 的 GIF、角色头像、语音或音乐。需要 DSH 启动动画时，在本机已有 DSH 主题仓库的前提下运行：
+仓库不会提交 DSH 的 GIF、角色头像、立绘、语音或音乐。需要 DSH 启动动画与角色媒体时，在本机已有 DSH 主题仓库的前提下运行：
 
 ```powershell
 Import-DSH-Boot.cmd "D:\path\to\dsh-plugin-eva-theme"
 ```
 
-导入器会校验 DSH `assets/manifest.json` 中的字节数和 SHA-256，再把 7 个启动素材复制到 `%LOCALAPPDATA%\EVACodexSkin\dsh-boot`。注入器启动时自动读取该目录；校验失败时不会使用损坏或篡改的包。完整边界和目录结构见 [DSH-BOOT.md](DSH-BOOT.md)。
+导入器会校验 DSH `assets/manifest.json` 中的字节数和 SHA-256，再把 18 个本地素材（启动 GIF、警报/插入栓、两张头像、两张立绘、五类语音和打字音）复制到 `%LOCALAPPDATA%\EVACodexSkin\dsh-boot`，合计 5,170,918 字节。注入器启动时自动读取该目录；校验失败时不会使用损坏或篡改的包。完整边界和目录结构见 [DSH-BOOT.md](DSH-BOOT.md)。
 
 ## 使用流程
 
@@ -64,7 +64,7 @@ Import-DSH-Boot.cmd "D:\path\to\dsh-plugin-eva-theme"
 
 皮肤不是独立客户端，也不是网页套壳。它向官方 renderer 注入配色 CSS、常驻的 `pointer-events: none` 装饰层，以及启动时短暂显示的启动层；启动层结束后会完全释放输入。它不会替换 React 组件，不会修改 `app.asar`，不会改签名，也不会绕过登录或订阅配额。
 
-常驻装饰层本身仍为 `pointer-events: none`；右侧驾驶员切换条是唯一例外，只有两个按钮接收点击，并使用 `-webkit-app-region: no-drag`，不会拖拽或遮挡原生窗口控制。窗口移动或缩放后，覆盖层跟随当前视口重新铺满，切换条在窄窗口自动压缩为编号按钮。
+常驻装饰层本身仍为 `pointer-events: none`；右侧设置按钮和 `表示設定` 面板是唯一例外，只有这些控件接收点击，并使用 `-webkit-app-region: no-drag`，不会拖拽或遮挡原生窗口控制。窗口移动或缩放后，覆盖层跟随当前视口重新铺满；窄窗口下设置按钮压缩为 `設`，设置面板改为底部面板。
 
 ## 环境要求
 
@@ -81,9 +81,10 @@ Import-DSH-Boot.cmd "D:\path\to\dsh-plugin-eva-theme"
 3. 使用独立的 Chromium 配置目录 `%LOCALAPPDATA%\EVACodexSkin\cdp-profile`，避免污染官方默认配置；
 4. 只连接 URL 为 `app://-/index.html` 的页面，拒绝 `avatar-overlay` 宠物层和非回环 WebSocket；
 5. 从官方 Codex 主进程的启动时间生成一次性启动指纹；若本机存在已校验的 DSH 启动包，则注入 `assets/dsh-boot.css` 和 DSH 序列，否则注入抽象启动层；
-6. 注入 `codex-skin/assets/eva-skin.css` 和常驻抽象装饰层；
-7. 监视页面重载和应用内主题切换，自动重新应用，并把最后选择同步到本地状态；同一 Codex 进程不重播启动层；
-8. `Restore-EVA.cmd` 删除样式、启动层、装饰节点和注入器进程。
+6. 注入 `codex-skin/assets/eva-skin.css`、`skin-ui.js` 和常驻装饰层；
+7. 读取本地媒体包，提供驾驶员切换、立绘、设置面板、语音试听、开机欢迎语音和可选的审核/完成自动提醒；
+8. 监视页面重载、应用内主题切换及原生审批/运行状态，自动重新应用并做事件去重；同一 Codex 进程不重播启动层；
+9. `Restore-EVA.cmd` 删除样式、启动层、设置 UI、装饰节点和注入器进程。
 
 实现参考了现有 Codex 换肤项目的回环 CDP、目标校验、`Page.addScriptToEvaluateOnNewDocument` 和 watcher 架构；没有把它们的角色图片、音轨或主题素材打包进本仓库。选择器和适配边界记录在 `codex-skin/selectors.json`。
 
@@ -105,7 +106,11 @@ Import-DSH-Boot.cmd "D:\path\to\dsh-plugin-eva-theme"
 - 侧栏、主区、输入框、原生按钮仍可交互；
 - 皮肤层 `pointer-events: none`；
 - 应用内点击 `02 ASUKA` / `00 REI` 可即时换肤，`localStorage` 与 `driver.txt` 同步；
-- 真实窗口缩放到 `1000×700`、`760×600` 后，覆盖层仍与视口等大，切换器保持在窗口内且无横向溢出；
+- `表示設定` 面板在真实 renderer 中打开、关闭、切换驾驶员和持久化验证通过；1440×1000 下完整内容无需滚动，1280×830 下无横向溢出；
+- 内置浏览器打开时保留 `設` 设置入口，并把按钮下移到浏览器侧栏之外；
+- 本地媒体包包含 18 个素材，立绘、五类语音试听和输入打字音均能读取；
+- 审核/完成自动语音状态机在隔离 DOM 样例中通过：打开历史审批不误播，新审批只播一次，“运行中 → 新完成回复”只播一次，两类事件使用不同音源；
+- 真实窗口缩放到 `1000×700`、`760×600` 后，覆盖层仍与视口等大，设置按钮保持在窗口内且无横向溢出；
 - 真实排队消息导轨使用 EVA 面板色和强调线，测试消息已删除；
 - 文件变更胶囊为深色面板、EVA 边框与左侧强调线；
 - `--remove` 后样式、覆盖层和 dataset 标记均消失；
@@ -147,6 +152,7 @@ codex-skin/
     eva-skin.css         # 两套配色和装饰层
     boot.css             # 无 DSH 包时的抽象启动层
     dsh-boot.css         # DSH 风格启动层的自有 CSS
+    skin-ui.js           # 表示設定、立绘、媒体开关、试听与自动提醒
     asuka-mark.svg
     rei-mark.svg
     linework.svg
@@ -162,6 +168,7 @@ workbench/               # 旧独立工作台，保留
 - 皮肤不改变模型、账户、计费、配额或任务执行逻辑。
 - 公开仓库不包含 DSH 的角色图、GIF、语音或音乐；未导入本地 DSH 资源包时，启动层回退为抽象数字、线框和扫描动效。
 - DSH 启动包不导入 9.4 MB 背景音乐；其再分发条件和体积均与本项目启动器不同。启动语音只在本机资源包内使用。
+- 审核自动语音与完成自动语音默认关闭，需在 `表示設定` 中手动开启；它们依赖 Codex renderer 的当前 DOM 锚点，Store 更新后若状态标记消失会自动降级为不播放，而不会监听任意页面变化。
 
 ## 素材与许可
 

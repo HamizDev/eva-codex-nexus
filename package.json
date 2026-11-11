@@ -1,6 +1,6 @@
 {
   "name": "eva-codex-nexus",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
   "engines": {
@@ -8,7 +8,7 @@
   },
   "scripts": {
     "setup": "npm --prefix workbench ci",
-    "test": "node --test workbench/tests/*.test.cjs codex-skin/tests/*.test.mjs",
+    "test": "node --test --test-force-exit workbench/tests/*.test.cjs codex-skin/tests/*.test.mjs",
     "test:skin": "node --test codex-skin/tests/*.test.mjs",
     "manifest": "node scripts/generate-manifest.cjs",
     "verify": "node scripts/check-release.cjs",
