@@ -21,8 +21,13 @@
     "settingsPanel": "[data-settings-panel-slug], input[name=\"appearance-theme\"]",
     "overlayMenu": "[role=\"menu\"]",
     "overlayDialog": "[role=\"dialog\"]",
+    "tooltip": "[role=\"tooltip\"]",
     "overlayPopper": "[data-radix-popper-content-wrapper]",
-    "brandedSurface": "[data-testid=\"app-shell-header-context-menu-surface\"]"
+    "brandedSurface": "[data-testid=\"app-shell-header-context-menu-surface\"]",
+    "elevatedSurface": "[class*=\"bg-surface-elevated-secondary\"]",
+    "neutralSoftAction": "[class*=\"bg-background-neutral-soft-alpha\"]",
+    "userMessage": ".bg-user-message",
+    "composerPrimary": ".bg-composer-primary"
   },
   "excludedTargets": {
     "avatarOverlay": "app://-/index.html?initialRoute=/avatar-overlay"

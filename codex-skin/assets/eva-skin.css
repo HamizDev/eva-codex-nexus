@@ -262,6 +262,40 @@ html[data-eva-skin] .bg-background-composer-action-bar {
   background-color: var(--eva-panel) !important;
 }
 
+html[data-eva-skin] [class*="bg-surface-elevated-secondary"] {
+  background-color: color-mix(in srgb, var(--eva-panel-raised) 92%, transparent) !important;
+  border-color: var(--eva-border) !important;
+  color: var(--eva-text) !important;
+}
+
+html[data-eva-skin] [class*="bg-background-neutral-soft-alpha"] {
+  background-color: var(--eva-panel-raised) !important;
+  border-color: var(--eva-border-strong) !important;
+  color: var(--eva-text) !important;
+}
+
+html[data-eva-skin] [class*="bg-background-neutral-soft-alpha"]:hover {
+  background-color: color-mix(in srgb, var(--eva-accent) 16%, var(--eva-panel-raised)) !important;
+  border-color: var(--eva-accent) !important;
+}
+
+html[data-eva-skin] [role="tooltip"] {
+  border: 1px solid var(--eva-border-strong) !important;
+  box-shadow: 0 14px 34px var(--eva-shadow), inset 3px 0 0 var(--eva-accent) !important;
+}
+
+html[data-eva-skin] .bg-user-message {
+  background: color-mix(in srgb, var(--eva-panel-raised) 84%, var(--eva-accent-strong) 16%) !important;
+  border: 1px solid var(--eva-border-strong) !important;
+  color: var(--eva-text-strong) !important;
+  box-shadow: inset 3px 0 0 var(--eva-accent-strong) !important;
+}
+
+html[data-eva-skin] .bg-composer-primary {
+  background-color: var(--eva-accent) !important;
+  color: var(--eva-bg) !important;
+}
+
 html[data-eva-skin] :is(.text-default, .text-primary) {
   color: var(--eva-text) !important;
 }

@@ -61,7 +61,7 @@ test("主题与 payload 版本稳定且可切换", () => {
   assert.equal(isDriver("asuka"), true);
   assert.equal(isDriver("rei"), true);
   assert.equal(isDriver("system"), false);
-  assert.equal(SKIN_VERSION, "0.2.1");
+  assert.equal(SKIN_VERSION, "0.2.2");
   const asuka = loadPayload("asuka");
   const rei = loadPayload("rei");
   assert.equal(asuka.driver, "asuka");
@@ -217,6 +217,11 @@ test("皮肤 CSS 使用稳定选择器并禁用远程资源", () => {
     "html[data-eva-skin=\"rei\"]",
     "aside.app-shell-left-panel",
     "[class*=\"_ComposerLayoutRoot_\"]",
+    "[class*=\"bg-surface-elevated-secondary\"]",
+    "[class*=\"bg-background-neutral-soft-alpha\"]",
+    "[role=\"tooltip\"]",
+    ".bg-user-message",
+    ".bg-composer-primary",
     "#eva-codex-skin-overlay",
     "pointer-events: none !important",
     "@media (prefers-reduced-motion: reduce)",
@@ -264,6 +269,11 @@ test("选择器合同保留稳定锚点", () => {
   assert.equal(selectors.schema, "eva-codex-skin-selectors/1");
   assert.equal(selectors.selectors.sidebar, "aside.app-shell-left-panel");
   assert.equal(selectors.selectors.homeIcon, "[data-testid=\"home-icon\"]");
+  assert.equal(selectors.selectors.tooltip, "[role=\"tooltip\"]");
+  assert.equal(selectors.selectors.elevatedSurface, "[class*=\"bg-surface-elevated-secondary\"]");
+  assert.equal(selectors.selectors.neutralSoftAction, "[class*=\"bg-background-neutral-soft-alpha\"]");
+  assert.equal(selectors.selectors.userMessage, ".bg-user-message");
+  assert.equal(selectors.selectors.composerPrimary, ".bg-composer-primary");
   assert.match(selectors.selectors.shellMain, /_MainContentSurface_/);
   assert.match(selectors.selectors.composer, /_ComposerLayoutRoot_/);
   assert.equal(
