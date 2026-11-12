@@ -106,7 +106,7 @@ function Ensure-BundledTheme {
     throw "EVA 素材导入完成但缺少本机清单：$importedManifestPath"
   }
   $imported = Get-Content -LiteralPath $importedManifestPath -Raw -Encoding UTF8 | ConvertFrom-Json
-  $assetCount = @($imported.assets.PSObject.Properties).Count
+  $assetCount = @($imported.assets).Count
   if ($assetCount -lt 20) {
     throw "EVA 素材包不完整：导入后只有 $assetCount 个素材。"
   }

@@ -30,8 +30,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "bytes": 25236,
-      "sha256": "00d7313cb642977fd9906725f3283346ad147737be42f36cc4cb4e91cb9a0a8f"
+      "bytes": 25468,
+      "sha256": "8647371e2b41f4eda3e227ffcb06402441af08c493b9bdf6e3dc4b99961b80e4"
     },
     {
       "path": "CONTRIBUTING.md",
@@ -105,8 +105,8 @@
     },
     {
       "path": "codex-skin/Import-EVA-Theme.ps1",
-      "bytes": 8242,
-      "sha256": "8219db1aacc712a5f59eacacf82148dcfa533699c812c9d369973adf4b5fce2c"
+      "bytes": 9177,
+      "sha256": "2883ae47256c883b9de08eb4aa5aabd64c358d01ef254eb4fc4a029f66dc1c00"
     },
     {
       "path": "codex-skin/Restore-EVA.ps1",
@@ -115,8 +115,8 @@
     },
     {
       "path": "codex-skin/Start-EVA.ps1",
-      "bytes": 26555,
-      "sha256": "b4c823282c5ee2f4bd2324343feeab94e6ebe985c4e89bd7c67c273f5b4ff641"
+      "bytes": 26535,
+      "sha256": "7597c7066f2753303e2001d3ff7c9b55614a5a98b27c2ac2c6de5c255255ee31"
     },
     {
       "path": "codex-skin/assets/README.md",
@@ -185,8 +185,8 @@
     },
     {
       "path": "codex-skin/tests/launcher.test.mjs",
-      "bytes": 7058,
-      "sha256": "aed432d302dfa4ffc7cea71eb96684caa807ec1f31622a5c2e231e146dfd7815"
+      "bytes": 7151,
+      "sha256": "45d1c9303790f7d2a38f4c71b0b0bf03cba8560d76f8abe80c21861cfc624bce"
     },
     {
       "path": "eva-theme/LICENSE",

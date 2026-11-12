@@ -112,6 +112,7 @@ test("默认启动和桌面安装都会准备内置 EVA 素材包", () => {
     "BundledThemeRoot",
     "Ensure-BundledTheme",
     "Import-EVA-Theme.ps1",
+    "$assetCount = @($imported.assets).Count",
     "assetCount -lt 20",
   ]) {
     assert.ok(launcher.includes(fragment), `missing automatic theme import contract: ${fragment}`);
@@ -140,6 +141,8 @@ test("EVA 主题素材导入器只在本地复制并校验媒体", () => {
     "Get-FileHash",
     "sourceCommit",
     "sourceVersion",
+    "missingIds",
+    "existingFilesPresent",
     "PACK-NOTICE.txt",
     "no redistribution without written permission",
   ]) {

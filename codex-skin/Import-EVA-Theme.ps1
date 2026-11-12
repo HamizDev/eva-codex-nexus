@@ -153,7 +153,28 @@ if ((Test-Path -LiteralPath $Destination -PathType Container) -and -not $Force) 
   $existingManifest = Join-Path $Destination 'manifest.json'
   if (Test-Path -LiteralPath $existingManifest -PathType Leaf) {
     $existing = Get-Content -LiteralPath $existingManifest -Raw -Encoding UTF8 | ConvertFrom-Json
-    if ($existing.sourceCommit -eq $commit -and $commit) {
+    $existingIds = @()
+    $existingFilesPresent = $true
+    if ($existing.assets -is [Array]) {
+      $existingIds = @($existing.assets | ForEach-Object { [string]$_.id })
+      foreach ($existingAsset in $existing.assets) {
+        $relative = [string]$existingAsset.file
+        if (-not $relative -or
+          $relative -match '(^|[\\/])\.\.([\\/]|$)' -or
+          [IO.Path]::IsPathRooted($relative) -or
+          -not (Test-Path -LiteralPath (Join-Path $Destination $relative) -PathType Leaf)) {
+          $existingFilesPresent = $false
+          break
+        }
+      }
+    } elseif ($existing.assets) {
+      $existingIds = @($existing.assets.PSObject.Properties.Name)
+    }
+    $expectedIds = @($requiredAssetIds + $optionalAssetIds)
+    $missingIds = @($expectedIds | Where-Object { $_ -notin $existingIds })
+    if ($existing.sourceCommit -eq $commit -and $commit -and
+      $missingIds.Count -eq 0 -and $existingIds.Count -ge $expectedIds.Count -and
+      $existingFilesPresent) {
       Write-Host "启动素材已经是最新版本（$($commit.Substring(0, 8))）。"
       Write-Host "位置：$Destination"
       return
