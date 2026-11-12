@@ -1,0 +1,134 @@
+{
+  "schemaVersion": 1,
+  "package": "eva-theme-pack",
+  "sourceVersion": "0.51.2",
+  "sourceCommit": "f8b96381ceda724c58e79ec375e0dfe08d244349",
+  "license": "../MEDIA-LICENSE.md",
+  "notice": "../NOTICE.md",
+  "assets": {
+    "boot": {
+      "file": "animations/nerv-boot.gif",
+      "type": "image/gif",
+      "bytes": 267311,
+      "sha256": "32d689fa2a8bb2331f8adbaff13861750b87825f5bce040734db6dc7b9f2fa51"
+    },
+    "logo": {
+      "file": "svg/nerv-logo.svg",
+      "type": "image/svg+xml",
+      "bytes": 21120,
+      "sha256": "c517c9bc95b38017912ad42f0d7cb0770a0ed15298a881baf2aae484185a18ac"
+    },
+    "emergency": {
+      "file": "svg/nerv-emergency.svg",
+      "type": "image/svg+xml",
+      "inline": true,
+      "bytes": 3671,
+      "sha256": "276606bbac9dc3fcd083b158e5b0b9b01e397f88cf83a2418c9189dadac5e9d7"
+    },
+    "entryPlug": {
+      "file": "svg/eva-entry-plug.svg",
+      "type": "image/svg+xml",
+      "inline": true,
+      "bytes": 5867,
+      "sha256": "bdd1cb1628b5adb7779f6340cd440e4858996b085eceb89d25ceb5aea4e4a724"
+    },
+    "asukaPortrait": {
+      "file": "images/asuka-portrait-lineart.png",
+      "type": "image/png",
+      "bytes": 999030,
+      "sha256": "5487f9519bc1ed122bd0ad6274f7a7debd320d38cccfe9a2fa87eba8b7fd86dd"
+    },
+    "asukaHead": {
+      "file": "images/asuka-avatar-closed-eyes.png",
+      "type": "image/png",
+      "bytes": 1381146,
+      "sha256": "cda9acf24d32932c0f9827da65ea3fe5ac59bb94c28d3b9fe169adfd675e7999"
+    },
+    "asukaVoice": {
+      "file": "audio/asuka-voice-boot.mp3",
+      "type": "audio/mpeg",
+      "bytes": 107483,
+      "sha256": "8215dd8831b56e4d9a43278c269fafaf50aa29606b24d50ecec8ed05f8b1b7df",
+      "durationSeconds": 6.713469
+    },
+    "asukaPickVoice": {
+      "file": "audio/asuka-voice-select.mp3",
+      "type": "audio/mpeg",
+      "bytes": 28489,
+      "sha256": "39b91f1dd1c4ef91271f0d65538ee1d7a7c9608108970bfd242977c5c69b1c15"
+    },
+    "asukaApproval": {
+      "file": "audio/asuka-voice-approval.mp3",
+      "type": "audio/mpeg",
+      "bytes": 43535,
+      "sha256": "d968f4878857d35ca370bcb22054b476c6619722ee05d4b7b3a39ed353cba945"
+    },
+    "asukaComplete": {
+      "file": "audio/asuka-voice-complete.mp3",
+      "type": "audio/mpeg",
+      "bytes": 55238,
+      "sha256": "f88316c1519c2b4b9fc042777f3352e3f5249c62be8e83cd19fa47370a74ec91"
+    },
+    "reiPortrait": {
+      "file": "images/rei-portrait-lineart.png",
+      "type": "image/png",
+      "bytes": 811658,
+      "sha256": "1d22c5a345573e32c1aebc19eb7aeda5cebd8a5b57fc418fbfd9a7b7e39e5fd4"
+    },
+    "reiHead": {
+      "file": "images/rei-avatar-closed-eyes.png",
+      "type": "image/png",
+      "bytes": 1118046,
+      "sha256": "cfbf109cf82b881a33d87cccaea3268e40906ea4c1de33972443d6b2de699ff0"
+    },
+    "reiVoice": {
+      "file": "audio/rei-voice-boot.mp3",
+      "type": "audio/mpeg",
+      "bytes": 104975,
+      "sha256": "4a4aad865e71ddfa8b4eeec5c8936c4a2d7e434d548aa2fb31b7b0e415260f74",
+      "durationSeconds": 6.556735
+    },
+    "reiPickVoice": {
+      "file": "audio/rei-voice-select.mp3",
+      "type": "audio/mpeg",
+      "bytes": 20548,
+      "sha256": "ffe2e9857b36ee3bf0a83cb09c4767315ea5d3a58695d4ee0af3ab95c723cd52"
+    },
+    "reiApproval": {
+      "file": "audio/rei-voice-approval.mp3",
+      "type": "audio/mpeg",
+      "bytes": 51477,
+      "sha256": "6e7870f6bb1ddc1714b59f6f11318c4a0eff1179b29fe538d816182fbacd2d76"
+    },
+    "reiComplete": {
+      "file": "audio/rei-voice-complete.mp3",
+      "type": "audio/mpeg",
+      "bytes": 57746,
+      "sha256": "8762550e287c9e3a77e6ad5730f123075225def553eb3a305ab6594d6632992e"
+    },
+    "bootBgm": {
+      "file": "audio/nerv-boot-music.mp3",
+      "type": "audio/mpeg",
+      "bytes": 9394719,
+      "sha256": "bd145dc69e76f0406f161a907ae232b130bad1604ec624de4915fdc53ccf55b3"
+    },
+    "asukaWelcome": {
+      "file": "audio/asuka-voice-welcome.mp3",
+      "type": "audio/mpeg",
+      "bytes": 43535,
+      "sha256": "643309fadbc21b335dd329565bdfda0620b4a782aaf6c3eb8ba565bd1e47163c"
+    },
+    "reiWelcome": {
+      "file": "audio/rei-voice-welcome.mp3",
+      "type": "audio/mpeg",
+      "bytes": 53148,
+      "sha256": "eaa5ce90e76b2ff71f1ccc6a4b66c8b576192154970700648c824fdbcbbeeeed"
+    },
+    "typing": {
+      "file": "audio/nerv-ui-typing.mp3",
+      "type": "audio/mpeg",
+      "bytes": 18015,
+      "sha256": "2d940e2128c8eb7d49b0e98b1039846d714811c08e614957f10a5f32a9a3ab65"
+    }
+  }
+}

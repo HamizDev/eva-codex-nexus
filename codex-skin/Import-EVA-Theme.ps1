@@ -10,6 +10,7 @@ $StateRoot = Join-Path $env:LOCALAPPDATA 'EVACodexSkin'
 if (-not $Destination) { $Destination = Join-Path $StateRoot 'eva-theme' }
 $Destination = [IO.Path]::GetFullPath($Destination)
 $RepoRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
+$BundledThemeRoot = [IO.Path]::GetFullPath((Join-Path $RepoRoot 'eva-theme'))
 
 function Resolve-EvaThemeSource {
   param([string]$Requested)
@@ -18,14 +19,14 @@ function Resolve-EvaThemeSource {
     $candidates += $Requested
   } else {
     if ($env:EVA_THEME_SOURCE_ROOT) { $candidates += $env:EVA_THEME_SOURCE_ROOT }
+    $candidates += @(
+      (Join-Path $RepoRoot 'eva-theme')
+    )
     $researchRoot = Join-Path (Split-Path -Parent $RepoRoot) 'skin-research'
     if (Test-Path -LiteralPath $researchRoot -PathType Container) {
       $candidates += @(Get-ChildItem -LiteralPath $researchRoot -Directory -ErrorAction SilentlyContinue |
         ForEach-Object { $_.FullName })
     }
-    $candidates += @(
-      (Join-Path $RepoRoot 'eva-theme')
-    )
   }
   foreach ($candidate in $candidates) {
     if (-not $candidate) { continue }
@@ -55,7 +56,10 @@ function Test-PathWithinRoot {
 $source = Resolve-EvaThemeSource -Requested $SourceRoot
 $assetManifestPath = Join-Path $source 'assets\manifest.json'
 $noticePath = Join-Path $source 'NOTICE.md'
-$licensePath = Join-Path $source 'LICENSE'
+$licensePath = Join-Path $source 'MEDIA-LICENSE.md'
+if (-not (Test-Path -LiteralPath $licensePath -PathType Leaf)) {
+  $licensePath = Join-Path $source 'LICENSE'
+}
 $packagePath = Join-Path $source 'package.json'
 foreach ($required in @($assetManifestPath, $noticePath, $licensePath)) {
   if (-not (Test-Path -LiteralPath $required -PathType Leaf)) {
@@ -69,11 +73,16 @@ $package = if (Test-Path -LiteralPath $packagePath -PathType Leaf) {
 } else {
   $null
 }
-$commit = $null
-try {
-  $commit = (& git -C $source rev-parse HEAD 2>$null).Trim()
-  if ($LASTEXITCODE -ne 0) { $commit = $null }
-} catch {}
+$commit = if ($assetManifest.sourceCommit) {
+  [string]$assetManifest.sourceCommit
+} else {
+  $value = $null
+  try {
+    $value = (& git -C $source rev-parse HEAD 2>$null).Trim()
+    if ($LASTEXITCODE -ne 0) { $value = $null }
+  } catch {}
+  $value
+}
 
 $requiredAssetIds = @(
   'boot',
@@ -85,6 +94,7 @@ $requiredAssetIds = @(
   'reiVoice'
 )
 $optionalAssetIds = @(
+  'logo',
   'asukaPortrait',
   'reiPortrait',
   'asukaPickVoice',
@@ -95,7 +105,8 @@ $optionalAssetIds = @(
   'reiApproval',
   'asukaComplete',
   'reiComplete',
-  'typing'
+  'typing',
+  'bootBgm'
 )
 $assets = @()
 foreach ($id in $requiredAssetIds) {
@@ -163,13 +174,14 @@ foreach ($asset in $assets) {
 $manifest = [ordered]@{
   schemaVersion = 1
   package = 'eva-theme-pack'
-  sourceRepository = 'local-only'
+  sourceRepository = if ([string]::Equals($source, $BundledThemeRoot, [StringComparison]::OrdinalIgnoreCase)) { 'eva-codex-nexus/eva-theme' } else { 'local-only' }
   sourceCommit = $commit
-  sourceVersion = if ($package) { [string]$package.version } else { $null }
+  sourceVersion = if ($package) { [string]$package.version } elseif ($assetManifest.sourceVersion) { [string]$assetManifest.sourceVersion } else { $null }
   importedAt = [DateTime]::UtcNow.ToString('o')
-  redistribution = 'local-only; original media terms apply'
+  redistribution = 'local-only; see MEDIA-LICENSE.md; no redistribution without written permission'
   features = @(
     'boot-sequence',
+    'boot-bgm',
     'boot-voice',
     'driver-select-voice',
     'welcome-voice',
@@ -203,9 +215,10 @@ Move-Item -LiteralPath $temporary -Destination $manifestPath -Force
 $notice = @(
   'EVA Codex theme media',
   '',
-  'This directory contains media copied from a local source theme directory',
-  'solely for use on this computer. The files are not part of the',
-  'EVA Codex public repository and must not be redistributed with it.',
+  'This directory contains media imported for use on this computer.',
+  'The source media is subject to eva-theme/MEDIA-LICENSE.md.',
+  'Do not copy, mirror, publish, or redistribute it without prior',
+  'written permission from HamizDev.',
   '',
   "Source: $source",
   "Commit: $commit",

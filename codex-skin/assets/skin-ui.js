@@ -183,7 +183,7 @@ function installEvaSkinUi(config) {
       portraitStrength: "背景強度",
       portraitStrengthHint: "線稿背景透明度",
       tps: "輸出速度 HUD",
-      tpsHint: "依串流回覆文字估算 token，顯示即時、峰值與平均速度",
+      tpsHint: "依串流回覆文字估算 token，以平滑視窗顯示即時、峰值與平均速度",
       previewBoot: "啟動語音",
       previewBootHint: "同步階段播放",
       previewPick: "選擇應答",
@@ -205,7 +205,7 @@ function installEvaSkinUi(config) {
       increase: "增大{label}",
       packUnavailable: "EVA 主題素材未匯入",
       tpsAria: "估算輸出速度",
-      tpsTitle: "估算值：依串流回覆文字長度計算",
+      tpsTitle: "估算值：依 2.4 秒滑動視窗內的文字增量換算",
     },
     "zh-Hans": {
       panelTitle: "显示设置",
@@ -238,7 +238,7 @@ function installEvaSkinUi(config) {
       portraitStrength: "背景强度",
       portraitStrengthHint: "线稿背景透明度",
       tps: "输出速度 HUD",
-      tpsHint: "根据流式回复文字估算 token，显示即时、峰值与平均速度",
+      tpsHint: "根据流式回复文字估算 token，以平滑窗口显示即时、峰值与平均速度",
       previewBoot: "启动语音",
       previewBootHint: "同步阶段播放",
       previewPick: "选择应答",
@@ -260,7 +260,7 @@ function installEvaSkinUi(config) {
       increase: "增大{label}",
       packUnavailable: "EVA 主题素材未导入",
       tpsAria: "估算输出速度",
-      tpsTitle: "估算值：根据流式回复文字长度计算",
+      tpsTitle: "估算值：根据 2.4 秒滑动窗口内的文字增量换算",
     },
     ja: {
       panelTitle: "表示設定",
@@ -293,7 +293,7 @@ function installEvaSkinUi(config) {
       portraitStrength: "背景強度",
       portraitStrengthHint: "線画背景の透明度",
       tps: "出力速度 HUD",
-      tpsHint: "ストリーミング本文から token を推定し、現在・ピーク・平均速度を表示",
+      tpsHint: "ストリーミング本文から token を推定し、平滑化した現在・ピーク・平均速度を表示",
       previewBoot: "起動ボイス",
       previewBootHint: "シンク段階で再生",
       previewPick: "選択応答",
@@ -315,7 +315,7 @@ function installEvaSkinUi(config) {
       increase: "{label}を上げる",
       packUnavailable: "EVA テーマ素材が未インポートです",
       tpsAria: "推定出力速度",
-      tpsTitle: "推定値：ストリーミング本文の長さから計算",
+      tpsTitle: "推定値：2.4 秒の移動窓内の文字増分から換算",
     },
     en: {
       panelTitle: "DISPLAY CONFIG",
@@ -348,7 +348,7 @@ function installEvaSkinUi(config) {
       portraitStrength: "Background strength",
       portraitStrengthHint: "Line-art background opacity",
       tps: "Output speed HUD",
-      tpsHint: "Estimate tokens from streamed reply text; show current, peak, and average speed",
+      tpsHint: "Estimate tokens from streamed reply text with a smoothed rate window",
       previewBoot: "Startup voice",
       previewBootHint: "Play during sync",
       previewPick: "Select response",
@@ -370,7 +370,7 @@ function installEvaSkinUi(config) {
       increase: "Increase {label}",
       packUnavailable: "EVA theme assets not imported",
       tpsAria: "Estimated output speed",
-      tpsTitle: "EST: calculated from streamed reply text length",
+      tpsTitle: "EST: calculated from text growth in a 2.4-second sliding window",
     },
   });
   const t = (key, values = null) => {
@@ -821,6 +821,16 @@ function installEvaSkinUi(config) {
     }
   }
 
+  const TPS_WINDOW_MS = 2400;
+  const TPS_SAMPLE_MS = 320;
+  const TPS_TOKEN_WEIGHTS = Object.freeze({
+    han: 0.78,
+    kana: 0.82,
+    hangul: 1.12,
+    symbol: 1.2,
+    punctuation: 0.58,
+  });
+
   const tpsState = {
     timer: null,
     turnKey: null,
@@ -829,17 +839,29 @@ function installEvaSkinUi(config) {
     current: 0,
     peak: 0,
     total: 0,
-    sampleStart: 0,
+    turnStartAt: 0,
     lastChangeAt: 0,
+    lastSampleAt: 0,
+    history: [],
     samples: [],
   };
 
   function estimateTokens(text) {
     const source = String(text || "");
     if (!source) return 0;
-    const cjk = source.match(/[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/gu);
-    const cjkCount = cjk ? cjk.length : 0;
-    return cjkCount + Math.max(0, source.length - cjkCount) / 4;
+    const segments = source.match(
+      /\p{Script=Han}|\p{Script=Hiragana}|\p{Script=Katakana}|\p{Script=Hangul}|\p{Extended_Pictographic}|[A-Za-z0-9_]+|[^\s]/gu,
+    ) || [];
+    let tokens = 0;
+    for (const segment of segments) {
+      if (/^\p{Script=Han}$/u.test(segment)) tokens += TPS_TOKEN_WEIGHTS.han;
+      else if (/^[\p{Script=Hiragana}\p{Script=Katakana}]$/u.test(segment)) tokens += TPS_TOKEN_WEIGHTS.kana;
+      else if (/^\p{Script=Hangul}$/u.test(segment)) tokens += TPS_TOKEN_WEIGHTS.hangul;
+      else if (/^\p{Extended_Pictographic}$/u.test(segment)) tokens += TPS_TOKEN_WEIGHTS.symbol;
+      else if (/^[A-Za-z0-9_]+$/.test(segment)) tokens += Math.max(0.35, segment.length * 0.25);
+      else tokens += TPS_TOKEN_WEIGHTS.punctuation;
+    }
+    return Math.max(1, tokens);
   }
 
   function tpsSnapshot() {
@@ -864,9 +886,21 @@ function installEvaSkinUi(config) {
     tpsState.current = 0;
     tpsState.peak = 0;
     tpsState.total = 0;
-    tpsState.sampleStart = 0;
+    tpsState.turnStartAt = 0;
     tpsState.lastChangeAt = 0;
+    tpsState.lastSampleAt = now;
+    tpsState.history = [{ at: now, tokens }];
     tpsState.samples = [];
+  }
+
+  function sampleWindowRate(now, tokens) {
+    const history = tpsState.history;
+    history.push({ at: now, tokens });
+    while (history.length > 1 && now - history[1].at >= TPS_WINDOW_MS) history.shift();
+    const base = history[0];
+    const span = Math.max(0, (now - base.at) / 1000);
+    if (span < 0.45 || tokens <= base.tokens) return 0;
+    return (tokens - base.tokens) / span;
   }
 
   function drawTps() {
@@ -909,6 +943,10 @@ function installEvaSkinUi(config) {
     if (disposed || !options.tps || document.visibilityState === "hidden") return;
     const now = performance.now();
     const running = isTaskRunning();
+    if (tpsState.lastSampleAt && now - tpsState.lastSampleAt > TPS_WINDOW_MS * 2) {
+      resetTps(tpsState.lastTokens, now);
+    }
+    tpsState.lastSampleAt = now;
     if (!running && tpsHud.hidden && now - tpsState.lastChangeAt > 2400) return;
     const snapshot = tpsSnapshot();
     if (!snapshot) {
@@ -922,21 +960,18 @@ function installEvaSkinUi(config) {
       hideTps();
     }
 
-    const delta = Math.max(0, snapshot.tokens - tpsState.lastTokens);
-    const elapsed = Math.max(0, (now - tpsState.lastAt) / 1000);
-    let instant = 0;
-    if (delta >= 0.5 && elapsed >= 0.12) {
-      instant = delta / elapsed;
-      tpsState.current = tpsState.current > 0
-        ? tpsState.current * 0.45 + instant * 0.55
-        : instant;
-      tpsState.peak = Math.max(tpsState.peak, instant);
+    const previousTokens = tpsState.lastTokens;
+    const delta = Math.max(0, snapshot.tokens - previousTokens);
+    const windowRate = sampleWindowRate(now, snapshot.tokens);
+    if (delta > 0.01) {
+      if (!tpsState.turnStartAt) {
+        tpsState.turnStartAt = tpsState.lastAt || now;
+      }
       tpsState.total += delta;
-      if (!tpsState.sampleStart) tpsState.sampleStart = now - elapsed * 1000;
       tpsState.lastChangeAt = now;
-    } else if (now - tpsState.lastChangeAt > 1200) {
-      tpsState.current = 0;
     }
+    tpsState.current = now - tpsState.lastChangeAt < 1200 ? windowRate : 0;
+    tpsState.peak = Math.max(tpsState.peak, tpsState.current);
 
     tpsState.lastTokens = snapshot.tokens;
     tpsState.lastAt = now;
@@ -945,11 +980,18 @@ function installEvaSkinUi(config) {
       if (now - tpsState.lastChangeAt > 2400) hideTps();
       return;
     }
+    if (tpsState.total <= 0 && tpsState.current <= 0) {
+      hideTps();
+      return;
+    }
 
-    tpsState.samples.push(instant);
+    tpsState.samples.push(tpsState.current);
     if (tpsState.samples.length > 30) tpsState.samples.shift();
-    const average = tpsState.sampleStart && tpsState.lastChangeAt > tpsState.sampleStart
-      ? tpsState.total / ((tpsState.lastChangeAt - tpsState.sampleStart) / 1000)
+    const activeSeconds = tpsState.turnStartAt && tpsState.lastChangeAt > tpsState.turnStartAt
+      ? (tpsState.lastChangeAt - tpsState.turnStartAt) / 1000
+      : 0;
+    const average = activeSeconds >= 0.45
+      ? tpsState.total / activeSeconds
       : tpsState.current;
     tpsValue.textContent = String(Math.max(0, Math.round(tpsState.current)));
     tpsPeak.textContent = String(Math.max(0, Math.round(tpsState.peak)));
@@ -963,7 +1005,7 @@ function installEvaSkinUi(config) {
     const snapshot = tpsSnapshot();
     resetTps(snapshot?.tokens || 0, now);
     if (snapshot?.key) tpsState.turnKey = snapshot.key;
-    tpsState.timer = setInterval(sampleTps, 400);
+    tpsState.timer = setInterval(sampleTps, TPS_SAMPLE_MS);
   }
 
   function stopTps() {

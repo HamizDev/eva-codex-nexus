@@ -2,7 +2,7 @@
 
 - [x] 当前发行形态为官方 Codex Desktop + `codex-skin/` 换肤层；
 - [x] 仓库不包含旧独立工作台、`codex app-server` bridge、Workbench 启动入口或终端/Git/插件面板；
-- [x] 仓库不包含角色 GIF、头像、立绘、语音、打字音或音乐；
+- [x] 角色 GIF、头像、立绘、语音、打字音和音乐只位于 `eva-theme/assets`，受独立媒体许可约束并保留校验清单；
 - [x] 根 `package.json` 与 `codex-skin/injector.mjs` 版本一致；
 - [x] `npm test`、`npm run manifest`、`npm run verify:public` 通过；
 - [x] `MANIFEST.json` 与当前源码逐文件 SHA-256 一致；
@@ -18,4 +18,4 @@ npm run manifest
 npm run verify:public
 ```
 
-不得上传 `%LOCALAPPDATA%\EVACodexSkin`、CDP 配置、登录凭据、`node_modules/`、运行日志、未获明确再分发许可的角色素材、语音或音乐。
+不得上传 `%LOCALAPPDATA%\EVACodexSkin`、CDP 配置、登录凭据、`node_modules/`、运行日志，或 `eva-theme/assets` 之外未获明确再分发许可的角色素材、语音和音乐。`eva-theme/assets` 只能按 `eva-theme/MEDIA-LICENSE.md` 维护，禁止未经授权再发布。

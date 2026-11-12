@@ -13,10 +13,10 @@
 
 ## 外部来源
 
-- **本地 EVA 主题素材**：GIF、警报/插入栓、头像、角色线稿、语音和打字音不进入公开仓库，只通过 `Import-EVA-Theme.ps1` 从用户本机的素材目录校验并复制到 `%LOCALAPPDATA%\EVACodexSkin\eva-theme`。
+- **EVA 主题素材包**：`eva-theme/assets` 包含 GIF、警报/插入栓、头像、角色线稿、语音、打字音和启动 BGM；源包随仓库维护，但运行时只通过 `Import-EVA-Theme.ps1` 校验并复制到 `%LOCALAPPDATA%\EVACodexSkin\eva-theme`。素材受 `eva-theme/MEDIA-LICENSE.md` 的独立限制性许可约束，不适用代码 MIT。
 - **NERV 顶部标志**：仅用于同人主题展示；项目 MIT 不覆盖 EVA/NERV 图形、商标或角色权利。
 - **官方 Codex**：由使用者自行安装。本项目不修改 `WindowsApps`、`app.asar`、签名、账号令牌、代理、Base URL 或模型配置。
 
 ## 媒体边界
 
-MIT 只覆盖本项目代码，不覆盖 EVA 角色形象、名称、音乐、语音、动画或 NERV/EVA 商标。导入本地媒体不等于获得公开再分发权；公开版本仍只提供导入器、自有 CSS 和说明。详细素材边界见 `ASSETS.md`、`ASSET-TODO.md` 与 `EVA-THEME.md`。
+MIT 只覆盖本项目代码，不覆盖 `eva-theme/assets` 中的媒体、EVA 角色形象、名称、音乐、语音、动画或 NERV/EVA 商标。仓库保留媒体源包不等于授予公开再发布权；未经书面授权不得镜像、再发布或放入其他仓库、Release、安装包或产品。详细边界见 `ASSETS.md`、`ASSET-TODO.md`、`EVA-THEME.md` 和 `eva-theme/MEDIA-LICENSE.md`。

@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice" fill="none">
+  <title>NERV EMERGENCY</title>
+  <defs>
+    <path id="eva-alert-hex" d="M-120 0-60-104H60L120 0 60 104H-60Z"/>
+    <g id="eva-alert-tile">
+      <use href="#eva-alert-hex" fill="#ef060c" stroke="#df0308" stroke-width="5"/>
+      <path d="M0-66-22-30H22ZM-22 29H22L0 65Z" fill="#030101"/>
+      <text x="0" y="9" fill="#030101" font-family="Arial,Helvetica,sans-serif" font-size="26" font-weight="800" text-anchor="middle" textLength="195" lengthAdjust="spacingAndGlyphs">EMERGENCY</text>
+    </g>
+    <pattern id="eva-alert-scan" width="4" height="4" patternUnits="userSpaceOnUse">
+      <path d="M0 .5H4" stroke="#000" stroke-opacity=".24"/>
+      <path d="M.5 0V4" stroke="#260000" stroke-opacity=".08"/>
+    </pattern>
+    <filter id="eva-alert-grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".72" numOctaves="3" seed="19"/>
+      <feColorMatrix type="saturate" values="0"/>
+    </filter>
+  </defs>
+  <path fill="#000" d="M0 0H1000V1000H0Z"/>
+  <g class="eva-alert-honeycomb" stroke-linejoin="miter">
+    <g class="eva-alert-cell" style="--alert-lag:-.16s"><use href="#eva-alert-tile" transform="translate(363 173)"/></g>
+    <g class="eva-alert-cell" style="--alert-lag:-.74s" opacity=".78"><use href="#eva-alert-tile" transform="translate(565 67)"/></g>
+    <g class="eva-alert-cell" style="--alert-lag:-.42s"><use href="#eva-alert-tile" transform="translate(565 280)"/></g>
+    <g class="eva-alert-cell" style="--alert-lag:-.95s"><use href="#eva-alert-tile" transform="translate(767 174)"/></g>
+    <g class="eva-alert-cell" style="--alert-lag:-.32s" opacity=".28"><use href="#eva-alert-tile" transform="translate(767 -38)"/></g>
+    <use href="#eva-alert-hex" transform="translate(969 67)" stroke="#df0308" stroke-width="7"/>
+    <use href="#eva-alert-hex" transform="translate(-49 793)" stroke="#df0308" stroke-width="7"/>
+    <g class="eva-alert-cell" style="--alert-lag:-.64s"><use href="#eva-alert-tile" transform="translate(132 899)"/></g>
+    <g class="eva-alert-cell" style="--alert-lag:-.11s" opacity=".65"><use href="#eva-alert-tile" transform="translate(334 793)"/></g>
+    <g class="eva-alert-cell" style="--alert-lag:-.83s"><use href="#eva-alert-tile" transform="translate(334 1005)"/></g>
+    <g class="eva-alert-cell" style="--alert-lag:-.36s" opacity=".24"><use href="#eva-alert-tile" transform="translate(-70 1005)"/></g>
+    <use href="#eva-alert-hex" transform="translate(536 899)" stroke="#df0308" stroke-width="7"/>
+    <use href="#eva-alert-hex" transform="translate(1128 899)" stroke="#df0308" stroke-width="7"/>
+  </g>
+  <g class="eva-alert-wordmark" fill="#ed050b">
+    <text x="-25" y="558" font-family="Baskerville,'Times New Roman',serif" font-size="218" textLength="578" lengthAdjust="spacingAndGlyphs">NERV</text>
+    <path d="M570 416H939V484H549ZM546 496H1016V565H524Z"/>
+    <g fill="#070000" font-family="'Times New Roman',Baskerville,serif">
+      <text x="572" y="466" font-size="37" textLength="344" lengthAdjust="spacingAndGlyphs">God's In His Heaven</text>
+      <text x="547" y="544" font-size="35" textLength="432" lengthAdjust="spacingAndGlyphs">All's Right With The World</text>
+    </g>
+    <text data-emergency-clock="" x="459" y="653" text-anchor="middle" font-family="'Times New Roman',Baskerville,serif" font-size="96" textLength="420" lengthAdjust="spacingAndGlyphs">09:58:57</text>
+  </g>
+  <path fill="url(#eva-alert-scan)" d="M0 0H1000V1000H0Z"/>
+  <path fill="#fff" filter="url(#eva-alert-grain)" opacity=".045" d="M0 0H1000V1000H0Z"/>
+</svg>

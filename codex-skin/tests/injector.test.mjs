@@ -10,6 +10,7 @@ import {
   EXACT_MAIN_URL,
   SKIN_VERSION,
   buildActiveDriverExpression,
+  buildBootBootstrapSource,
   buildBootSource,
   buildEarlySource,
   buildInstallSource,
@@ -156,6 +157,13 @@ test("首次启动动画只播放一次并可跳过", () => {
     early.indexOf("eva-codex-skin-boot-launch") <
       early.indexOf("__EVA_CODEX_SKIN_EARLY_GENERATION__"),
   );
+  const bootstrap = buildBootBootstrapSource(boot);
+  assert.ok(bootstrap.includes('location.href !== "app://-/index.html"'));
+  assert.ok(bootstrap.includes("eva-codex-skin-boot-launch"));
+  assert.match(bootstrap, /reason: "not-main-document"/);
+  const stableBootstrap = buildBootBootstrapSource(boot, 1234.5);
+  assert.match(stableBootstrap, /performance\.timeOrigin !== 1234\.5/);
+  assert.match(stableBootstrap, /reason: "document-changed"/);
   assert.match(buildRemoveSource(), /eva-codex-skin-boot-style/);
 });
 
@@ -175,6 +183,12 @@ test("EVA 主题素材包按清单校验并生成本地启动序列", () => {
     },
     asukaHead: { file: "assets/asuka.png", type: "image/png", data: Buffer.from("89504e470d0a1a0a", "hex") },
     reiHead: { file: "assets/rei.png", type: "image/png", data: Buffer.from("89504e470d0a1a0a", "hex") },
+    logo: {
+      file: "assets/nerv-logo.svg",
+      type: "image/svg+xml",
+      data: Buffer.from("<svg xmlns=\"http://www.w3.org/2000/svg\"><path id=\"mark\"/></svg>"),
+    },
+    bootBgm: { file: "assets/nerv-boot-music.mp3", type: "audio/mpeg", data: Buffer.from("ID3bgm") },
     asukaVoice: { file: "assets/asuka-boot.mp3", type: "audio/mpeg", data: Buffer.from("ID3asuka") },
     reiVoice: { file: "assets/rei-boot.mp3", type: "audio/mpeg", data: Buffer.from("ID3rei") },
     asukaPortrait: { file: "assets/asuka-portrait.png", type: "image/png", data: Buffer.from("89504e470d0a1a0a", "hex") },
@@ -212,7 +226,9 @@ test("EVA 主题素材包按清单校验并生成本地启动序列", () => {
   try {
     const pack = loadEvaThemePack(packRoot);
     assert.equal(pack.assets.boot.startsWith("data:image/gif;base64,"), true);
-    assert.equal(Object.keys(pack.assets).length, 18);
+    assert.equal(Object.keys(pack.assets).length, 20);
+    assert.equal(pack.assets.logo.startsWith("data:image/svg+xml;base64,"), true);
+    assert.equal(pack.assets.bootBgm.startsWith("data:audio/mpeg;base64,"), true);
     assert.equal(pack.assets.asukaPortrait.startsWith("data:image/png;base64,"), true);
     assert.equal(pack.assets.asukaPickVoice.startsWith("data:audio/mpeg;base64,"), true);
     assert.equal(pack.revision.length, 24);
@@ -258,7 +274,13 @@ test("EVA 主题素材包按清单校验并生成本地启动序列", () => {
       "dataset.phase",
       "NERV",
       "eva-boot-alert-layer",
+      "eva-boot-alert-art",
+      "eva-boot-alert-clock",
       "eva-boot-select-layer",
+      "eva-boot-intro-layer",
+      "eva-boot-intro-typed",
+      "data-eva-clock",
+      "eva-boot-bgm",
       "data-eva-pilot",
       "data-eva-dropzone",
       "chooseDriver",
@@ -277,9 +299,43 @@ test("EVA 主题素材包按清单校验并生成本地启动序列", () => {
       "bootOptions.boot === false",
       "bootOptions.bootVoice !== false",
       "eva-skin-boot-finished",
+      "tickPhaseClock",
+      "document.hidden",
+      "\"focus\"",
+      "\"blur\"",
+      "transitionIntroToSelect",
+      "introTransitioning",
+      "is-leaving",
+      "is-arriving",
+      "data-boot-unit",
     ]) {
       assert.ok(payload.bootSource.includes(fragment), `missing EVA boot contract: ${fragment}`);
     }
+    assert.doesNotMatch(payload.bootSource, /document\.hasFocus/);
+    assert.doesNotMatch(payload.bootSource, /later\(\(\) => setPhase\("emergency"\)/);
+    assert.doesNotMatch(payload.bootSource, /phaseTimer/);
+    const leaveIndex = payload.bootSource.indexOf("const leave = () =>");
+    const maybeFinishIndex = payload.bootSource.indexOf("const maybeFinish = () =>");
+    const chooseIndex = payload.bootSource.indexOf("const chooseDriver = (pilot) =>");
+    const tickSyncIndex = payload.bootSource.indexOf("const tickSync = (now) =>");
+    const installIndex = payload.bootSource.indexOf("const install = () =>");
+    const runtimeIndex = payload.bootSource.indexOf("const runtime = { bootId, driver, finish, cleanup, mounted: false }");
+    assert.ok(leaveIndex >= 0 && maybeFinishIndex > leaveIndex);
+    assert.ok(chooseIndex >= 0 && tickSyncIndex > chooseIndex);
+    assert.ok(installIndex >= 0 && runtimeIndex > installIndex);
+    assert.match(
+      payload.bootSource.slice(leaveIndex, maybeFinishIndex),
+      /localStorage\.setItem\(storageKey, bootId\)/,
+    );
+    assert.doesNotMatch(
+      payload.bootSource.slice(chooseIndex, tickSyncIndex),
+      /localStorage\.setItem\(storageKey, bootId\)/,
+    );
+    assert.doesNotMatch(
+      payload.bootSource.slice(installIndex, runtimeIndex),
+      /localStorage\.setItem\(storageKey, bootId\)/,
+    );
+    assert.doesNotMatch(payload.bootSource, /onBackdropClick/);
     assert.ok(!/(?:src|href)\s*=\s*["']https?:|url\(\s*["']?https?:|@import/i.test(payload.bootSource));
   } finally {
     fs.rmSync(packRoot, { recursive: true, force: true });
@@ -396,7 +452,14 @@ test("皮肤 CSS 使用稳定选择器并禁用远程资源", () => {
     "#eva-codex-skin-boot",
     ".eva-boot-gif",
     ".eva-boot-alert-layer",
+    ".eva-boot-alert-clock",
+    ".eva-boot-alert-art > svg",
     ".eva-boot-select-layer",
+    ".eva-boot-intro-layer",
+    ".eva-boot-title",
+    ".eva-boot-hint",
+    "@keyframes eva-boot-intro-scan",
+    "@keyframes eva-boot-intro-out",
     ".eva-boot-select-bay",
     ".eva-boot-pilot-card",
     ".eva-boot-select-bay.is-over",
@@ -432,14 +495,41 @@ test("应用内切换驾驶员不会启动开机动画", () => {
   assert.doesNotMatch(source, /eva-codex-skin-boot-launch/);
 });
 
-test("启动层等待 Codex 主页面出现后再注入", () => {
+test("启动层在主文档稳定后、Codex 主界面探测前挂载", () => {
   const source = fs.readFileSync(path.join(root, "injector.mjs"), "utf8");
   const applyStart = source.indexOf("async function applyOnce");
+  const applyEnd = source.indexOf("async function runWatch", applyStart);
+  const applySource = source.slice(applyStart, applyEnd);
   const probeIndex = source.indexOf("const probe = await waitForCodexProbe", applyStart);
-  const bootIndex = source.indexOf("await session.evaluate(current.bootSource)", applyStart);
+  const stableIndex = source.indexOf("await mountBootOnStableDocument(", applyStart);
+  const bootIndex = source.indexOf("current.bootSource", stableIndex);
   assert.ok(applyStart >= 0);
   assert.ok(probeIndex > applyStart);
-  assert.ok(bootIndex > probeIndex);
+  assert.ok(stableIndex > applyStart);
+  assert.ok(bootIndex > applyStart);
+  assert.ok(stableIndex < bootIndex);
+  assert.ok(bootIndex < probeIndex);
+  assert.match(applySource, /bootPending/);
+  assert.doesNotMatch(applySource, /await session\.evaluate\(current\.bootSource\)/);
+  assert.match(source, /const stableForMs = 650;/);
+  assert.match(
+    source.slice(source.indexOf("async function mountBootOnStableDocument"), source.indexOf("async function waitForVerifiedSession")),
+    /buildBootBootstrapSource\(/,
+  );
+});
+
+test("应用未完成重载后重新挂载启动层，完成标记只在离开时写入", () => {
+  const source = fs.readFileSync(path.join(root, "injector.mjs"), "utf8");
+  const loadStart = source.indexOf('result.session.on("Page.loadEventFired"');
+  const loadEnd = source.indexOf("sessions.set(target.id, record)", loadStart);
+  assert.ok(loadStart >= 0 && loadEnd > loadStart);
+  const loadSource = source.slice(loadStart, loadEnd);
+  assert.match(loadSource, /eva-codex-skin-boot-launch/);
+  assert.match(loadSource, /buildBootBootstrapSource\(current\.bootSource\)/);
+  assert.match(
+    source.slice(source.indexOf("async function mountBootOnStableDocument"), source.indexOf("async function waitForVerifiedSession")),
+    /document-changed/,
+  );
 });
 
 test("内置浏览器打开时重新定位设置入口且不隐藏设置面板", () => {
@@ -493,9 +583,13 @@ test("输出速度 HUD 使用真实流式正文并标明估算", () => {
   for (const fragment of [
     "eva-tps-hud",
     "estimateTokens",
+    "TPS_TOKEN_WEIGHTS",
+    "TPS_WINDOW_MS = 2400",
+    "TPS_SAMPLE_MS = 320",
+    "sampleWindowRate",
     "[data-turn-key]",
     'data-markdown-text-style="assistant-message"',
-    "setInterval(sampleTps, 400)",
+    "setInterval(sampleTps, TPS_SAMPLE_MS)",
     "tok/s",
     "EST",
     "PEAK",
@@ -504,6 +598,8 @@ test("输出速度 HUD 使用真实流式正文并标明估算", () => {
   ]) {
     assert.ok(js.includes(fragment), `missing tps contract: ${fragment}`);
   }
+  assert.ok(!js.includes("setInterval(sampleTps, 400)"));
+  assert.ok(!js.includes("cjkCount +"));
   assert.match(css, /#eva-codex-skin-overlay \.eva-tps-hud\s*\{/);
   assert.match(css, /@keyframes eva-tps-in/);
 });

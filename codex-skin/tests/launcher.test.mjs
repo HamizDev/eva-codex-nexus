@@ -62,6 +62,21 @@ test("CDP 目标列表兼容 Windows PowerShell 5.1 的数组返回", () => {
   );
 });
 
+test("注入器与 CDP 等待并行启动，避免聊天页先出现", () => {
+  const source = read("codex-skin/Start-EVA.ps1");
+  const processWaitIndex = source.indexOf("$launchedProcess = Wait-CodexProcess");
+  const injectorIndex = source.indexOf("$injector = Start-Injector");
+  const waitIndex = source.indexOf(
+    "if (-not (Wait-CdpEndpoint",
+    injectorIndex,
+  );
+  assert.ok(processWaitIndex > 0);
+  assert.ok(injectorIndex > 0);
+  assert.ok(processWaitIndex < injectorIndex);
+  assert.ok(waitIndex > injectorIndex);
+  assert.match(source, /\$bootId = Get-CodexLaunchId -Install \$install/);
+});
+
 test("默认入口只启动官方 Codex 皮肤", () => {
   const skin = read("Start-EVA.cmd");
   const vbs = read("Start-EVA.vbs");
@@ -95,6 +110,7 @@ test("EVA 主题素材导入器只在本地复制并校验媒体", () => {
     "EVA_THEME_SOURCE_ROOT",
     "eva-theme",
     "assets\\manifest.json",
+    "MEDIA-LICENSE.md",
     "asukaPortrait",
     "reiPortrait",
     "asukaPickVoice",
@@ -108,11 +124,22 @@ test("EVA 主题素材导入器只在本地复制并校验媒体", () => {
     "typing",
     "Get-FileHash",
     "sourceCommit",
+    "sourceVersion",
     "PACK-NOTICE.txt",
-    "local-only; original media terms apply",
+    "no redistribution without written permission",
   ]) {
     assert.ok(source.includes(fragment), `missing EVA theme importer contract: ${fragment}`);
   }
+});
+
+test("仓库内置 EVA 素材包保留独立媒体许可和校验清单", () => {
+  const pack = JSON.parse(read("eva-theme/assets/manifest.json"));
+  assert.equal(pack.package, "eva-theme-pack");
+  assert.equal(pack.sourceVersion, "0.51.2");
+  assert.equal(Object.keys(pack.assets).length, 20);
+  assert.match(read("eva-theme/MEDIA-LICENSE.md"), /All rights reserved/i);
+  assert.match(read("eva-theme/MEDIA-LICENSE.md"), /prior written permission/i);
+  assert.match(read("eva-theme/NOTICE.md"), /MEDIA-LICENSE\.md/);
 });
 
 test("恢复脚本同时处理 CDP 清理和注入器进程", () => {

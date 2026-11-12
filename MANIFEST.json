@@ -10,8 +10,8 @@
     },
     {
       "path": ".gitattributes",
-      "bytes": 186,
-      "sha256": "1a70773ad1ab160d5095395f9e68856a6dfcf60d97eb4d0312811ffe7be567e1"
+      "bytes": 225,
+      "sha256": "e57e3c4fd42e7e4cd4b29db6ff9d7370d4669597813ad85fd06451954ae752fd"
     },
     {
       "path": ".gitignore",
@@ -20,18 +20,18 @@
     },
     {
       "path": "ASSET-TODO.md",
-      "bytes": 1486,
-      "sha256": "4214d3cdfd6c93dc1176cf31caf7be5d832d24392023ed2db713de9f6ea33449"
+      "bytes": 1585,
+      "sha256": "2fb85204c1d6a0f2b167e66cbba59035f8aef028301d8065fe22d21824f44551"
     },
     {
       "path": "ASSETS.md",
-      "bytes": 1424,
-      "sha256": "cfd3be15693f86d330e0b1302015d0865dbf45932763ca99ecebaeedbfa1ca38"
+      "bytes": 1774,
+      "sha256": "aa81cbfc7800b584eaba1fa26e28a6a5c849f0a2fd9516f03533c600c93b38d1"
     },
     {
       "path": "CHANGELOG.md",
-      "bytes": 21336,
-      "sha256": "a8f89dab9b2b2197ebc8783ee053aa11567d102dd5dd00816c9c98ff9a4197e8"
+      "bytes": 25009,
+      "sha256": "d3610156390fd0688f38c051988a5b944106cd53956bbbd0cf7c8ed68a5fd45e"
     },
     {
       "path": "CONTRIBUTING.md",
@@ -40,8 +40,8 @@
     },
     {
       "path": "EVA-THEME.md",
-      "bytes": 4876,
-      "sha256": "21a0a1026d4b97b052971f7e4332aadccb5fa7dc1af3916d43914126063ab9da"
+      "bytes": 5570,
+      "sha256": "51e93ae9f978a9998df3075d0c7c2033346746b500bfdb4b7d4f1fde74ba14bd"
     },
     {
       "path": "Import-EVA-Theme.cmd",
@@ -60,23 +60,23 @@
     },
     {
       "path": "LICENSE-STATUS.md",
-      "bytes": 708,
-      "sha256": "7569c029a84ab95f2c0b0804e40c25a5a398731b8f4d94ceae26ea5e08f8bb12"
+      "bytes": 760,
+      "sha256": "af785a8558ebf65aab0e905e6d9e5d176b76ca7a5fe8eafc06e0cb37ffc3e8a9"
     },
     {
       "path": "PROVENANCE.md",
-      "bytes": 1496,
-      "sha256": "dba25ad26c85b9ebdb16c2707c333edabf01091d184e1b486c9b409bac089782"
+      "bytes": 1713,
+      "sha256": "0c5fa41879e8ae82b6de11beb2a436cdfb7026907c44590e802e95614ea20d0c"
     },
     {
       "path": "PUBLIC-RELEASE-CHECKLIST.md",
-      "bytes": 1058,
-      "sha256": "a97425f1c1051acc4486f8b9cd81104fdaa028422391481d70c10cdb9e384d75"
+      "bytes": 1248,
+      "sha256": "c32a4d02fa15c39f583bb68b78b0d71f62add83907d4c86a545b5eb9fda86869"
     },
     {
       "path": "README.md",
-      "bytes": 14898,
-      "sha256": "9f4b50f371d3f7fb90a848c55b93dc2783e3ae31d461ccdedc45b087db7f03ee"
+      "bytes": 21391,
+      "sha256": "c3586c76a08db933563c8e5bb9625c30fd5cc6bcda1cb204566a0e0b02560204"
     },
     {
       "path": "Restore-EVA.cmd",
@@ -100,13 +100,13 @@
     },
     {
       "path": "THIRD_PARTY_NOTICES.md",
-      "bytes": 959,
-      "sha256": "a290304e695e3c2af3347cdd96e883559caf59061005628b7ec26ad8a31076fb"
+      "bytes": 1333,
+      "sha256": "76276a6414106a60c676cc4c733f4b66b0fb9f8ad91d83685cd0d05d059767e9"
     },
     {
       "path": "codex-skin/Import-EVA-Theme.ps1",
-      "bytes": 7622,
-      "sha256": "53952b6f53c48c60289db3fcf1026034c5158e0abbd612b15ae674c1056c8240"
+      "bytes": 8242,
+      "sha256": "8219db1aacc712a5f59eacacf82148dcfa533699c812c9d369973adf4b5fce2c"
     },
     {
       "path": "codex-skin/Restore-EVA.ps1",
@@ -115,13 +115,13 @@
     },
     {
       "path": "codex-skin/Start-EVA.ps1",
-      "bytes": 24146,
-      "sha256": "8ce61fe6b3d5b02ed1cda14d94e49658be54c6c5f0275191851451b16fcb443f"
+      "bytes": 25150,
+      "sha256": "b7ff47789b4e322a27b696f98a4494183dae86d0ada593864450754e1304de81"
     },
     {
       "path": "codex-skin/assets/README.md",
-      "bytes": 1330,
-      "sha256": "3dbfaca5edbf028d193aac53801f22863060ae2fa79f8a8f912b7f229b087d57"
+      "bytes": 1542,
+      "sha256": "bb41a3577b9fb13d22f86df635ad8fbb9f3375f83326b166701514896bf83936"
     },
     {
       "path": "codex-skin/assets/asuka-mark.svg",
@@ -135,8 +135,8 @@
     },
     {
       "path": "codex-skin/assets/eva-boot.css",
-      "bytes": 26537,
-      "sha256": "116a60ac16fcd3372274f3e68a0070d939b4e217199509dbf7f2e885c8f616ac"
+      "bytes": 47013,
+      "sha256": "9e2f78983c03a6fce0f897e3836b217e9231da3fae6d721f84bce27bf74cc04f"
     },
     {
       "path": "codex-skin/assets/eva-skin.css",
@@ -160,13 +160,13 @@
     },
     {
       "path": "codex-skin/assets/skin-ui.js",
-      "bytes": 56841,
-      "sha256": "6fe03533edba609a2ae1a5b6ba53561d5d6ab4a4029f6c56aeedd04df2450255"
+      "bytes": 58442,
+      "sha256": "85a387fc62d03b6dfeb387279ff2fb14fef6ac376a9251f03f6c73c699e3a304"
     },
     {
       "path": "codex-skin/injector.mjs",
-      "bytes": 80763,
-      "sha256": "74f77e3909bc3fcdf8c236a7f4545928ab98fbc69e554f397320fce03d0efda7"
+      "bytes": 106510,
+      "sha256": "b3da17258e004f020da20260253037414196b4aed7f0a19d67e71c0bc8a90f56"
     },
     {
       "path": "codex-skin/selectors.json",
@@ -180,13 +180,138 @@
     },
     {
       "path": "codex-skin/tests/injector.test.mjs",
-      "bytes": 24024,
-      "sha256": "8d316f17825b9471009ea361cd988a3a16404c698171f89e09e1d8c3ee433779"
+      "bytes": 28638,
+      "sha256": "b638f7117fe60a423ad69dc3a91d0ca7f6c6916f2a23c9a9937e3d6285207ae3"
     },
     {
       "path": "codex-skin/tests/launcher.test.mjs",
-      "bytes": 5343,
-      "sha256": "beb62cd96f2902f31cbe39a1e3b6c8639982da3a3782b4e6409c975dfa4537d4"
+      "bytes": 6529,
+      "sha256": "ae1a1da91b3f251ce6be1c818a4384e5ffe5fc594ec306c102d2fad89fd96089"
+    },
+    {
+      "path": "eva-theme/LICENSE",
+      "bytes": 435,
+      "sha256": "99c2be046b087186673e49e06b4f64f4763a3f765a058bb6ab887f9a8d6bafbb"
+    },
+    {
+      "path": "eva-theme/MEDIA-LICENSE.md",
+      "bytes": 1434,
+      "sha256": "7bf7bc62be29c3883e7531710fc472ad7766628f460547da28bdebad0b7ab33a"
+    },
+    {
+      "path": "eva-theme/NOTICE.md",
+      "bytes": 1009,
+      "sha256": "47f26e9ef385d5b883934fc251e93cb5a9e30b2fa7934d4e2af43d730347f5ab"
+    },
+    {
+      "path": "eva-theme/README.md",
+      "bytes": 1374,
+      "sha256": "5c8e07b6f71d7b14aa9caf27330acacc62a51254385ba3abcbb606b705a972b6"
+    },
+    {
+      "path": "eva-theme/assets/animations/nerv-boot.gif",
+      "bytes": 267311,
+      "sha256": "32d689fa2a8bb2331f8adbaff13861750b87825f5bce040734db6dc7b9f2fa51"
+    },
+    {
+      "path": "eva-theme/assets/audio/asuka-voice-approval.mp3",
+      "bytes": 43535,
+      "sha256": "d968f4878857d35ca370bcb22054b476c6619722ee05d4b7b3a39ed353cba945"
+    },
+    {
+      "path": "eva-theme/assets/audio/asuka-voice-boot.mp3",
+      "bytes": 107483,
+      "sha256": "8215dd8831b56e4d9a43278c269fafaf50aa29606b24d50ecec8ed05f8b1b7df"
+    },
+    {
+      "path": "eva-theme/assets/audio/asuka-voice-complete.mp3",
+      "bytes": 55238,
+      "sha256": "f88316c1519c2b4b9fc042777f3352e3f5249c62be8e83cd19fa47370a74ec91"
+    },
+    {
+      "path": "eva-theme/assets/audio/asuka-voice-select.mp3",
+      "bytes": 28489,
+      "sha256": "39b91f1dd1c4ef91271f0d65538ee1d7a7c9608108970bfd242977c5c69b1c15"
+    },
+    {
+      "path": "eva-theme/assets/audio/asuka-voice-welcome.mp3",
+      "bytes": 43535,
+      "sha256": "643309fadbc21b335dd329565bdfda0620b4a782aaf6c3eb8ba565bd1e47163c"
+    },
+    {
+      "path": "eva-theme/assets/audio/nerv-boot-music.mp3",
+      "bytes": 9394719,
+      "sha256": "bd145dc69e76f0406f161a907ae232b130bad1604ec624de4915fdc53ccf55b3"
+    },
+    {
+      "path": "eva-theme/assets/audio/nerv-ui-typing.mp3",
+      "bytes": 18015,
+      "sha256": "2d940e2128c8eb7d49b0e98b1039846d714811c08e614957f10a5f32a9a3ab65"
+    },
+    {
+      "path": "eva-theme/assets/audio/rei-voice-approval.mp3",
+      "bytes": 51477,
+      "sha256": "6e7870f6bb1ddc1714b59f6f11318c4a0eff1179b29fe538d816182fbacd2d76"
+    },
+    {
+      "path": "eva-theme/assets/audio/rei-voice-boot.mp3",
+      "bytes": 104975,
+      "sha256": "4a4aad865e71ddfa8b4eeec5c8936c4a2d7e434d548aa2fb31b7b0e415260f74"
+    },
+    {
+      "path": "eva-theme/assets/audio/rei-voice-complete.mp3",
+      "bytes": 57746,
+      "sha256": "8762550e287c9e3a77e6ad5730f123075225def553eb3a305ab6594d6632992e"
+    },
+    {
+      "path": "eva-theme/assets/audio/rei-voice-select.mp3",
+      "bytes": 20548,
+      "sha256": "ffe2e9857b36ee3bf0a83cb09c4767315ea5d3a58695d4ee0af3ab95c723cd52"
+    },
+    {
+      "path": "eva-theme/assets/audio/rei-voice-welcome.mp3",
+      "bytes": 53148,
+      "sha256": "eaa5ce90e76b2ff71f1ccc6a4b66c8b576192154970700648c824fdbcbbeeeed"
+    },
+    {
+      "path": "eva-theme/assets/images/asuka-avatar-closed-eyes.png",
+      "bytes": 1381146,
+      "sha256": "cda9acf24d32932c0f9827da65ea3fe5ac59bb94c28d3b9fe169adfd675e7999"
+    },
+    {
+      "path": "eva-theme/assets/images/asuka-portrait-lineart.png",
+      "bytes": 999030,
+      "sha256": "5487f9519bc1ed122bd0ad6274f7a7debd320d38cccfe9a2fa87eba8b7fd86dd"
+    },
+    {
+      "path": "eva-theme/assets/images/rei-avatar-closed-eyes.png",
+      "bytes": 1118046,
+      "sha256": "cfbf109cf82b881a33d87cccaea3268e40906ea4c1de33972443d6b2de699ff0"
+    },
+    {
+      "path": "eva-theme/assets/images/rei-portrait-lineart.png",
+      "bytes": 811658,
+      "sha256": "1d22c5a345573e32c1aebc19eb7aeda5cebd8a5b57fc418fbfd9a7b7e39e5fd4"
+    },
+    {
+      "path": "eva-theme/assets/manifest.json",
+      "bytes": 4585,
+      "sha256": "2d6f582ddcda7655586e262975d1792bc745cb12d35386f8633351760f819825"
+    },
+    {
+      "path": "eva-theme/assets/svg/eva-entry-plug.svg",
+      "bytes": 5867,
+      "sha256": "bdd1cb1628b5adb7779f6340cd440e4858996b085eceb89d25ceb5aea4e4a724"
+    },
+    {
+      "path": "eva-theme/assets/svg/nerv-emergency.svg",
+      "bytes": 3671,
+      "sha256": "276606bbac9dc3fcd083b158e5b0b9b01e397f88cf83a2418c9189dadac5e9d7"
+    },
+    {
+      "path": "eva-theme/assets/svg/nerv-logo.svg",
+      "bytes": 21120,
+      "sha256": "c517c9bc95b38017912ad42f0d7cb0770a0ed15298a881baf2aae484185a18ac"
     },
     {
       "path": "package.json",
@@ -200,8 +325,8 @@
     },
     {
       "path": "scripts/check-release.cjs",
-      "bytes": 2876,
-      "sha256": "bffbbd09bf03c4793012ad606112aa22342f45d916eb495587a9569249e458be"
+      "bytes": 4395,
+      "sha256": "610a138b9848598a51aadff6de1a9f03e352208e32a332960c74e72dce476566"
     },
     {
       "path": "scripts/generate-manifest.cjs",

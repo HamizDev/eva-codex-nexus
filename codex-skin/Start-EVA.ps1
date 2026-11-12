@@ -198,6 +198,22 @@ function Get-CodexProcesses {
   })
 }
 
+function Wait-CodexProcess {
+  param(
+    [Parameter(Mandatory)][object]$Install,
+    [int]$TimeoutSeconds = 10
+  )
+  $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
+  while ([DateTime]::UtcNow -lt $deadline) {
+    $process = @(Get-CodexProcesses -Executable $Install.Executable) |
+      Sort-Object CreationDate |
+      Select-Object -First 1
+    if ($process) { return $process }
+    Start-Sleep -Milliseconds 120
+  }
+  return $null
+}
+
 function Get-CodexLaunchId {
   param([Parameter(Mandatory)][object]$Install)
   $processes = @(Get-CodexProcesses -Executable $Install.Executable)
@@ -351,6 +367,7 @@ function Start-CodexWithCdp {
   )
   New-Item -ItemType Directory -Force -Path $UserDataDir | Out-Null
   $arguments = '--remote-debugging-address=127.0.0.1 --remote-debugging-port=' + $CdpPort +
+    ' --autoplay-policy=no-user-gesture-required' +
     ' --user-data-dir="' + $UserDataDir + '"'
   $activated = $false
   if ($Install.AppUserModelId) {
@@ -506,6 +523,7 @@ try {
     }
   }
 
+  $launchedCodex = $false
   if (-not $cdpReady) {
     $running = @(Get-CodexProcesses -Executable $install.Executable)
     if ($running.Count) {
@@ -523,16 +541,19 @@ try {
     }
 
     Start-CodexWithCdp -Install $install -CdpPort $Port -UserDataDir $ProfilePath
-    Write-Step "等待官方 Codex 的本地 CDP 端口 $Port..."
-    if (-not (Wait-CdpEndpoint -CdpPort $Port -Executable $install.Executable -TimeoutSeconds 45)) {
-      throw "Codex 没有在 45 秒内开放已验证的本地 CDP 端口 $Port。皮肤未注入，官方程序未被修改。"
-    }
+    $launchedCodex = $true
   } else {
     Write-Step "已检测到本次 Codex 的本地 CDP 端口 $Port。"
   }
 
   Stop-RecordedInjector -State $saved
   Stop-StaleInjectors
+  if ($launchedCodex) {
+    $launchedProcess = Wait-CodexProcess -Install $install -TimeoutSeconds 10
+    if (-not $launchedProcess) {
+      throw 'Codex 进程没有在启动后出现，皮肤未注入。'
+    }
+  }
   $bootId = Get-CodexLaunchId -Install $install
   $forceToken = if ($Driver -in @('asuka', 'rei')) {
     [guid]::NewGuid().ToString('N')
@@ -561,6 +582,18 @@ try {
   $temporary = "$StatePath.$PID.tmp"
   $state | ConvertTo-Json | Set-Content -LiteralPath $temporary -Encoding UTF8
   Move-Item -LiteralPath $temporary -Destination $StatePath -Force
+
+  if ($launchedCodex) {
+    Write-Step "等待官方 Codex 的本地 CDP 端口 $Port..."
+    if (-not (Wait-CdpEndpoint -CdpPort $Port -Executable $install.Executable -TimeoutSeconds 45)) {
+      try {
+        if ($injector -and -not $injector.HasExited) {
+          Stop-Process -Id $injector.Id -Force -ErrorAction SilentlyContinue
+        }
+      } catch {}
+      throw "Codex 没有在 45 秒内开放已验证的本地 CDP 端口 $Port。皮肤未注入，官方程序未被修改。"
+    }
+  }
 
   Start-Sleep -Milliseconds 1200
   $runtime = $null

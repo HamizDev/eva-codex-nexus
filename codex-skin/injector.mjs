@@ -34,6 +34,7 @@ const BOOT_ID_PATTERN = /^[A-Za-z0-9._-]{1,128}$/;
 const EVA_THEME_PACKAGE = "eva-theme-pack";
 const EVA_THEME_REQUIRED_ASSETS = ["boot", "emergency", "entryPlug", "asukaHead", "reiHead"];
 const EVA_THEME_OPTIONAL_ASSETS = [
+  "logo",
   "asukaVoice",
   "reiVoice",
   "asukaPortrait",
@@ -47,6 +48,7 @@ const EVA_THEME_OPTIONAL_ASSETS = [
   "asukaComplete",
   "reiComplete",
   "typing",
+  "bootBgm",
 ];
 const EVA_THEME_MAX_BYTES = 16 * 1024 * 1024;
 const DRIVER_STORAGE_KEY = "eva-codex-skin-driver-v1";
@@ -398,6 +400,129 @@ function bootProfile(driver) {
       };
 }
 
+function scopeSvgMarkup(markup, scope) {
+  const ids = new Map();
+  const scoped = String(markup || "").replace(/\bid="([^"]+)"/g, (_, id) => {
+    const next = `${scope}-${id}`;
+    ids.set(id, next);
+    return `id="${next}"`;
+  });
+  return scoped
+    .replace(/url\(#([^)]+)\)/g, (_, id) => `url(#${ids.get(id) || id})`)
+    .replace(/\bhref="#([^"]+)"/g, (_, id) => `href="#${ids.get(id) || id}"`);
+}
+
+const BOOT_PACK_COPY = Object.freeze({
+  "zh-Hant": Object.freeze({
+    selectTitle: "選擇你的駕駛員",
+    selectHint: "將頭像拖入左側插入栓，或點擊角色卡",
+    enterSelect: "進入選擇",
+    exit: "跳過並進入",
+    drag: "拖入插入栓",
+    drop: "拖入駕駛員 · DROP PILOT",
+    awaiting: "等待駕駛員選擇 · AWAITING PILOT",
+    syncTitle: "駕駛員同步中",
+    syncHint: "啟動語音播放結束後進入會話",
+    syncState: "駕駛員同步中",
+    syncCaption: "AUDIO SYNCHRONIZATION",
+    voiceHint: "啟動語音與同步進度",
+    syncStatus: "駕駛艙同步中 · LINK ESTABLISHING",
+    asuka: "明日香",
+    rei: "綾波麗",
+    dark: "暗色",
+    light: "亮色",
+    card: "選擇{pilot}，載入{mode}主題",
+    language: "啟動介面語言",
+    bgm: "啟動背景音樂",
+    bgmOn: "背景音樂播放中 · 點擊靜音",
+    bgmOff: "點擊播放啟動背景音樂",
+    skip: "跳過 / ESC",
+    alert: "NERV 警報啟動畫面",
+    handoff: "同步完成，正在進入聊天",
+  }),
+  "zh-Hans": Object.freeze({
+    selectTitle: "选择你的驾驶员",
+    selectHint: "将头像拖入左侧插入栓，或点击角色卡",
+    enterSelect: "进入选择",
+    exit: "跳过并进入",
+    drag: "拖入插入栓",
+    drop: "拖入驾驶员 · DROP PILOT",
+    awaiting: "等待驾驶员选择 · AWAITING PILOT",
+    syncTitle: "驾驶员同步中",
+    syncHint: "启动语音播放结束后进入会话",
+    syncState: "驾驶员同步中",
+    syncCaption: "AUDIO SYNCHRONIZATION",
+    voiceHint: "启动语音与同步进度",
+    syncStatus: "驾驶舱同步中 · LINK ESTABLISHING",
+    asuka: "明日香",
+    rei: "绫波丽",
+    dark: "暗色",
+    light: "亮色",
+    card: "选择{pilot}，载入{mode}主题",
+    language: "启动界面语言",
+    bgm: "启动背景音乐",
+    bgmOn: "背景音乐播放中 · 点击静音",
+    bgmOff: "点击播放启动背景音乐",
+    skip: "跳过 / ESC",
+    alert: "NERV 警报启动画面",
+    handoff: "同步完成，正在进入聊天",
+  }),
+  ja: Object.freeze({
+    selectTitle: "パイロットを選択",
+    selectHint: "ポートレートを左のエントリープラグへドラッグ、またはクリック",
+    enterSelect: "選択画面へ",
+    exit: "スキップして入る",
+    drag: "エントリープラグへ",
+    drop: "パイロットを挿入 · DROP PILOT",
+    awaiting: "パイロット待機中 · AWAITING PILOT",
+    syncTitle: "パイロット同期中",
+    syncHint: "起動ボイス終了後にチャットへ移行します",
+    syncState: "パイロット同期中",
+    syncCaption: "AUDIO SYNCHRONIZATION",
+    voiceHint: "起動ボイスと同期状況",
+    syncStatus: "コックピット同期中 · LINK ESTABLISHING",
+    asuka: "アスカ",
+    rei: "綾波レイ",
+    dark: "ダーク",
+    light: "ライト",
+    card: "{pilot}を選択、{mode}テーマを読み込む",
+    language: "起動画面の言語",
+    bgm: "起動 BGM",
+    bgmOn: "BGM 再生中 · クリックでミュート",
+    bgmOff: "クリックして BGM を再生",
+    skip: "スキップ / ESC",
+    alert: "NERV 警報起動画面",
+    handoff: "同期完了、チャットへ移行中",
+  }),
+  en: Object.freeze({
+    selectTitle: "Select your pilot",
+    selectHint: "Drag a portrait into the entry plug, or click to select",
+    enterSelect: "Continue",
+    exit: "Skip and enter",
+    drag: "Drag to plug",
+    drop: "DROP PILOT HERE",
+    awaiting: "AWAITING PILOT",
+    syncTitle: "Synchronizing pilot",
+    syncHint: "Enter chat when the startup voice finishes",
+    syncState: "PILOT SYNCHRONIZATION",
+    syncCaption: "AUDIO SYNCHRONIZATION",
+    voiceHint: "Startup voice and synchronization",
+    syncStatus: "PILOT SYNC · LINK ESTABLISHING",
+    asuka: "Asuka",
+    rei: "Rei",
+    dark: "Dark",
+    light: "Light",
+    card: "Select {pilot}, load the {mode} theme",
+    language: "Startup interface language",
+    bgm: "Startup music",
+    bgmOn: "Music playing · Click to mute",
+    bgmOff: "Click to play startup music",
+    skip: "Skip / ESC",
+    alert: "NERV emergency startup",
+    handoff: "Sync complete, entering chat",
+  }),
+});
+
 function buildBootMarkup(driver) {
   const copy = bootProfile(driver);
   return [
@@ -445,70 +570,119 @@ function buildBootPackMarkup(driver, pack, syncSecondsByDriver) {
     sourceVersion ? `EVA BOOT ${sourceVersion}` : "EVA BOOT",
     sourceCommit,
   ].filter(Boolean).join(" / ");
+  const logo = pack.assets.logo || "";
+  const entryPlug = {
+    select: scopeSvgMarkup(pack.inline.entryPlug || "", "select"),
+    sync: scopeSvgMarkup(pack.inline.entryPlug || "", "sync"),
+  };
   const pilotCards = ["asuka", "rei"].map((pilot) => {
     const profile = bootProfile(pilot);
-    const head = pack.assets[pilot === "rei" ? "reiHead" : "asukaHead"];
     const label = pilot === "rei" ? "绫波丽" : "明日香";
     return [
       `<button type="button" class="eva-boot-pilot-card" data-eva-pilot="${pilot}"`,
-      ` aria-label="选择${label}（EVA-${profile.unit}）" aria-pressed="false" draggable="true">`,
-      `<span class="eva-boot-pilot-card-face" style="--eva-boot-avatar:url('${head}')"></span>`,
+      ` data-unit="${profile.unit}" aria-label="选择${label}（EVA-${profile.unit}）" aria-pressed="false" draggable="true">`,
+      `<span class="eva-boot-pilot-card-top"><span>PILOT / ${pilot === "rei" ? "FIRST CHILD" : "SECOND CHILD"}</span><i>NEURAL ID · ${profile.unit}</i></span>`,
+      '<span class="eva-boot-pilot-card-face"></span>',
       '<span class="eva-boot-pilot-card-copy">',
-      `<b>${profile.unit}</b><strong>${label}</strong><small>${profile.pilot}</small>`,
-      '</span><span class="eva-boot-pilot-card-drag">拖入插入栓</span></button>',
+      `<b data-eva-boot-unit>${profile.unit}</b><strong data-eva-boot-pilot>${label}</strong><small>${profile.pilot}</small>`,
+      `<em data-eva-boot-mode>${pilot === "rei" ? "亮色 / UNIT 00" : "暗色 / UNIT 02"}</em>`,
+      '</span><span class="eva-boot-pilot-card-watermark" aria-hidden="true">' + profile.unit + '</span>',
+      '<span class="eva-boot-pilot-card-drag" data-eva-boot-text="drag">拖入插入栓</span></button>',
     ].join("");
   }).join("");
+  const contourRings = Array.from({ length: 16 }, (_, index) => (
+    `<span class="eva-boot-contour-ring" style="--i:${index}"></span>`
+  )).join("");
+  const logoMarkup = logo ? '<span class="eva-boot-logo" aria-hidden="true"></span>' : "";
+  const emergencyMarkup = pack.inline.emergency
+    ? `<div class="eva-boot-alert-art" aria-hidden="true">${pack.inline.emergency}</div>`
+    : `<img class="eva-boot-alert-art" src="${pack.assets.emergency}" alt="">`;
   return [
+    '<div class="eva-boot-atmosphere" aria-hidden="true">',
+    `<div class="eva-boot-contour-map">${contourRings}</div>`,
+    '<span class="eva-boot-watermark">NERV</span>',
+    '<i class="eva-boot-rail left"></i><i class="eva-boot-rail right"></i>',
+    '<span class="eva-boot-atmosphere-code">TOKYO-III // CENTRAL DOGMA // 00:07</span>',
+    "</div>",
+    '<div class="eva-boot-layer eva-boot-intro-layer" data-eva-layer="intro">',
+    '<div class="eva-boot-intro-pilot" data-eva-pilot-intro="asuka" aria-hidden="true">',
+    '<span class="eva-boot-intro-face"></span>',
+    "<b>02</b><small>ASUKA LANGLEY</small>",
+    "</div>",
+    '<div class="eva-boot-intro-copy">',
+    '<p class="eva-boot-intro-kicker">NERV / PILOT AUTHENTICATION</p>',
+    '<h1 class="eva-boot-intro-title" aria-label="選擇你的駕駛員">',
+    '<span class="eva-boot-intro-measure" aria-hidden="true">選擇你的駕駛員</span>',
+    '<span class="eva-boot-intro-typed" aria-hidden="true"></span>',
+    "</h1>",
+    '<p class="eva-boot-intro-sub">SPECIAL AGENCY · CENTRAL DOGMA · LEVEL 07</p>',
+    '<i class="eva-boot-intro-rule" aria-hidden="true"></i>',
+    "</div>",
+    '<div class="eva-boot-intro-pilot" data-eva-pilot-intro="rei" aria-hidden="true">',
+    '<span class="eva-boot-intro-face"></span>',
+    "<b>00</b><small>REI AYANAMI</small>",
+    "</div>",
+    '<div class="eva-boot-intro-hud"><span>TOKYO-III / NERV</span><time data-eva-clock>--:--:--</time><small>PILOT AUTHENTICATION</small></div>',
+    '<button type="button" class="eva-boot-intro-next" data-eva-boot-text="enterSelect">進入選擇</button>',
+    "</div>",
     '<div class="eva-boot-layer eva-boot-gif-layer" data-eva-layer="gif">',
     `<img class="eva-boot-gif" src="${pack.assets.boot}" alt="" width="256" height="256">`,
     "</div>",
     '<div class="eva-boot-layer eva-boot-alert-layer" data-eva-layer="emergency">',
-    `<img class="eva-boot-alert-art" src="${pack.assets.emergency}" alt="">`,
+    emergencyMarkup,
     '<div class="eva-boot-alert-scan" aria-hidden="true"></div>',
     '<div class="eva-boot-alert-copy">',
     "<b>EMERGENCY</b>",
     "<span>GOD'S IN HIS HEAVEN.<br>ALL'S RIGHT WITH THE WORLD.</span>",
+    '<div class="eva-boot-alert-clock"><time data-eva-clock>--:--:--</time><small>LOCAL TIME · TOKYO-III</small></div>',
     "<small>TOKYO-III // NERV CENTRAL DOGMA // LEVEL 07</small>",
     "</div>",
     "</div>",
     '<div class="eva-boot-layer eva-boot-select-layer" data-eva-layer="select">',
     '<header class="eva-boot-head">',
-    '<div><span class="eva-boot-kicker"><b>NERV</b> // PILOT AUTHENTICATION</span>',
-    '<strong>选择你的驾驶员</strong><small>拖入插入栓或点击角色卡</small></div>',
-    '<span class="eva-boot-head-code">SYNC SYSTEM<br><b>STANDBY</b></span>',
+    '<div class="eva-boot-heading"><div class="eva-boot-brand">' + logoMarkup,
+    '<span class="eva-boot-kicker"><b>NERV</b> // PILOT AUTHENTICATION<small>SPECIAL AGENCY · CENTRAL DOGMA</small></span></div>',
+    '<h1 class="eva-boot-title" data-eva-boot-text="selectTitle">選擇你的駕駛員</h1>',
+    '<p class="eva-boot-hint" data-eva-boot-text="selectHint">將頭像拖入左側插入栓，或點擊角色卡</p></div>',
+    '<div class="eva-boot-head-code"><span class="eva-boot-security">TOKYO-III<b>NEURAL INTERFACE · LEVEL 07</b></span>',
+    '<span class="eva-boot-live-clock"><b data-eva-clock>--:--:--</b><small>LOCAL</small></span>',
+    '<div class="eva-boot-languages" role="group"><button type="button" data-eva-boot-lang="zh-Hant" lang="zh-Hant">繁</button><button type="button" data-eva-boot-lang="zh-Hans" lang="zh-Hans">简</button><button type="button" data-eva-boot-lang="ja" lang="ja">日本語</button><button type="button" data-eva-boot-lang="en" lang="en">EN</button></div>',
+    '<button type="button" class="eva-boot-exit" data-eva-boot-text="exit">跳過並進入</button></div>',
     "</header>",
     '<main class="eva-boot-select-grid">',
     '<section class="eva-boot-bay eva-boot-select-bay" data-eva-dropzone="true">',
     '<span class="eva-boot-bay-label">NERV / ENTRY SYSTEM<b>INSERT PILOT / DRAG OR CLICK</b></span>',
-    '<div class="eva-boot-plug eva-boot-select-plug" role="img" aria-label="Entry Plug">' + pack.inline.entryPlug + "</div>",
+    '<div class="eva-boot-plug eva-boot-select-plug" role="img" aria-label="Entry Plug">' + entryPlug.select + "</div>",
     '<span class="eva-boot-bay-lock">INTERLOCK / STANDBY</span>',
-    '<span class="eva-boot-bay-target">拖入驾驶员 · DROP PILOT</span>',
+    '<span class="eva-boot-bay-target" data-eva-boot-text="drop">拖入駕駛員 · DROP PILOT</span>',
     "</section>",
     '<section class="eva-boot-pilot-select">',
     '<div class="eva-boot-pilot-cards">',
     pilotCards,
     "</div>",
-    '<p class="eva-boot-select-hint"><b>可选操作</b>拖动头像到左侧插入栓，或直接点击卡片。选择后播放应答和当前驾驶员的启动语音。</p>',
+    '<p class="eva-boot-select-hint"><b>NERV / OPERATION</b><span data-eva-boot-text="selectHint">將頭像拖入左側插入栓，或點擊角色卡</span></p>',
     "</section>",
     "</main>",
-    '<footer class="eva-boot-foot"><span class="eva-boot-status"><i></i>等待驾驶员选择 · AWAITING PILOT</span>',
-    '<span class="eva-boot-magi">ESC / SKIP AVAILABLE</span></footer>',
+    '<footer class="eva-boot-foot"><span class="eva-boot-status"><i></i><span data-eva-boot-text="awaiting">等待駕駛員選擇 · AWAITING PILOT</span></span>',
+    '<span class="eva-boot-magi">MELCHIOR·1 / BALTHASAR·2 / CASPER·3</span></footer>',
     "</div>",
     '<div class="eva-boot-layer eva-boot-console-layer" data-eva-layer="sync">',
     '<header class="eva-boot-head">',
-    '<div><span class="eva-boot-kicker"><b>NERV</b> // MAGI SYSTEM</span>',
-    `<strong>${copy.code}</strong><small>${source}</small></div>`,
-    '<span class="eva-boot-head-code">TOKYO-III<br><b>LEVEL 07</b></span>',
+    '<div class="eva-boot-heading"><div class="eva-boot-brand">' + logoMarkup,
+    '<span class="eva-boot-kicker"><b>NERV</b> // MAGI SYSTEM<small>SPECIAL AGENCY · CENTRAL DOGMA</small></span></div>',
+    `<h1 class="eva-boot-title" data-eva-boot-text="syncTitle">駕駛員同步中</h1><p class="eva-boot-hint" data-eva-boot-text="syncHint">啟動語音播放結束後進入會話</p><small class="eva-boot-source">${source}</small></div>`,
+    '<span class="eva-boot-head-code"><span class="eva-boot-security">TOKYO-III<b>NEURAL INTERFACE · LEVEL 07</b></span><span class="eva-boot-live-clock"><b data-eva-clock>--:--:--</b><small>LOCAL</small></span></span>',
     "</header>",
     '<main class="eva-boot-grid">',
     '<section class="eva-boot-bay">',
     '<span class="eva-boot-bay-label">NERV / ENTRY SYSTEM<b>ENTRY PLUG / CONNECTED</b></span>',
-    '<div class="eva-boot-plug" role="img" aria-label="Entry Plug">' + pack.inline.entryPlug + "</div>",
+    '<div class="eva-boot-plug" role="img" aria-label="Entry Plug">' + entryPlug.sync + "</div>",
     '<span class="eva-boot-bay-lock">INTERLOCK / ENGAGED</span>',
     '<span class="eva-boot-bay-target">驾驶员已装载 · PILOT LOADED</span>',
     "</section>",
     '<section class="eva-boot-panel">',
     '<div class="eva-boot-pilot">',
+    '<span class="eva-boot-sync-portrait" data-eva-sync-portrait aria-hidden="true"></span>',
     '<span class="eva-boot-pilot-face" data-eva-sync-face></span>',
     '<div class="eva-boot-pilot-copy">',
     `<span class="eva-boot-unit">${copy.unit}</span>`,
@@ -526,22 +700,25 @@ function buildBootPackMarkup(driver, pack, syncSecondsByDriver) {
     "</svg>",
     '<span class="eva-boot-percent">00%</span><small>SYNC RATIO</small>',
     "</div>",
-    '<div class="eva-boot-sync-copy"><span class="eva-boot-live"><i></i>NEURAL LINK ACTIVE</span>',
-    `<h2>${driver === "rei" ? "绫波丽" : "明日香"}</h2><p>同步中 / SYNCHRONIZING</p>`,
+    '<div class="eva-boot-sync-copy"><span class="eva-boot-live"><i></i><span data-eva-boot-text="syncState">駕駛員同步中</span></span>',
+    `<h2>${driver === "rei" ? "绫波丽" : "明日香"}</h2><p><span data-eva-boot-text="voiceHint">啟動語音與同步進度</span><br><span class="eva-boot-sync-caption" data-eva-boot-text="syncCaption">AUDIO SYNCHRONIZATION</span></p>`,
     '<div class="eva-boot-meter" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i></div>',
-    `<div class="eva-boot-meter-copy"><span>00%</span><span>00:00 / 00:${String(syncSeconds).padStart(2, "0")}</span></div></div>`,
+    `<div class="eva-boot-meter-copy"><span>00%</span><span>00:00 / 00:${String(syncSeconds).padStart(2, "0")}</span></div><div class="eva-boot-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>`,
     "</div>",
     '<div class="eva-boot-systems" aria-hidden="true">',
     "<span>A10 INTERFACE<b>CONNECTED</b></span><span>L.C.L. CHAMBER<b>SEALED</b></span><span>MAGI SYSTEM<b>STABLE</b></span>",
     "</div>",
     "</section>",
     "</main>",
-    '<footer class="eva-boot-foot"><span class="eva-boot-status"><i></i>驾驶舱同步中 · LINK ESTABLISHING</span>',
+    '<footer class="eva-boot-foot"><span class="eva-boot-status"><i></i><span data-eva-boot-text="syncStatus">駕駛艙同步中 · LINK ESTABLISHING</span></span>',
     '<span class="eva-boot-magi">MELCHIOR·1 / BALTHASAR·2 / CASPER·3</span></footer>',
     "</div>",
-    '<button type="button" class="eva-boot-skip" aria-label="跳过启动动画">跳过 / ESC</button>',
+    '<button type="button" class="eva-boot-sound" aria-label="启动背景音乐" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m11 4-6 5H2v6h3l6 5ZM15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/><path class="eva-sound-slash" d="m3 3 18 18"/></svg></button>',
+    '<button type="button" class="eva-boot-skip" aria-label="跳过启动动画">跳過 / ESC</button>',
     '<audio class="eva-boot-pick-voice" preload="auto"></audio>',
     '<audio class="eva-boot-voice" preload="auto"></audio>',
+    '<audio class="eva-boot-bgm" preload="auto" loop></audio>',
+    '<audio class="eva-boot-typing" preload="auto"></audio>',
   ].join("");
 }
 
@@ -629,6 +806,7 @@ export function buildBootSource({ driver, css, bootId }) {
       if (leaving || !mounted) return;
       leaving = true;
       finishedPlayback = true;
+      try { localStorage.setItem(storageKey, bootId); } catch {}
       if (finishTimer) clearTimeout(finishTimer);
       const elapsed = performance.now() - shownAt;
       const delay = Math.max(0, 1900 - elapsed);
@@ -665,7 +843,6 @@ export function buildBootSource({ driver, css, bootId }) {
       if (!document.getElementById(elementId)) {
         document.body.appendChild(boot);
       }
-      try { localStorage.setItem(storageKey, bootId); } catch {}
       root.dataset.evaBoot = driver;
       mounted = true;
       shownAt = performance.now();
@@ -746,6 +923,7 @@ export function buildBootPackSource({ driver, css, bootId, pack, forceDriverToke
     const resultKey = ${JSON.stringify(BOOT_RESULT_KEY)};
     const optionsKey = ${JSON.stringify(OPTIONS_STORAGE_KEY)};
     const sourceCommit = ${JSON.stringify(sourceCommit)};
+    const brandLogo = ${JSON.stringify(pack.assets.logo || "")};
     const profiles = ${JSON.stringify({
       asuka: bootProfile("asuka"),
       rei: bootProfile("rei"),
@@ -764,6 +942,14 @@ export function buildBootPackSource({ driver, css, bootId, pack, forceDriverToke
       asuka: pack.assets.asukaPickVoice || "",
       rei: pack.assets.reiPickVoice || "",
     })};
+    const portraits = ${JSON.stringify({
+      asuka: pack.assets.asukaPortrait || "",
+      rei: pack.assets.reiPortrait || "",
+    })};
+    const bootBgm = ${JSON.stringify(pack.assets.bootBgm || "")};
+    const typingSound = ${JSON.stringify(pack.assets.typing || "")};
+    const bootCopy = ${JSON.stringify(BOOT_PACK_COPY)};
+    const bootLanguageKey = "eva-codex-skin-boot-language-v1";
     const syncMsByDriver = ${JSON.stringify(syncMsByDriver)};
     const syncSecondsByDriver = ${JSON.stringify(syncSecondsByDriver)};
     let bootOptions = {};
@@ -795,10 +981,23 @@ export function buildBootPackSource({ driver, css, bootId, pack, forceDriverToke
     boot.setAttribute("aria-modal", "true");
     boot.setAttribute("aria-label", "NERV 驾驶员启动序列");
     boot.innerHTML = ${JSON.stringify(markup)};
-    const phases = { gif: 3840, emergency: 3000 };
+    if (brandLogo) boot.style.setProperty("--eva-boot-logo", "url('" + brandLogo + "')");
+    boot.style.setProperty("--eva-boot-asuka-head", "url('" + heads.asuka + "')");
+    boot.style.setProperty("--eva-boot-rei-head", "url('" + heads.rei + "')");
+    boot.style.setProperty("--eva-boot-asuka-portrait", "url('" + portraits.asuka + "')");
+    boot.style.setProperty("--eva-boot-rei-portrait", "url('" + portraits.rei + "')");
+    const bgm = boot.querySelector(".eva-boot-bgm");
+    const soundButton = boot.querySelector(".eva-boot-sound");
+    const typingAudio = boot.querySelector(".eva-boot-typing");
+    const phases = { gif: 3840, emergency: 3000, intro: 4200 };
     let selectedDriver = driver;
     let syncMs = syncMsByDriver[selectedDriver];
     let syncSeconds = syncSecondsByDriver[selectedDriver];
+    let language = "zh-Hant";
+    try {
+      const savedLanguage = localStorage.getItem(bootLanguageKey);
+      if (Object.hasOwn(bootCopy, savedLanguage)) language = savedLanguage;
+    } catch {}
     let selectionLocked = false;
     let shownAt = 0;
     let mounted = false;
@@ -807,13 +1006,22 @@ export function buildBootPackSource({ driver, css, bootId, pack, forceDriverToke
     let appReady = false;
     let sequenceDone = false;
     let attemptTimer = null;
-    let phaseTimer = null;
     let cleanupTimer = null;
     let progressFrame = null;
+    let phaseClockFrame = null;
+    let phaseClockLast = 0;
+    let phaseRemaining = phases.gif;
+    let phaseClockDone = false;
     let syncStarted = 0;
     let syncRatio = 0;
     let syncVoiceStarted = false;
     let resultAnnounced = false;
+    let clockTimer = null;
+    let introTypeTimer = null;
+    let introTransitioning = false;
+    let bgmFrame = null;
+    let bgmStarting = false;
+    let bgmWanted = Boolean(bootBgm);
     const timers = new Set();
     const later = (fn, ms) => {
       const timer = setTimeout(() => {
@@ -828,22 +1036,109 @@ export function buildBootPackSource({ driver, css, bootId, pack, forceDriverToke
         try { audio.pause(); } catch {}
       }
     };
+    const text = (key, pilot = selectedDriver) => {
+      const dictionary = bootCopy[language] || bootCopy["zh-Hant"];
+      const value = dictionary[key] ?? bootCopy["zh-Hant"][key] ?? key;
+      return String(value)
+        .replace("{pilot}", pilot === "rei" ? dictionary.rei : dictionary.asuka)
+        .replace("{mode}", pilot === "rei" ? dictionary.light : dictionary.dark);
+    };
+    const paintSound = () => {
+      if (!soundButton) return;
+      const playing = Boolean(bgmWanted && bgm && !bgm.paused);
+      soundButton.hidden = !bootBgm;
+      soundButton.setAttribute("aria-pressed", String(playing));
+      soundButton.setAttribute("aria-label", text("bgm"));
+      soundButton.title = text(playing ? "bgmOn" : "bgmOff");
+    };
+    const fadeBgm = (target, duration = 380) => {
+      if (bgmFrame !== null) cancelAnimationFrame(bgmFrame);
+      bgmFrame = null;
+      if (!bgm || leaving) return;
+      if (bgm.paused) {
+        bgm.volume = target;
+        return;
+      }
+      const from = Number(bgm.volume);
+      const started = performance.now();
+      const step = (now) => {
+        bgmFrame = null;
+        if (!bgm || leaving) return;
+        const ratio = Math.max(0, Math.min(1, (now - started) / duration));
+        bgm.volume = Math.max(0, Math.min(1, from + (target - from) * ratio));
+        if (ratio < 1) bgmFrame = requestAnimationFrame(step);
+      };
+      bgmFrame = requestAnimationFrame(step);
+    };
+    const playBgm = () => {
+      if (!bgm || !bgmWanted || bgmStarting || leaving || document.hidden) return;
+      if (bgm.dataset.ready !== "true") {
+        bgm.dataset.ready = "true";
+        bgm.src = bootBgm;
+        bgm.volume = 0.24;
+        try { bgm.load(); } catch {}
+      }
+      if (!bgm.paused) {
+        paintSound();
+        return;
+      }
+      bgmStarting = true;
+      try {
+        Promise.resolve(bgm.play()).then(() => {
+          bgmStarting = false;
+          if (!leaving) paintSound();
+        }).catch(() => {
+          bgmStarting = false;
+          if (!leaving) paintSound();
+        });
+      } catch {
+        bgmStarting = false;
+        paintSound();
+      }
+    };
+    const updateClock = () => {
+      const now = new Date();
+      const time = [
+        String(now.getHours()).padStart(2, "0"),
+        String(now.getMinutes()).padStart(2, "0"),
+        String(now.getSeconds()).padStart(2, "0"),
+      ].join(":");
+      for (const node of boot.querySelectorAll("[data-eva-clock], [data-emergency-clock]")) {
+        if (node.textContent !== time) node.textContent = time;
+      }
+    };
+    const onBootPointer = (event) => {
+      if (!event.target?.closest?.(".eva-boot-sound")) playBgm();
+    };
+    const onBootKey = (event) => {
+      if (!event.target?.closest?.(".eva-boot-sound")) playBgm();
+    };
     const removeListeners = () => {
       window.removeEventListener("keydown", onKey, true);
-      boot.removeEventListener("click", onBackdropClick);
       window.removeEventListener("pagehide", onPageHide);
+      window.removeEventListener("focus", onFocusChange);
+      window.removeEventListener("blur", onFocusChange);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      boot.removeEventListener("pointerdown", onBootPointer, true);
+      boot.removeEventListener("keydown", onBootKey, true);
     };
     const cleanup = () => {
       for (const timer of timers) clearTimeout(timer);
       timers.clear();
       if (attemptTimer) clearInterval(attemptTimer);
-      if (phaseTimer) clearTimeout(phaseTimer);
       if (cleanupTimer) clearTimeout(cleanupTimer);
       if (progressFrame !== null) cancelAnimationFrame(progressFrame);
-      phaseTimer = null;
+      if (phaseClockFrame !== null) cancelAnimationFrame(phaseClockFrame);
+      if (bgmFrame !== null) cancelAnimationFrame(bgmFrame);
+      if (clockTimer !== null) clearInterval(clockTimer);
+      if (introTypeTimer !== null) clearTimeout(introTypeTimer);
       attemptTimer = null;
       cleanupTimer = null;
       progressFrame = null;
+      phaseClockFrame = null;
+      bgmFrame = null;
+      clockTimer = null;
+      introTypeTimer = null;
       stopAudio();
       removeListeners();
       if (!finishedPlayback) {
@@ -869,6 +1164,7 @@ export function buildBootPackSource({ driver, css, bootId, pack, forceDriverToke
       if (leaving) return;
       leaving = true;
       finishedPlayback = true;
+      try { localStorage.setItem(storageKey, bootId); } catch {}
       stopAudio();
       if (!resultAnnounced) {
         resultAnnounced = true;
@@ -904,13 +1200,64 @@ export function buildBootPackSource({ driver, css, bootId, pack, forceDriverToke
     const setPhase = (phase) => {
       if (leaving) return;
       boot.dataset.phase = phase;
-      if (phase === "emergency") {
-        phaseTimer = later(() => setPhase("select"), phases.emergency);
+      if (phase === "intro") {
+        typeIntroTitle();
+        fadeBgm(0.24, 420);
       } else if (phase === "select") {
         requestAnimationFrame(() => {
           boot.querySelector(".eva-boot-pilot-card")?.focus?.({ preventScroll: true });
         });
       }
+    };
+    const typeIntroTitle = () => {
+      const typed = boot.querySelector(".eva-boot-intro-typed");
+      if (!typed) return;
+      if (introTypeTimer !== null) clearTimeout(introTypeTimer);
+      const full = text("selectTitle");
+      const characters = Array.from(full);
+      let count = 0;
+      typed.textContent = "";
+      if (typingAudio && typingSound && bootOptions.typing !== false) {
+        try {
+          typingAudio.src = typingSound;
+          typingAudio.volume = 0.42;
+          typingAudio.currentTime = 0;
+          Promise.resolve(typingAudio.play()).catch(() => {});
+        } catch {}
+      }
+      const step = () => {
+        introTypeTimer = null;
+        if (leaving || boot.dataset.phase !== "intro") return;
+        typed.textContent = characters.slice(0, ++count).join("");
+        if (count < characters.length) {
+          introTypeTimer = setTimeout(step, Math.max(52, Math.min(112, 880 / Math.max(1, characters.length))));
+        }
+      };
+      introTypeTimer = setTimeout(step, 180);
+    };
+    const transitionIntroToSelect = () => {
+      if (leaving) return;
+      if (boot.dataset.phase !== "intro") {
+        if (boot.dataset.phase === "select") return;
+        setPhase("select");
+        return;
+      }
+      if (introTransitioning) return;
+      introTransitioning = true;
+      if (introTypeTimer !== null) {
+        clearTimeout(introTypeTimer);
+        introTypeTimer = null;
+      }
+      const intro = boot.querySelector(".eva-boot-intro-layer");
+      const select = boot.querySelector(".eva-boot-select-layer");
+      intro?.classList.add("is-leaving");
+      select?.classList.add("is-arriving");
+      later(() => {
+        if (leaving) return;
+        setPhase("select");
+        intro?.classList.remove("is-leaving");
+        select?.classList.remove("is-arriving");
+      }, 420);
     };
     const updateSelectedDriver = (pilot) => {
       const profile = profiles[pilot];
@@ -922,6 +1269,13 @@ export function buildBootPackSource({ driver, css, bootId, pack, forceDriverToke
       const face = boot.querySelector("[data-eva-sync-face]");
       if (face && heads[pilot]) {
         face.style.setProperty("--eva-boot-avatar", "url('" + heads[pilot] + "')");
+      }
+      const portrait = boot.querySelector("[data-eva-sync-portrait]");
+      if (portrait && portraits[pilot]) {
+        portrait.style.setProperty("--eva-boot-portrait", "url('" + portraits[pilot] + "')");
+        portrait.hidden = false;
+      } else if (portrait) {
+        portrait.hidden = true;
       }
       const unit = boot.querySelector(".eva-boot-console-layer .eva-boot-unit");
       const name = boot.querySelector(".eva-boot-console-layer .eva-boot-pilot-copy h1");
@@ -937,7 +1291,10 @@ export function buildBootPackSource({ driver, css, bootId, pack, forceDriverToke
           (pilot === "rei" ? "LIGHT / UNIT 00" : "DARK / UNIT 02");
       }
       if (code) code.textContent = profile.code;
-      if (syncTitle) syncTitle.textContent = pilot === "rei" ? "绫波丽" : "明日香";
+      if (syncTitle) syncTitle.textContent = text(pilot === "rei" ? "rei" : "asuka");
+      for (const node of boot.querySelectorAll("[data-boot-unit]")) {
+        node.textContent = profile.unit;
+      }
       syncMs = syncMsByDriver[pilot];
       syncSeconds = syncSecondsByDriver[pilot];
       const time = boot.querySelector(".eva-boot-meter-copy span:last-child");
@@ -956,6 +1313,40 @@ export function buildBootPackSource({ driver, css, bootId, pack, forceDriverToke
         }
       } catch {}
     };
+    const paintLanguage = () => {
+      boot.lang = language;
+      for (const node of boot.querySelectorAll("[data-eva-boot-text]")) {
+        node.textContent = text(node.dataset.evaBootText);
+      }
+      for (const node of boot.querySelectorAll("[data-eva-boot-aria]")) {
+        node.setAttribute("aria-label", text(node.dataset.evaBootAria));
+      }
+      for (const button of boot.querySelectorAll("[data-eva-boot-lang]")) {
+        button.setAttribute("aria-pressed", String(button.dataset.evaBootLang === language));
+      }
+      for (const card of boot.querySelectorAll("[data-eva-pilot]")) {
+        const pilot = card.dataset.evaPilot;
+        if (!profiles[pilot]) continue;
+        card.setAttribute("aria-label", text("card", pilot));
+        const pilotName = card.querySelector("[data-eva-boot-pilot]");
+        const mode = card.querySelector("[data-eva-boot-mode]");
+        if (pilotName) pilotName.textContent = text(pilot === "rei" ? "rei" : "asuka");
+        if (mode) mode.textContent = (pilot === "rei" ? text("light") : text("dark")) + " / UNIT " + profiles[pilot].unit;
+      }
+      const introTitle = boot.querySelector(".eva-boot-intro-title");
+      const introMeasure = boot.querySelector(".eva-boot-intro-measure");
+      if (introTitle) introTitle.setAttribute("aria-label", text("selectTitle"));
+      if (introMeasure) introMeasure.textContent = text("selectTitle");
+      const languageGroup = boot.querySelector(".eva-boot-languages");
+      if (languageGroup) languageGroup.setAttribute("aria-label", text("language"));
+      const skipButton = boot.querySelector(".eva-boot-skip");
+      if (skipButton) {
+        skipButton.textContent = text("skip");
+        skipButton.setAttribute("aria-label", text("skip"));
+      }
+      if (boot.dataset.phase === "intro") typeIntroTitle();
+      paintSound();
+    };
     const chooseDriver = (pilot) => {
       if (leaving || selectionLocked || !profiles[pilot]) return;
       selectionLocked = true;
@@ -964,6 +1355,7 @@ export function buildBootPackSource({ driver, css, bootId, pack, forceDriverToke
       const bay = boot.querySelector("[data-eva-dropzone]");
       bay?.classList.remove("is-over");
       bay?.setAttribute("data-loaded", "true");
+      fadeBgm(0.07, 320);
 
       const pick = boot.querySelector(".eva-boot-pick-voice");
       let delay = 520;
@@ -984,7 +1376,6 @@ export function buildBootPackSource({ driver, css, bootId, pack, forceDriverToke
           pick.addEventListener("ended", startSync, { once: true });
         }
       }
-      try { localStorage.setItem(storageKey, bootId); } catch {}
       later(startSync, delay);
     };
     const tickSync = (now) => {
@@ -1025,6 +1416,7 @@ export function buildBootPackSource({ driver, css, bootId, pack, forceDriverToke
     const startSync = () => {
       if (leaving || boot.dataset.phase === "sync") return;
       setPhase("sync");
+      fadeBgm(0.045, 500);
       syncStarted = performance.now();
       const voice = boot.querySelector(".eva-boot-voice");
       if (voice && bootOptions.bootVoice !== false) {
@@ -1044,13 +1436,37 @@ export function buildBootPackSource({ driver, css, bootId, pack, forceDriverToke
         }
       }, 20000);
     };
+    const tickPhaseClock = (now) => {
+      phaseClockFrame = null;
+      if (leaving || phaseClockDone) return;
+      if (!phaseClockLast) phaseClockLast = now;
+      const delta = Math.min(1000, Math.max(0, now - phaseClockLast));
+      phaseClockLast = now;
+      if (!["gif", "emergency", "intro"].includes(boot.dataset.phase)) {
+        phaseClockDone = true;
+        return;
+      }
+      if (!document.hidden) {
+        phaseRemaining -= delta;
+        if (phaseRemaining <= 0) {
+          if (boot.dataset.phase === "gif") {
+            setPhase("emergency");
+            phaseRemaining = phases.emergency;
+          } else if (boot.dataset.phase === "emergency") {
+            setPhase("intro");
+            phaseRemaining = phases.intro;
+          } else if (boot.dataset.phase === "intro") {
+            transitionIntroToSelect();
+            phaseClockDone = true;
+            return;
+          }
+        }
+      }
+      phaseClockFrame = requestAnimationFrame(tickPhaseClock);
+    };
     const onSkip = (event) => {
       event.preventDefault();
       event.stopPropagation();
-      leave();
-    };
-    const onBackdropClick = (event) => {
-      if (event.target?.closest?.("button,audio,.eva-boot-select-layer,.eva-boot-console-layer")) return;
       leave();
     };
     const onKey = (event) => {
@@ -1058,6 +1474,16 @@ export function buildBootPackSource({ driver, css, bootId, pack, forceDriverToke
         event.preventDefault();
         event.stopPropagation();
         leave();
+        return;
+      }
+      if (
+        event.key === "Enter" &&
+        boot.dataset.phase === "intro" &&
+        !event.target?.closest?.("button,a,input,textarea,select,[role='button']")
+      ) {
+        event.preventDefault();
+        event.stopPropagation();
+        transitionIntroToSelect();
         return;
       }
       if (
@@ -1073,6 +1499,23 @@ export function buildBootPackSource({ driver, css, bootId, pack, forceDriverToke
       if (finishedPlayback) return;
       try { localStorage.removeItem(storageKey); } catch {}
     };
+    const onVisibilityChange = () => {
+      phaseClockLast = performance.now();
+      if (document.hidden) {
+        if (phaseClockFrame !== null) cancelAnimationFrame(phaseClockFrame);
+        phaseClockFrame = null;
+        if (bgm && !bgm.paused) bgm.pause();
+      } else {
+        playBgm();
+        if (!phaseClockDone && phaseClockFrame === null) {
+          phaseClockFrame = requestAnimationFrame(tickPhaseClock);
+        }
+      }
+      paintSound();
+    };
+    const onFocusChange = () => {
+      phaseClockLast = performance.now();
+    };
     const install = () => {
       if (!document.body) return false;
       if (!document.getElementById(styleId)) {
@@ -1082,13 +1525,49 @@ export function buildBootPackSource({ driver, css, bootId, pack, forceDriverToke
         (document.head || document.documentElement).appendChild(style);
       }
       if (!document.getElementById(elementId)) document.body.appendChild(boot);
-      try { localStorage.setItem(storageKey, bootId); } catch {}
       root.dataset.evaBoot = driver;
       mounted = true;
       shownAt = performance.now();
       window.addEventListener("keydown", onKey, true);
       window.addEventListener("pagehide", onPageHide);
-      boot.addEventListener("click", onBackdropClick);
+      window.addEventListener("focus", onFocusChange);
+      window.addEventListener("blur", onFocusChange);
+      document.addEventListener("visibilitychange", onVisibilityChange);
+      boot.addEventListener("pointerdown", onBootPointer, true);
+      boot.addEventListener("keydown", onBootKey, true);
+      boot.querySelector(".eva-boot-intro-next")?.addEventListener("click", transitionIntroToSelect);
+      soundButton?.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        if (!bgm) return;
+        if (!bgm.paused) {
+          bgmWanted = false;
+          bgm.pause();
+          if (bgmFrame !== null) cancelAnimationFrame(bgmFrame);
+          bgmFrame = null;
+        } else {
+          bgmWanted = true;
+          playBgm();
+        }
+        paintSound();
+      });
+      bgm?.addEventListener("playing", () => {
+        if (!leaving) paintSound();
+      });
+      bgm?.addEventListener("pause", () => {
+        if (!leaving) paintSound();
+      });
+      bgm?.addEventListener("error", () => {
+        bgmWanted = false;
+        paintSound();
+      });
+      for (const button of boot.querySelectorAll("[data-eva-boot-lang]")) {
+        button.addEventListener("click", () => {
+          language = button.dataset.evaBootLang;
+          try { localStorage.setItem(bootLanguageKey, language); } catch {}
+          paintLanguage();
+        });
+      }
       boot.querySelector(".eva-boot-skip")?.addEventListener("click", onSkip);
       for (const card of boot.querySelectorAll("[data-eva-pilot]")) {
         card.addEventListener("click", () => chooseDriver(card.dataset.evaPilot));
@@ -1133,9 +1612,18 @@ export function buildBootPackSource({ driver, css, bootId, pack, forceDriverToke
         });
       }
       requestAnimationFrame(() => {
-        if (!leaving) boot.classList.add("is-active");
+        if (!leaving) {
+          boot.classList.add("is-active");
+          paintLanguage();
+          playBgm();
+        }
       });
-      phaseTimer = later(() => setPhase("emergency"), phases.gif);
+      updateClock();
+      clockTimer = setInterval(updateClock, 1000);
+      phaseClockLast = 0;
+      phaseRemaining = phases.gif;
+      phaseClockDone = false;
+      phaseClockFrame = requestAnimationFrame(tickPhaseClock);
       later(() => {
         appReady = true;
         maybeFinish();
@@ -1383,6 +1871,26 @@ export function buildEarlySource(payloadSource, revision, bootSource = "") {
     }
     timer = setInterval(install, 300);
     timeout = setTimeout(stop, 60000);
+  })()`;
+}
+
+export function buildBootBootstrapSource(bootSource, expectedTimeOrigin = null) {
+  if (typeof bootSource !== "string" || !bootSource.trim()) {
+    return `({ played: false, reason: "missing-boot-source" })`;
+  }
+  return `(() => {
+    if (location.href !== ${JSON.stringify(EXACT_MAIN_URL)}) {
+      return { played: false, reason: "not-main-document" };
+    }
+    if (${Number.isFinite(expectedTimeOrigin) ? `performance.timeOrigin !== ${Number(expectedTimeOrigin)}` : "false"}) {
+      return { played: false, reason: "document-changed" };
+    }
+    try {
+      return (${bootSource});
+    } catch (error) {
+      console.error("[eva-skin] early boot install failed", error);
+      return { played: false, reason: "boot-error" };
+    }
   })()`;
 }
 
@@ -1694,6 +2202,72 @@ async function waitForCodexProbe(session, timeoutMs) {
   throw new Error(`等待 Codex 界面超时（${timeoutMs}ms）`);
 }
 
+async function waitForBootDocument(session, timeoutMs) {
+  const deadline = Date.now() + timeoutMs;
+  const stableForMs = 650;
+  let stableKey = "";
+  let stableSince = 0;
+  while (Date.now() < deadline) {
+    let state;
+    try {
+      state = await session.evaluate(`(() => ({
+        href: location.href,
+        readyState: document.readyState,
+        visibility: document.visibilityState,
+        hasBody: Boolean(document.body),
+        timeOrigin: performance.timeOrigin,
+      }))()`);
+    } catch {
+      stableKey = "";
+      stableSince = 0;
+      await sleep(120);
+      continue;
+    }
+    const eligible = state?.href === EXACT_MAIN_URL &&
+      state.readyState !== "loading" &&
+      state.hasBody;
+    const nextKey = eligible ? `${state.timeOrigin}|${state.href}` : "";
+    const now = Date.now();
+    if (!nextKey) {
+      stableKey = "";
+      stableSince = 0;
+    } else if (nextKey === stableKey) {
+      if (now - stableSince >= stableForMs) return state;
+    } else {
+      stableKey = nextKey;
+      stableSince = now;
+    }
+    await sleep(120);
+  }
+  return null;
+}
+
+async function mountBootOnStableDocument(session, bootSource, timeoutMs) {
+  const deadline = Date.now() + timeoutMs;
+  let lastResult = null;
+  while (Date.now() < deadline) {
+    const bootDocument = await waitForBootDocument(
+      session,
+      Math.min(2500, Math.max(400, deadline - Date.now())),
+    );
+    if (!bootDocument) continue;
+    lastResult = await session.evaluate(buildBootBootstrapSource(
+      bootSource,
+      bootDocument.timeOrigin,
+    ));
+    if (lastResult?.played) return lastResult;
+    const reason = String(lastResult?.reason || "");
+    if (["already-played", "already-installed", "disabled", "reduced-motion"].includes(reason)) {
+      return lastResult;
+    }
+    if (!["document-changed", "not-main-document", "waiting-for-body"].includes(reason)) {
+      return lastResult;
+    }
+    await sleep(120);
+  }
+  return lastResult;
+}
+
 async function waitForVerifiedSession(session, timeoutMs) {
   const deadline = Date.now() + timeoutMs;
   let last;
@@ -1764,21 +2338,38 @@ async function applyOnce(target, current, port, options) {
   const session = await connectTarget(target, port);
   let earlyScriptId = null;
   try {
-    const earlySource = buildEarlySource(
-      current.source,
-      current.revision,
-      current.bootSource,
-    );
+    const earlySource = buildEarlySource(current.source, current.revision);
     const early = await session.send("Page.addScriptToEvaluateOnNewDocument", {
       source: earlySource,
     });
     earlyScriptId = early.identifier ?? null;
+    if (current.bootSource) {
+      try {
+        await mountBootOnStableDocument(
+          session,
+          current.bootSource,
+          Math.min(options.probeTimeoutMs, 8000),
+        );
+      } catch (error) {
+        console.error(`[eva-skin] boot display failed: ${error.message}`);
+      }
+    }
     const probe = await waitForCodexProbe(session, options.probeTimeoutMs);
     if (current.bootSource) {
       try {
-        await session.evaluate(current.bootSource);
+        const bootPending = await session.evaluate(`(() => {
+          try {
+            return !window[${JSON.stringify(BOOT_RUNTIME_KEY)}] &&
+              localStorage.getItem("eva-codex-skin-boot-launch") !== ${JSON.stringify(current.bootId)};
+          } catch {
+            return false;
+          }
+        })()`);
+        if (bootPending) {
+          await session.evaluate(buildBootBootstrapSource(current.bootSource));
+        }
       } catch (error) {
-        console.error(`[eva-skin] boot display failed: ${error.message}`);
+        console.error(`[eva-skin] late boot display failed: ${error.message}`);
       }
     }
     await session.evaluate(buildEarlySource(current.source, current.revision));
@@ -1847,7 +2438,6 @@ async function runWatch(options) {
                 source: buildEarlySource(
                   current.source,
                   current.revision,
-                  current.bootSource,
                 ),
               },
             )).identifier ?? null;
@@ -1901,11 +2491,22 @@ async function runWatch(options) {
           setTimeout(async () => {
             if (record.session.closed) return;
             try {
+              if (current.bootSource) {
+                const completed = await record.session.evaluate(`(() => {
+                  try {
+                    return localStorage.getItem("eva-codex-skin-boot-launch") === ${JSON.stringify(current.bootId)};
+                  } catch {
+                    return false;
+                  }
+                })()`);
+                if (!completed) {
+                  await record.session.evaluate(buildBootBootstrapSource(current.bootSource));
+                }
+              }
               await record.session.evaluate(
                 buildEarlySource(
                   current.source,
                   current.revision,
-                  current.bootSource,
                 ),
               );
               await record.session.evaluate(current.source);
