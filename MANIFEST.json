@@ -20,18 +20,18 @@
     },
     {
       "path": "ASSET-TODO.md",
-      "bytes": 1585,
-      "sha256": "2fb85204c1d6a0f2b167e66cbba59035f8aef028301d8065fe22d21824f44551"
+      "bytes": 1615,
+      "sha256": "f2dd3e46a4540647cc38579f7fb605466806a582b6eda68f50dd7fbe256b4930"
     },
     {
       "path": "ASSETS.md",
-      "bytes": 1774,
-      "sha256": "aa81cbfc7800b584eaba1fa26e28a6a5c849f0a2fd9516f03533c600c93b38d1"
+      "bytes": 1792,
+      "sha256": "6a35f540927a11c8463a866c20389e6ed36831f061dc4dd12d4c74ed9e90f8ec"
     },
     {
       "path": "CHANGELOG.md",
-      "bytes": 25009,
-      "sha256": "d3610156390fd0688f38c051988a5b944106cd53956bbbd0cf7c8ed68a5fd45e"
+      "bytes": 25236,
+      "sha256": "00d7313cb642977fd9906725f3283346ad147737be42f36cc4cb4e91cb9a0a8f"
     },
     {
       "path": "CONTRIBUTING.md",
@@ -40,8 +40,8 @@
     },
     {
       "path": "EVA-THEME.md",
-      "bytes": 5570,
-      "sha256": "51e93ae9f978a9998df3075d0c7c2033346746b500bfdb4b7d4f1fde74ba14bd"
+      "bytes": 5670,
+      "sha256": "9b32e68329276a57cf463f702326b8e62fd4b53f559b053fe6659a58bcd4b703"
     },
     {
       "path": "Import-EVA-Theme.cmd",
@@ -65,18 +65,18 @@
     },
     {
       "path": "PROVENANCE.md",
-      "bytes": 1713,
-      "sha256": "0c5fa41879e8ae82b6de11beb2a436cdfb7026907c44590e802e95614ea20d0c"
+      "bytes": 1730,
+      "sha256": "23593b45b0e9d7d57497fcb5e0d79721afa9af16dc07aefa90ab62e096540055"
     },
     {
       "path": "PUBLIC-RELEASE-CHECKLIST.md",
-      "bytes": 1248,
-      "sha256": "c32a4d02fa15c39f583bb68b78b0d71f62add83907d4c86a545b5eb9fda86869"
+      "bytes": 1365,
+      "sha256": "b4ab6576978904f9c5614e2a52757341ebbf7ea31343dcd821aa00e6f1fe4012"
     },
     {
       "path": "README.md",
-      "bytes": 21391,
-      "sha256": "c3586c76a08db933563c8e5bb9625c30fd5cc6bcda1cb204566a0e0b02560204"
+      "bytes": 22008,
+      "sha256": "6788babc04b16d9efb980f3fd6c7026ff7aff7c6fd80b489f239cb4a4577725d"
     },
     {
       "path": "Restore-EVA.cmd",
@@ -115,8 +115,8 @@
     },
     {
       "path": "codex-skin/Start-EVA.ps1",
-      "bytes": 25150,
-      "sha256": "b7ff47789b4e322a27b696f98a4494183dae86d0ada593864450754e1304de81"
+      "bytes": 26555,
+      "sha256": "b4c823282c5ee2f4bd2324343feeab94e6ebe985c4e89bd7c67c273f5b4ff641"
     },
     {
       "path": "codex-skin/assets/README.md",
@@ -185,8 +185,8 @@
     },
     {
       "path": "codex-skin/tests/launcher.test.mjs",
-      "bytes": 6529,
-      "sha256": "ae1a1da91b3f251ce6be1c818a4384e5ffe5fc594ec306c102d2fad89fd96089"
+      "bytes": 7058,
+      "sha256": "aed432d302dfa4ffc7cea71eb96684caa807ec1f31622a5c2e231e146dfd7815"
     },
     {
       "path": "eva-theme/LICENSE",
@@ -205,8 +205,8 @@
     },
     {
       "path": "eva-theme/README.md",
-      "bytes": 1374,
-      "sha256": "5c8e07b6f71d7b14aa9caf27330acacc62a51254385ba3abcbb606b705a972b6"
+      "bytes": 1458,
+      "sha256": "7979f2a223b59b07804e1b0ec7543873af8eff568027e1f06bb28b35db0f3148"
     },
     {
       "path": "eva-theme/assets/animations/nerv-boot.gif",
@@ -320,8 +320,8 @@
     },
     {
       "path": "scripts/Install-EVA-DesktopShortcut.ps1",
-      "bytes": 3419,
-      "sha256": "766c0ffa70ba85b452005869c154e37b6f2f03ff6e48e58c2e934391e0d385d1"
+      "bytes": 4154,
+      "sha256": "2398cf205e0ba1cb1ea4bb33466dcf5a92899b949773e98e45bad95c7d1a8e70"
     },
     {
       "path": "scripts/check-release.cjs",

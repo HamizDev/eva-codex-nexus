@@ -3,6 +3,7 @@
 - [x] 当前发行形态为官方 Codex Desktop + `codex-skin/` 换肤层；
 - [x] 仓库不包含旧独立工作台、`codex app-server` bridge、Workbench 启动入口或终端/Git/插件面板；
 - [x] 角色 GIF、头像、立绘、语音、打字音和音乐只位于 `eva-theme/assets`，受独立媒体许可约束并保留校验清单；
+- [x] 默认桌面安装和启动流程会自动导入 `eva-theme/`，素材缺失或少于 20 个文件时失败；
 - [x] 根 `package.json` 与 `codex-skin/injector.mjs` 版本一致；
 - [x] `npm test`、`npm run manifest`、`npm run verify:public` 通过；
 - [x] `MANIFEST.json` 与当前源码逐文件 SHA-256 一致；

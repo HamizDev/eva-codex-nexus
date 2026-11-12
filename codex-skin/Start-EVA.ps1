@@ -23,6 +23,8 @@ $ProfilePath = Join-Path $StateRoot 'cdp-profile'
 $InjectorLog = Join-Path $StateRoot 'injector.log'
 $InjectorErrorLog = Join-Path $StateRoot 'injector-error.log'
 $InjectorPath = Join-Path $PSScriptRoot 'injector.mjs'
+$BundledThemeRoot = [IO.Path]::GetFullPath((Join-Path (Split-Path -Parent $PSScriptRoot) 'eva-theme'))
+$ThemePackPath = Join-Path $StateRoot 'eva-theme'
 
 function Write-Step {
   param([Parameter(Mandatory)][string]$Message)
@@ -86,6 +88,29 @@ function Get-NodeRuntime {
     throw "官方 Codex 皮肤需要 Node.js 22 或更高版本（内置 WebSocket），当前为 $version。"
   }
   return [pscustomobject]@{ Path = $command.Source; Version = $version }
+}
+
+function Ensure-BundledTheme {
+  $manifestPath = Join-Path $BundledThemeRoot 'assets\manifest.json'
+  if (-not (Test-Path -LiteralPath $manifestPath -PathType Leaf)) {
+    throw "未找到内置 EVA 素材包：$manifestPath。请不要使用没有 eva-theme/ 的旧版仓库。"
+  }
+  $importerPath = Join-Path $PSScriptRoot 'Import-EVA-Theme.ps1'
+  if (-not (Test-Path -LiteralPath $importerPath -PathType Leaf)) {
+    throw "未找到 EVA 素材导入器：$importerPath"
+  }
+  New-Item -ItemType Directory -Force -Path $StateRoot | Out-Null
+  & $importerPath -SourceRoot $BundledThemeRoot -Destination $ThemePackPath | Out-Null
+  $importedManifestPath = Join-Path $ThemePackPath 'manifest.json'
+  if (-not (Test-Path -LiteralPath $importedManifestPath -PathType Leaf)) {
+    throw "EVA 素材导入完成但缺少本机清单：$importedManifestPath"
+  }
+  $imported = Get-Content -LiteralPath $importedManifestPath -Raw -Encoding UTF8 | ConvertFrom-Json
+  $assetCount = @($imported.assets.PSObject.Properties).Count
+  if ($assetCount -lt 20) {
+    throw "EVA 素材包不完整：导入后只有 $assetCount 个素材。"
+  }
+  Write-Step "EVA 素材包已就绪（$assetCount 个文件）。"
 }
 
 function Test-TrustedPublisher {
@@ -512,6 +537,8 @@ try {
     $result.Output | ForEach-Object { Write-Host $_ }
     exit $result.ExitCode
   }
+
+  Ensure-BundledTheme
 
   $saved = Read-SavedState
   $cdpReady = Test-CdpEndpoint -CdpPort $Port -Executable $install.Executable

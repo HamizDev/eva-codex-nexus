@@ -9,6 +9,10 @@ param(
 $ErrorActionPreference = 'Stop'
 $Root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $Launcher = Join-Path $Root 'Start-EVA.vbs'
+$ThemeRoot = Join-Path $Root 'eva-theme'
+$ThemeManifest = Join-Path $ThemeRoot 'assets\manifest.json'
+$ThemeImporter = Join-Path $Root 'codex-skin\Import-EVA-Theme.ps1'
+$ThemeDestination = Join-Path $env:LOCALAPPDATA 'EVACodexSkin\eva-theme'
 if (-not (Test-Path -LiteralPath $Launcher -PathType Leaf)) {
   throw "缺少隐藏启动入口：$Launcher"
 }
@@ -44,6 +48,16 @@ function Find-CodexExecutable {
 }
 
 $codex = Find-CodexExecutable
+if (-not (Test-Path -LiteralPath $ThemeManifest -PathType Leaf)) {
+  throw "缺少内置 EVA 素材包清单：$ThemeManifest"
+}
+if (-not (Test-Path -LiteralPath $ThemeImporter -PathType Leaf)) {
+  throw "缺少 EVA 素材导入器：$ThemeImporter"
+}
+& $ThemeImporter -SourceRoot $ThemeRoot -Destination $ThemeDestination | Out-Null
+if (-not (Test-Path -LiteralPath (Join-Path $ThemeDestination 'manifest.json') -PathType Leaf)) {
+  throw "EVA 素材没有成功导入：$ThemeDestination"
+}
 $desktop = [Environment]::GetFolderPath('Desktop')
 if (-not (Test-Path -LiteralPath $desktop -PathType Container)) {
   throw "找不到桌面目录：$desktop"

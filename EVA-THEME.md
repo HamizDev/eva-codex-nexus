@@ -1,6 +1,6 @@
 # EVA 主题素材包
 
-公开仓库包含 `eva-theme/` 素材包，但不会自动加载。需要完整启动动画时，运行导入器；媒体会复制到本机，仓库中的源文件仍受 `eva-theme/MEDIA-LICENSE.md` 限制，未经书面授权不得再发布。
+公开仓库包含 `eva-theme/` 素材包。桌面快捷方式安装器和启动器会自动校验并导入它；手动运行导入器仅用于修复或重新导入。媒体会复制到本机，仓库中的源文件仍受 `eva-theme/MEDIA-LICENSE.md` 限制，未经书面授权不得再发布。
 
 ## 使用
 
@@ -10,7 +10,7 @@ Import-EVA-Theme.cmd
 Import-EVA-Theme.cmd "D:\path\to\eva-theme"
 ```
 
-不带参数时，导入器优先读取仓库根的 `eva-theme/`。环境变量 `EVA_THEME_SOURCE_ROOT` 或命令行参数仍可指定其他合法素材目录。
+不带参数时，导入器优先读取仓库根的 `eva-theme/`。正常安装和启动会自动执行这一步；环境变量 `EVA_THEME_SOURCE_ROOT` 或命令行参数仍可指定其他合法素材目录。
 
 导入后的日常启动不需要再次运行导入器。`Start-EVA.vbs` / `Start-EVA.cmd` 启动的注入器会自动读取：
 
@@ -51,7 +51,7 @@ Import-EVA-Theme.cmd "D:\path\to\eva-theme"
 - 拒绝包含脚本、事件处理器、远程 URL 或 `@import` 的 SVG；
 - 生成 `PACK-NOTICE.txt`，标明只允许本机使用。
 
-启动时若素材包尚未导入，自动回退到 `codex-skin/assets/boot.css` 的抽象启动层。若包存在但校验失败，注入器会拒绝加载该包并在日志中报错。
+安装器和启动器会在启动前自动导入素材；若素材包缺失、少于 20 个文件或校验失败，导入器会报错并阻止启动，不会静默使用无素材版本。
 
 ## 启动序列
 

@@ -13,7 +13,7 @@
 
 ## 外部来源
 
-- **EVA 主题素材包**：`eva-theme/assets` 包含 GIF、警报/插入栓、头像、角色线稿、语音、打字音和启动 BGM；源包随仓库维护，但运行时只通过 `Import-EVA-Theme.ps1` 校验并复制到 `%LOCALAPPDATA%\EVACodexSkin\eva-theme`。素材受 `eva-theme/MEDIA-LICENSE.md` 的独立限制性许可约束，不适用代码 MIT。
+- **EVA 主题素材包**：`eva-theme/assets` 包含 GIF、警报/插入栓、头像、角色线稿、语音、打字音和启动 BGM；源包随仓库维护，安装器和启动器会自动调用 `Import-EVA-Theme.ps1`，校验并复制到 `%LOCALAPPDATA%\EVACodexSkin\eva-theme`。素材受 `eva-theme/MEDIA-LICENSE.md` 的独立限制性许可约束，不适用代码 MIT。
 - **NERV 顶部标志**：仅用于同人主题展示；项目 MIT 不覆盖 EVA/NERV 图形、商标或角色权利。
 - **官方 Codex**：由使用者自行安装。本项目不修改 `WindowsApps`、`app.asar`、签名、账号令牌、代理、Base URL 或模型配置。
 

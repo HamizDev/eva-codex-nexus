@@ -7,13 +7,13 @@
 - 4 个角色头像或线稿立绘；
 - 12 个语音、音效或启动 BGM。
 
-素材包的校验清单在 [`assets/manifest.json`](assets/manifest.json)，包含每个文件的字节数和 SHA-256。运行时不会直接读取这里；请在仓库根目录执行：
+素材包的校验清单在 [`assets/manifest.json`](assets/manifest.json)，包含每个文件的字节数和 SHA-256。`Install-EVA-DesktopShortcut.cmd` 和 `Start-EVA.cmd` 会自动读取并导入这里；手动修复时可在仓库根目录执行：
 
 ```powershell
 Import-EVA-Theme.cmd
 ```
 
-导入器会把素材复制到 `%LOCALAPPDATA%\EVACodexSkin\eva-theme`，之后启动器才会加载。也可以显式传入其他合法素材目录：
+导入器会把素材复制到 `%LOCALAPPDATA%\EVACodexSkin\eva-theme`，安装器和启动器会自动完成这一步。也可以显式传入其他合法素材目录：
 
 ```powershell
 Import-EVA-Theme.cmd "D:\path\to\eva-theme"

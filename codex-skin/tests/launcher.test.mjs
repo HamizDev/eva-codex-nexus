@@ -94,6 +94,8 @@ test("桌面快捷方式使用官方 Codex 图标并指向隐藏启动器", () =
   const source = read("scripts/Install-EVA-DesktopShortcut.ps1");
   for (const fragment of [
     "Get-AppxPackage -Name 'OpenAI.Codex'",
+    "Import-EVA-Theme.ps1",
+    "ThemeDestination",
     "Desktop",
     "TargetPath = $wscript",
     "IconLocation = $codex.Path + ',0'",
@@ -102,6 +104,19 @@ test("桌面快捷方式使用官方 Codex 图标并指向隐藏启动器", () =
   ]) {
     assert.ok(source.includes(fragment), `missing shortcut contract: ${fragment}`);
   }
+});
+
+test("默认启动和桌面安装都会准备内置 EVA 素材包", () => {
+  const launcher = read("codex-skin/Start-EVA.ps1");
+  for (const fragment of [
+    "BundledThemeRoot",
+    "Ensure-BundledTheme",
+    "Import-EVA-Theme.ps1",
+    "assetCount -lt 20",
+  ]) {
+    assert.ok(launcher.includes(fragment), `missing automatic theme import contract: ${fragment}`);
+  }
+  assert.ok(launcher.indexOf("Ensure-BundledTheme") < launcher.indexOf("$saved = Read-SavedState"));
 });
 
 test("EVA 主题素材导入器只在本地复制并校验媒体", () => {

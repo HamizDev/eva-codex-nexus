@@ -5,7 +5,8 @@
 ### 新增
 
 - README 新增“自己安装”和“交给 AI 安装”两套步骤，补充公开仓库素材边界、安装后验证命令，以及 `OpenAI.Codex 26.1106.6628.0`、Chromium `157.0.8103.51`、Windows 11 `10.0.26300`、Node `24.22.2` 的构建/验证基线。
-- 新增仓库内 `eva-theme/` 素材包：20 个媒体文件、`assets/manifest.json`、来源说明和独立媒体许可；启动器仍然只在用户显式运行 `Import-EVA-Theme.cmd` 后加载素材。
+- 新增仓库内 `eva-theme/` 素材包：20 个媒体文件、`assets/manifest.json`、来源说明和独立媒体许可；安装器和启动器会在启动前自动准备素材。
+- 默认安装和启动流程改为自动导入仓库内 `eva-theme/`：`Install-EVA-DesktopShortcut.cmd` 和 `Start-EVA.cmd` 都会先校验并准备素材，素材缺失或少于 20 个文件时直接报错，不再静默退回无素材基础版。
 - 新增 `eva-theme/MEDIA-LICENSE.md`：媒体可在本机导入使用，但未经 HamizDev 明确书面授权，不得复制、镜像、再发布到其他仓库、Release、安装包或产品；项目代码仍使用 MIT。
 - README 增加“只安装公开仓库”和“仓库 + 已授权 `eva-theme` 素材包”的效果范围对照，并把 `--verify` 成功字段修正为实际返回的 `installed: true`、`pass: true`、`version` 和 `driver`。
 - 启动序列加入黑底驾驶员入口页：NERV 抬头、左右明日香/绫波丽线稿、逐字显示的「選擇你的駕駛員」、扫描线、进入选择和实时时钟；入口会自动过渡到选择页，也可点击按钮或按 Enter 提前进入。

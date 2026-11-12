@@ -13,7 +13,7 @@
 
 ## 素材包边界
 
-角色 GIF、警报/插入栓、头像、线稿立绘、启动/选择/欢迎/审核/完成语音、打字音和音乐位于 `eva-theme/assets`，随仓库提供源码和管理清单，但不会自动加载。需要时由 `Import-EVA-Theme.ps1` 校验并复制到：
+角色 GIF、警报/插入栓、头像、线稿立绘、启动/选择/欢迎/审核/完成语音、打字音和音乐位于 `eva-theme/assets`，随仓库提供源码和管理清单。桌面快捷方式安装器和启动器会自动调用 `Import-EVA-Theme.ps1` 校验并复制到：
 
 ```text
 %LOCALAPPDATA%\EVACodexSkin\eva-theme
