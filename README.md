@@ -9,17 +9,17 @@
 为**官方 Codex 桌面客户端**打造的 EVA 双角色皮肤，不是另做一个 Codex 工作台。<br />
 明日香的红与黑，绫波丽的白与蓝；侧栏、项目、会话、输入框、审批与快捷键仍保持 Codex 原生。
 
-[![Release](https://img.shields.io/badge/release-v0.4.2-b62026)](https://github.com/HamizDev/eva-codex-nexus/tree/v0.4.2) [![License](https://img.shields.io/badge/code-MIT-176b91)](LICENSE) [![Platform](https://img.shields.io/badge/platform-Windows-236c9d)](#环境要求)
+[![Release](https://img.shields.io/badge/release-v0.4.3-b62026)](https://github.com/HamizDev/eva-codex-nexus/tree/v0.4.3) [![License](https://img.shields.io/badge/code-MIT-176b91)](LICENSE) [![Platform](https://img.shields.io/badge/platform-Windows-236c9d)](#环境要求)
 
-[**下载最新版本**](https://github.com/HamizDev/eva-codex-nexus/archive/refs/tags/v0.4.2.zip) · [使用流程](#使用流程) · [启动动画](#eva-启动素材包) · [更新日志](CHANGELOG.md) · [问题反馈](https://github.com/HamizDev/eva-codex-nexus/issues)
+[**下载最新版本**](https://github.com/HamizDev/eva-codex-nexus/archive/refs/tags/v0.4.3.zip) · [使用流程](#使用流程) · [启动动画](#eva-启动素材包) · [更新日志](CHANGELOG.md) · [问题反馈](https://github.com/HamizDev/eva-codex-nexus/issues)
 
-`eva-codex-nexus` · 当前版本 **v0.4.2（开发预览）**
+`eva-codex-nexus` · 当前版本 **v0.4.3（开发预览）**
 
 </div>
 
 > 非官方项目，与 OpenAI、Studio Khara、Gainax 及相关权利方均无关联。
 
-从 v0.1.0 开始，默认入口启动的是**你电脑上已安装的官方 Codex**。侧栏、项目、会话、输入框、审批、菜单和快捷键仍然是 Codex 原生的，只额外叠加 EVA 的配色、线框和装饰层。v0.2.0 增加了无控制台启动、官方 Codex 图标的桌面快捷方式，以及可选的 EVA 主题素材包；v0.2.1 修复了 Windows PowerShell 5.1 下 CDP 目标列表误判、导致启动器拒绝注入的问题；v0.2.2 补齐了侧栏悬浮说明、改动汇总卡片、文件变更提示、用户气泡和发送按钮的面板配色；v0.3.0 增加应用内明日香/绫波丽切换、排队消息导轨适配，并完成真实窗口缩放验证；v0.3.1 修复用户消息气泡对比度，适配内置浏览器的标签、导航、地址栏、导入横幅和工具卡片，并在浏览器打开时自动收起驾驶员切换条；v0.3.2 适配右上角摘要面板的标题、分组线、文件行、缩略图和操作状态；v0.4.0 把角色立绘、选择语音、欢迎语音、审核/完成提醒和打字音接入本地媒体包，新增两类自动提醒开关、`表示設定` 面板、立绘透明度、主题内切换与完整媒体开关；v0.4.1 增加首次启动的驾驶员选择/拖放、修复启动层注入时机与完成音误播，并移除旧独立工作台和相关依赖；v0.4.2 将公开素材命名统一为 EVA Theme。
+从 v0.1.0 开始，默认入口启动的是**你电脑上已安装的官方 Codex**。侧栏、项目、会话、输入框、审批、菜单和快捷键仍然是 Codex 原生的，只额外叠加 EVA 的配色、线框和装饰层。v0.2.0 增加了无控制台启动、官方 Codex 图标的桌面快捷方式，以及可选的 EVA 主题素材包；v0.2.1 修复了 Windows PowerShell 5.1 下 CDP 目标列表误判、导致启动器拒绝注入的问题；v0.2.2 补齐了侧栏悬浮说明、改动汇总卡片、文件变更提示、用户气泡和发送按钮的面板配色；v0.3.0 增加应用内明日香/绫波丽切换、排队消息导轨适配，并完成真实窗口缩放验证；v0.3.1 修复用户消息气泡对比度，适配内置浏览器的标签、导航、地址栏、导入横幅和工具卡片，并在浏览器打开时自动收起驾驶员切换条；v0.3.2 适配右上角摘要面板的标题、分组线、文件行、缩略图和操作状态；v0.4.0 把角色立绘、选择语音、欢迎语音、审核/完成提醒和打字音接入本地媒体包，新增两类自动提醒开关、`表示設定` 面板、立绘透明度、主题内切换与完整媒体开关；v0.4.1 增加首次启动的驾驶员选择/拖放、修复启动层注入时机与完成音误播，并移除旧独立工作台和相关依赖；v0.4.2 将公开素材命名统一为 EVA Theme；v0.4.3 将设置面板改为可折叠的浮动面板，支持自由拖动、简繁日英四语言即时切换和估算输出速度 HUD。
 
 ## 入口
 
@@ -29,7 +29,7 @@
 | `Start-EVA.cmd` | 兼容入口：通过隐藏的 `Start-EVA.vbs` 启动；命令行窗口只短暂出现 |
 | `Start-EVA.cmd rei` | 官方 Codex + 00 绫波丽皮肤 |
 | `Start-EVA.cmd asuka` | 官方 Codex + 02 明日香皮肤 |
-| 应用内右侧 `設 / SETTINGS` | 打开 `表示設定`：切换 02 明日香 / 00 绫波丽、开关动画/语音/打字音与审核/完成自动提醒、试听五类语音、调整立绘透明度；选择会持久化 |
+| 应用内右侧 `設 / SETTINGS` | 打开 `表示設定`：切换 02 明日香 / 00 绫波丽、简繁日英四语言、动画/语音/打字音与审核/完成自动提醒、试听五类语音、调整立绘透明度和输出速度 HUD；面板可折叠、自由拖动，选择会持久化 |
 | `Start-EVA-Rei.cmd` | 双击切换到 00 绫波丽皮肤 |
 | `Restore-EVA.cmd` | 移除当前皮肤，不关闭 Codex；官方文件不被修改 |
 | `Install-EVA-DesktopShortcut.cmd` | 重新创建桌面快捷方式；图标取自官方 Codex 客户端 |

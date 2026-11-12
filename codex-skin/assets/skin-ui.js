@@ -141,7 +141,247 @@ function installEvaSkinUi(config) {
     typing: true,
     portrait: true,
     portraitStrength: 0.11,
+    tps: true,
+    locale: "zh-Hant",
   });
+  const locales = Object.freeze(["zh-Hant", "zh-Hans", "ja", "en"]);
+  const localeLabels = Object.freeze({
+    "zh-Hant": "繁體中文",
+    "zh-Hans": "简体中文",
+    ja: "日本語",
+    en: "ENGLISH",
+  });
+  const messages = Object.freeze({
+    "zh-Hant": {
+      panelTitle: "顯示設定",
+      panelSubtitle: "DISPLAY CONFIG",
+      close: "關閉顯示設定",
+      panelAria: "EVA 角色主題顯示設定",
+      settingsAria: "EVA 顯示設定",
+      dragHint: "拖曳標題列可自由移動",
+      groupPilot: "駕駛員與語言",
+      groupStartup: "啟動與聲音",
+      groupPreview: "語音試聽",
+      groupVisual: "外觀與輸出",
+      languageAria: "介面語言",
+      boot: "開機動畫",
+      bootHint: "下次啟動播放駕駛員選擇與 NERV 序列；應用內換膚不播放",
+      bootVoice: "啟動語音",
+      bootVoiceHint: "同步階段播放目前駕駛員語音",
+      pickVoice: "選擇應答",
+      pickVoiceHint: "切換駕駛員時播放短語音",
+      welcomeVoice: "歡迎語音",
+      welcomeVoiceHint: "啟動完成後播放",
+      approvalVoice: "審核自動語音",
+      approvalVoiceHint: "待審批出現時播放一次",
+      completeVoice: "完成自動語音",
+      completeVoiceHint: "主任務完成時播放一次",
+      typing: "介面打字音",
+      typingHint: "在輸入框中鍵入時播放短促提示",
+      portrait: "顯示角色立繪",
+      portraitHint: "隨明暗主題切換駕駛員",
+      portraitStrength: "背景強度",
+      portraitStrengthHint: "線稿背景透明度",
+      tps: "輸出速度 HUD",
+      tpsHint: "依串流回覆文字估算 token，顯示即時、峰值與平均速度",
+      previewBoot: "啟動語音",
+      previewBootHint: "同步階段播放",
+      previewPick: "選擇應答",
+      previewPickHint: "切換駕駛員時播放",
+      previewWelcome: "歡迎語音",
+      previewWelcomeHint: "啟動完成後播放",
+      previewApproval: "審核提醒",
+      previewApprovalHint: "人工審批待處理",
+      previewComplete: "完成提醒",
+      previewCompleteHint: "主任務正常完成",
+      needAssets: "需要先匯入本機 EVA 主題素材",
+      reset: "重設全部",
+      on: "開啟",
+      off: "關閉",
+      driverAsuka: "明日香",
+      driverRei: "綾波麗",
+      switchToDriver: "切換至{driver}（EVA-{unit}）",
+      decrease: "減小{label}",
+      increase: "增大{label}",
+      packUnavailable: "EVA 主題素材未匯入",
+      tpsAria: "估算輸出速度",
+      tpsTitle: "估算值：依串流回覆文字長度計算",
+    },
+    "zh-Hans": {
+      panelTitle: "显示设置",
+      panelSubtitle: "DISPLAY CONFIG",
+      close: "关闭显示设置",
+      panelAria: "EVA 角色主题显示设置",
+      settingsAria: "EVA 显示设置",
+      dragHint: "拖动标题栏可自由移动",
+      groupPilot: "驾驶员与语言",
+      groupStartup: "启动与声音",
+      groupPreview: "语音试听",
+      groupVisual: "外观与输出",
+      languageAria: "界面语言",
+      boot: "开机动画",
+      bootHint: "下次启动播放驾驶员选择与 NERV 序列；应用内换肤不播放",
+      bootVoice: "启动语音",
+      bootVoiceHint: "同步阶段播放当前驾驶员语音",
+      pickVoice: "选择应答",
+      pickVoiceHint: "切换驾驶员时播放短语音",
+      welcomeVoice: "欢迎语音",
+      welcomeVoiceHint: "启动完成后播放",
+      approvalVoice: "审核自动语音",
+      approvalVoiceHint: "待审批出现时播放一次",
+      completeVoice: "完成自动语音",
+      completeVoiceHint: "主任务完成时播放一次",
+      typing: "界面打字音",
+      typingHint: "在输入框中键入时播放短促提示",
+      portrait: "显示角色立绘",
+      portraitHint: "随明暗主题切换驾驶员",
+      portraitStrength: "背景强度",
+      portraitStrengthHint: "线稿背景透明度",
+      tps: "输出速度 HUD",
+      tpsHint: "根据流式回复文字估算 token，显示即时、峰值与平均速度",
+      previewBoot: "启动语音",
+      previewBootHint: "同步阶段播放",
+      previewPick: "选择应答",
+      previewPickHint: "切换驾驶员时播放",
+      previewWelcome: "欢迎语音",
+      previewWelcomeHint: "启动完成后播放",
+      previewApproval: "审核提醒",
+      previewApprovalHint: "人工审批待处理",
+      previewComplete: "完成提醒",
+      previewCompleteHint: "主任务正常完成",
+      needAssets: "需要先导入本机 EVA 主题素材",
+      reset: "重置全部",
+      on: "开启",
+      off: "关闭",
+      driverAsuka: "明日香",
+      driverRei: "绫波丽",
+      switchToDriver: "切换到{driver}（EVA-{unit}）",
+      decrease: "减小{label}",
+      increase: "增大{label}",
+      packUnavailable: "EVA 主题素材未导入",
+      tpsAria: "估算输出速度",
+      tpsTitle: "估算值：根据流式回复文字长度计算",
+    },
+    ja: {
+      panelTitle: "表示設定",
+      panelSubtitle: "DISPLAY CONFIG",
+      close: "表示設定を閉じる",
+      panelAria: "EVA キャラクターテーマ表示設定",
+      settingsAria: "EVA 表示設定",
+      dragHint: "ヘッダーをドラッグして自由に移動",
+      groupPilot: "パイロットと言語",
+      groupStartup: "起動とサウンド",
+      groupPreview: "ボイス試聴",
+      groupVisual: "外観と出力",
+      languageAria: "表示言語",
+      boot: "起動アニメーション",
+      bootHint: "次回起動時にパイロット選択と NERV シーケンスを再生",
+      bootVoice: "起動ボイス",
+      bootVoiceHint: "シンク段階で現在のパイロット音声を再生",
+      pickVoice: "選択応答",
+      pickVoiceHint: "パイロット切り替え時に短い音声を再生",
+      welcomeVoice: "歓迎ボイス",
+      welcomeVoiceHint: "起動完了後に再生",
+      approvalVoice: "承認自動ボイス",
+      approvalVoiceHint: "承認待ちが表示された時に一度再生",
+      completeVoice: "完了自動ボイス",
+      completeVoiceHint: "メインタスク完了時に一度再生",
+      typing: "入力サウンド",
+      typingHint: "入力欄でキー入力時に短い音を再生",
+      portrait: "キャラクター立ち絵",
+      portraitHint: "テーマに合わせてパイロットを切り替え",
+      portraitStrength: "背景強度",
+      portraitStrengthHint: "線画背景の透明度",
+      tps: "出力速度 HUD",
+      tpsHint: "ストリーミング本文から token を推定し、現在・ピーク・平均速度を表示",
+      previewBoot: "起動ボイス",
+      previewBootHint: "シンク段階で再生",
+      previewPick: "選択応答",
+      previewPickHint: "パイロット切り替え時に再生",
+      previewWelcome: "歓迎ボイス",
+      previewWelcomeHint: "起動完了後に再生",
+      previewApproval: "審査リマインド",
+      previewApprovalHint: "手動承認待ち",
+      previewComplete: "完了リマインド",
+      previewCompleteHint: "メインタスク正常完了",
+      needAssets: "先にローカル EVA テーマ素材をインポートしてください",
+      reset: "全てリセット",
+      on: "承認",
+      off: "否定",
+      driverAsuka: "アスカ",
+      driverRei: "レイ",
+      switchToDriver: "{driver}に切り替え（EVA-{unit}）",
+      decrease: "{label}を下げる",
+      increase: "{label}を上げる",
+      packUnavailable: "EVA テーマ素材が未インポートです",
+      tpsAria: "推定出力速度",
+      tpsTitle: "推定値：ストリーミング本文の長さから計算",
+    },
+    en: {
+      panelTitle: "DISPLAY CONFIG",
+      panelSubtitle: "EVA THEME",
+      close: "Close display settings",
+      panelAria: "EVA character theme display settings",
+      settingsAria: "EVA display settings",
+      dragHint: "Drag the header to move the panel freely",
+      groupPilot: "PILOT & LANGUAGE",
+      groupStartup: "STARTUP & AUDIO",
+      groupPreview: "VOICE PREVIEW",
+      groupVisual: "APPEARANCE & OUTPUT",
+      languageAria: "Interface language",
+      boot: "Boot animation",
+      bootHint: "Play pilot select and NERV sequence on next launch; not replayed in-app",
+      bootVoice: "Startup voice",
+      bootVoiceHint: "Play the current pilot voice during sync",
+      pickVoice: "Select response",
+      pickVoiceHint: "Play a short voice when switching pilot",
+      welcomeVoice: "Welcome voice",
+      welcomeVoiceHint: "Play after startup completes",
+      approvalVoice: "Approval alert",
+      approvalVoiceHint: "Play once when an approval request appears",
+      completeVoice: "Completion alert",
+      completeVoiceHint: "Play once when the main task completes",
+      typing: "Typing SFX",
+      typingHint: "Play a short cue while typing in the composer",
+      portrait: "Show character portrait",
+      portraitHint: "Switch pilot with the light or dark theme",
+      portraitStrength: "Background strength",
+      portraitStrengthHint: "Line-art background opacity",
+      tps: "Output speed HUD",
+      tpsHint: "Estimate tokens from streamed reply text; show current, peak, and average speed",
+      previewBoot: "Startup voice",
+      previewBootHint: "Play during sync",
+      previewPick: "Select response",
+      previewPickHint: "Play when switching pilot",
+      previewWelcome: "Welcome voice",
+      previewWelcomeHint: "Play after startup completes",
+      previewApproval: "Approval alert",
+      previewApprovalHint: "Waiting for manual approval",
+      previewComplete: "Completion alert",
+      previewCompleteHint: "Main task completed normally",
+      needAssets: "Import local EVA theme assets first",
+      reset: "Reset all",
+      on: "ON",
+      off: "OFF",
+      driverAsuka: "Asuka",
+      driverRei: "Rei",
+      switchToDriver: "Switch to {driver} (EVA-{unit})",
+      decrease: "Decrease {label}",
+      increase: "Increase {label}",
+      packUnavailable: "EVA theme assets not imported",
+      tpsAria: "Estimated output speed",
+      tpsTitle: "EST: calculated from streamed reply text length",
+    },
+  });
+  const t = (key, values = null) => {
+    let text = messages[options.locale]?.[key] ?? messages["zh-Hant"][key] ?? key;
+    if (values && typeof values === "object") {
+      for (const [name, value] of Object.entries(values)) {
+        text = text.replaceAll(`{${name}}`, String(value));
+      }
+    }
+    return text;
+  };
   const completionStableMs = 3000;
   const welcomeFreshMs = 30000;
   const ranges = Object.freeze({ portraitStrength: [0.03, 0.28] });
@@ -163,6 +403,9 @@ function installEvaSkinUi(config) {
 
   function normalize(key, value) {
     if (!Object.hasOwn(defaults, key)) return undefined;
+    if (key === "locale") {
+      return locales.includes(value) ? value : defaults.locale;
+    }
     if (Object.hasOwn(ranges, key)) {
       const [min, max] = ranges[key];
       const number = Number(value);
@@ -191,15 +434,15 @@ function installEvaSkinUi(config) {
 
   const options = loadOptions();
   const drivers = [
-    { id: "asuka", unit: "02", name: "明日香", en: "ASUKA", head: "asukaHead", portrait: "asukaPortrait", pick: "asukaPickVoice" },
-    { id: "rei", unit: "00", name: "绫波丽", en: "REI", head: "reiHead", portrait: "reiPortrait", pick: "reiPickVoice" },
+    { id: "asuka", unit: "02", nameKey: "driverAsuka", en: "ASUKA", head: "asukaHead", portrait: "asukaPortrait", pick: "asukaPickVoice" },
+    { id: "rei", unit: "00", nameKey: "driverRei", en: "REI", head: "reiHead", portrait: "reiPortrait", pick: "reiPickVoice" },
   ];
   const previewSpecs = [
-    { id: "boot", label: "启动语音", detail: "同步阶段播放" },
-    { id: "pick", label: "选择应答", detail: "切换驾驶员时播放" },
-    { id: "welcome", label: "欢迎语音", detail: "启动完成后播放" },
-    { id: "approval", label: "审核提醒", detail: "人工审批待处理" },
-    { id: "complete", label: "完成提醒", detail: "主任务正常完成" },
+    { id: "boot", labelKey: "previewBoot", detailKey: "previewBootHint" },
+    { id: "pick", labelKey: "previewPick", detailKey: "previewPickHint" },
+    { id: "welcome", labelKey: "previewWelcome", detailKey: "previewWelcomeHint" },
+    { id: "approval", labelKey: "previewApproval", detailKey: "previewApprovalHint" },
+    { id: "complete", labelKey: "previewComplete", detailKey: "previewCompleteHint" },
   ];
   const hasBootVoice = () => hasAny(["asukaVoice", "reiVoice"]);
   const hasPickVoice = () => hasAny(["asukaPickVoice", "reiPickVoice"]);
@@ -216,6 +459,7 @@ function installEvaSkinUi(config) {
   settingsButton.className = "eva-settings-button";
   settingsButton.setAttribute("aria-expanded", "false");
   settingsButton.setAttribute("aria-controls", "eva-codex-skin-settings");
+  settingsButton.setAttribute("aria-label", t("settingsAria"));
   settingsButton.innerHTML = "<span>設</span><small>SETTINGS</small>";
   overlay.appendChild(settingsButton);
 
@@ -225,33 +469,105 @@ function installEvaSkinUi(config) {
   panel.hidden = true;
   panel.tabIndex = -1;
   panel.setAttribute("role", "region");
-  panel.setAttribute("aria-label", "EVA 角色主题显示设定");
+  panel.setAttribute("aria-label", t("panelAria"));
+  panel.setAttribute("lang", options.locale);
   panel.innerHTML = [
-    '<header class="eva-config-head"><div><b>表示設定</b><small>DISPLAY CONFIG</small></div>',
-    '<button type="button" class="eva-config-close" aria-label="关闭显示设定" title="关闭（Esc）">×</button></header>',
+    '<header class="eva-config-head" data-eva-drag-handle>',
+    '<span class="eva-config-grip" aria-hidden="true"></span>',
+    '<div><b></b><small></small></div>',
+    '<button type="button" class="eva-config-close" aria-label="" title="">×</button></header>',
     '<div class="eva-config-body"></div>',
     '<footer class="eva-config-foot"><span class="eva-config-pack"></span>',
-    '<button type="button" class="eva-config-reset">重置全部</button></footer>',
+    '<button type="button" class="eva-config-reset"></button></footer>',
   ].join("");
   overlay.appendChild(panel);
 
+  const tpsHud = document.createElement("div");
+  tpsHud.className = "eva-tps-hud";
+  tpsHud.hidden = true;
+  tpsHud.setAttribute("role", "status");
+  tpsHud.setAttribute("aria-live", "off");
+  tpsHud.innerHTML = [
+    '<div class="eva-tps-line"><span class="eva-tps-value">0</span><small>tok/s</small><em>EST</em></div>',
+    '<svg class="eva-tps-spark" viewBox="0 0 100 22" preserveAspectRatio="none" aria-hidden="true">',
+    '<polyline points="0,22 100,22"></polyline></svg>',
+    '<div class="eva-tps-meta"><span>PEAK <b>0</b></span><span>AVG <b>0</b></span></div>',
+  ].join("");
+  overlay.appendChild(tpsHud);
+
   const body = panel.querySelector(".eva-config-body");
   const packNode = panel.querySelector(".eva-config-pack");
+  const panelTitle = panel.querySelector(".eva-config-head b");
+  const panelSubtitle = panel.querySelector(".eva-config-head small");
+  const closeButton = panel.querySelector(".eva-config-close");
+  const resetButton = panel.querySelector(".eva-config-reset");
+  const panelHead = panel.querySelector(".eva-config-head");
+  const tpsValue = tpsHud.querySelector(".eva-tps-value");
+  const tpsPeak = tpsHud.querySelector(".eva-tps-meta b");
+  const tpsAverage = tpsHud.querySelectorAll(".eva-tps-meta b")[1];
+  const tpsSpark = tpsHud.querySelector(".eva-tps-spark polyline");
   const controls = [];
   const previewButtons = [];
+  const groupNodes = [];
+  const pilotButtons = new Map();
+  const languageButtons = new Map();
   const packVersion = String(config.packVersion || "").trim();
   const packCommit = String(config.packCommit || "").trim().slice(0, 8);
+  let openGroupKey = "groupPilot";
+  let panelCloseTimer = null;
+  let panelLeft = null;
+  let panelTop = null;
+  let dragState = null;
   if (packVersion) packNode.textContent = `EVA THEME ${packVersion}${packCommit ? " / " + packCommit : ""}`;
-  else packNode.textContent = "EVA 主题素材未导入";
+  else packNode.textContent = t("packUnavailable");
 
-  function addGroup(title) {
+  function setGroupOpen(group, open, exclusive = true) {
+    const next = Boolean(open);
+    if (next && exclusive) {
+      for (const other of groupNodes) {
+        if (other !== group && other.open) setGroupOpen(other, false, false);
+      }
+    }
+    group.open = next;
+    group.content.hidden = !next;
+    group.toggle.setAttribute("aria-expanded", String(next));
+    group.mark.textContent = next ? "−" : "+";
+    if (next) openGroupKey = group.key;
+    else if (openGroupKey === group.key) openGroupKey = null;
+    if (panelOpen && panelLeft !== null && panelTop !== null) {
+      requestAnimationFrame(() => {
+        if (panelOpen) setPanelPosition(panelLeft, panelTop);
+      });
+    }
+  }
+
+  function addGroup(key) {
     const group = document.createElement("section");
     group.className = "eva-config-group";
+    group.dataset.evaGroup = key;
+    const toggle = document.createElement("button");
+    toggle.type = "button";
+    toggle.className = "eva-config-group-toggle";
+    toggle.setAttribute("aria-expanded", "false");
     const heading = document.createElement("h2");
-    heading.textContent = title;
-    group.appendChild(heading);
+    heading.textContent = t(key);
+    const mark = document.createElement("span");
+    mark.className = "eva-config-group-mark";
+    mark.setAttribute("aria-hidden", "true");
+    mark.textContent = "+";
+    toggle.append(heading, mark);
+    const content = document.createElement("div");
+    content.className = "eva-config-group-body";
+    content.id = `eva-config-group-${key}`;
+    content.hidden = true;
+    group.append(toggle, content);
+    toggle.setAttribute("aria-controls", content.id);
     body.appendChild(group);
-    return group;
+    const entry = { key, element: group, toggle, heading, mark, content, open: false };
+    toggle.addEventListener("click", () => setGroupOpen(entry, !entry.open));
+    groupNodes.push(entry);
+    if (key === "groupPilot") setGroupOpen(entry, true, false);
+    return entry;
   }
 
   function addSwitch(group, key, label, hint, available = true) {
@@ -260,15 +576,15 @@ function installEvaSkinUi(config) {
     const copy = document.createElement("div");
     copy.className = "eva-config-copy";
     const name = document.createElement("b");
-    name.textContent = label;
+    name.textContent = t(label);
     const detail = document.createElement("small");
-    detail.textContent = available ? hint : "需要先导入本地 EVA 主题素材";
+    detail.textContent = available ? t(hint) : t("needAssets");
     copy.append(name, detail);
     const button = document.createElement("button");
     button.type = "button";
     button.className = "eva-config-switch";
     button.setAttribute("role", "switch");
-    button.setAttribute("aria-label", label);
+    button.setAttribute("aria-label", t(label));
     button.disabled = !available;
     button.addEventListener("click", () => {
       if (button.disabled) return;
@@ -277,8 +593,8 @@ function installEvaSkinUi(config) {
       refresh();
     });
     row.append(copy, button);
-    group.appendChild(row);
-    controls.push({ kind: "switch", key, button, available });
+    group.content.appendChild(row);
+    controls.push({ kind: "switch", key, labelKey: label, hintKey: hint, name, detail, button, available });
   }
 
   function addRange(group, key, label, hint, available = true) {
@@ -287,9 +603,9 @@ function installEvaSkinUi(config) {
     const copy = document.createElement("div");
     copy.className = "eva-config-copy";
     const name = document.createElement("b");
-    name.textContent = label;
+    name.textContent = t(label);
     const detail = document.createElement("small");
-    detail.textContent = hint;
+    detail.textContent = t(hint);
     copy.append(name, detail);
     const output = document.createElement("output");
     output.className = "eva-config-value";
@@ -299,18 +615,18 @@ function installEvaSkinUi(config) {
     const minus = document.createElement("button");
     minus.type = "button";
     minus.textContent = "−";
-    minus.setAttribute("aria-label", `减小${label}`);
+    minus.setAttribute("aria-label", t("decrease", { label: t(label) }));
     const input = document.createElement("input");
     const [min, max] = ranges[key];
     input.type = "range";
     input.min = String(min);
     input.max = String(max);
     input.step = "0.01";
-    input.setAttribute("aria-label", label);
+    input.setAttribute("aria-label", t(label));
     const plus = document.createElement("button");
     plus.type = "button";
     plus.textContent = "＋";
-    plus.setAttribute("aria-label", `增大${label}`);
+    plus.setAttribute("aria-label", t("increase", { label: t(label) }));
     const step = (direction) => {
       options[key] = normalize(key, options[key] + direction * 0.01);
       saveOptions();
@@ -325,21 +641,35 @@ function installEvaSkinUi(config) {
     });
     strip.append(minus, input, plus);
     row.appendChild(strip);
-    group.appendChild(row);
-    controls.push({ kind: "range", key, input, output, minus, plus, available });
+    group.content.appendChild(row);
+    controls.push({
+      kind: "range",
+      key,
+      labelKey: label,
+      hintKey: hint,
+      name,
+      detail,
+      input,
+      output,
+      minus,
+      plus,
+      available,
+    });
   }
 
-  const pilotGroup = addGroup("驾驶员");
+  const pilotGroup = addGroup("groupPilot");
   const pilotGrid = document.createElement("div");
   pilotGrid.className = "eva-config-pilots";
-  pilotGroup.appendChild(pilotGrid);
-  const pilotButtons = new Map();
+  pilotGroup.content.appendChild(pilotGrid);
   for (const driver of drivers) {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "eva-config-pilot";
     button.dataset.evaUiDriver = driver.id;
-    button.setAttribute("aria-label", `切换到${driver.name}（EVA-${driver.unit}）`);
+    button.setAttribute("aria-label", t("switchToDriver", {
+      driver: t(driver.nameKey),
+      unit: driver.unit,
+    }));
     const face = document.createElement("span");
     face.className = "eva-config-face";
     face.style.setProperty("--eva-config-face", hasMedia(driver.head) ? `url("${media[driver.head]}")` : "none");
@@ -359,42 +689,71 @@ function installEvaSkinUi(config) {
     pilotButtons.set(driver.id, button);
   }
 
-  const bootGroup = addGroup("启动与声音");
+  const languageRow = document.createElement("div");
+  languageRow.className = "eva-config-language-row";
+  const languageLabel = document.createElement("span");
+  languageLabel.className = "eva-config-language-label";
+  const languageGroup = document.createElement("div");
+  languageGroup.className = "eva-config-languages";
+  languageGroup.setAttribute("role", "group");
+  languageGroup.setAttribute("aria-label", t("languageAria"));
+  for (const locale of locales) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "eva-config-language";
+    button.dataset.evaUiLocale = locale;
+    button.textContent = localeLabels[locale];
+    button.setAttribute("aria-label", localeLabels[locale]);
+    button.addEventListener("click", () => {
+      if (options.locale === locale) return;
+      options.locale = locale;
+      saveOptions();
+      applyLocale();
+    });
+    languageGroup.appendChild(button);
+    languageButtons.set(locale, button);
+  }
+  languageRow.append(languageLabel, languageGroup);
+  pilotGroup.content.appendChild(languageRow);
+
+  languageLabel.textContent = t("languageAria");
+
+  const bootGroup = addGroup("groupStartup");
   addSwitch(
     bootGroup,
     "boot",
-    "开机动画",
-    "下次启动播放驾驶员选择与 NERV 序列；应用内换肤不播放",
+    "boot",
+    "bootHint",
   );
-  addSwitch(bootGroup, "bootVoice", "启动语音", "同步阶段播放当前驾驶员语音", hasBootVoice());
-  addSwitch(bootGroup, "pickVoice", "选择应答", "切换驾驶员时播放短语音", hasPickVoice());
-  addSwitch(bootGroup, "welcomeVoice", "欢迎语音", "启动完成后播放", hasWelcomeVoice());
+  addSwitch(bootGroup, "bootVoice", "bootVoice", "bootVoiceHint", hasBootVoice());
+  addSwitch(bootGroup, "pickVoice", "pickVoice", "pickVoiceHint", hasPickVoice());
+  addSwitch(bootGroup, "welcomeVoice", "welcomeVoice", "welcomeVoiceHint", hasWelcomeVoice());
   addSwitch(
     bootGroup,
     "approvalVoice",
-    "审核自动语音",
-    "待审批出现时播放一次",
+    "approvalVoice",
+    "approvalVoiceHint",
     hasAny(["asukaApproval", "reiApproval"]),
   );
   addSwitch(
     bootGroup,
     "completeVoice",
-    "完成自动语音",
-    "主任务完成时播放一次",
+    "completeVoice",
+    "completeVoiceHint",
     hasAny(["asukaComplete", "reiComplete"]),
   );
-  addSwitch(bootGroup, "typing", "界面打字音", "在输入框中键入时播放短促提示", hasMedia("typing"));
+  addSwitch(bootGroup, "typing", "typing", "typingHint", hasMedia("typing"));
 
-  const previewGroup = addGroup("语音试听");
+  const previewGroup = addGroup("groupPreview");
   const previewGrid = document.createElement("div");
   previewGrid.className = "eva-config-previews";
-  previewGroup.appendChild(previewGrid);
+  previewGroup.content.appendChild(previewGrid);
   for (const spec of previewSpecs) {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "eva-config-preview";
     button.dataset.evaPreview = spec.id;
-    button.innerHTML = `<b>${spec.label}</b><small>${spec.detail}</small>`;
+    button.innerHTML = `<b>${t(spec.labelKey)}</b><small>${t(spec.detailKey)}</small>`;
     button.addEventListener("click", () => {
       const id = mediaId(currentDriver, spec.id);
       if (!id) return;
@@ -404,9 +763,214 @@ function installEvaSkinUi(config) {
     previewButtons.push(button);
   }
 
-  const visualGroup = addGroup("角色背景");
-  addSwitch(visualGroup, "portrait", "显示角色立绘", "随明暗主题切换驾驶员", hasPortrait());
-  addRange(visualGroup, "portraitStrength", "背景强度", "线稿背景透明度", hasPortrait());
+  const visualGroup = addGroup("groupVisual");
+  addSwitch(visualGroup, "portrait", "portrait", "portraitHint", hasPortrait());
+  addRange(visualGroup, "portraitStrength", "portraitStrength", "portraitStrengthHint", hasPortrait());
+  addSwitch(visualGroup, "tps", "tps", "tpsHint");
+
+  function applyLocale() {
+    const locale = options.locale;
+    panel.lang = locale;
+    panel.setAttribute("aria-label", t("panelAria"));
+    settingsButton.setAttribute("aria-label", t("settingsAria"));
+    panelTitle.textContent = t("panelTitle");
+    panelSubtitle.textContent = t("panelSubtitle");
+    closeButton.setAttribute("aria-label", t("close"));
+    closeButton.title = `${t("close")} (Esc)`;
+    panelHead.title = t("dragHint");
+    resetButton.textContent = t("reset");
+    languageLabel.textContent = t("languageAria");
+    languageGroup.setAttribute("aria-label", t("languageAria"));
+    if (!packVersion) packNode.textContent = t("packUnavailable");
+    for (const group of groupNodes) {
+      group.heading.textContent = t(group.key);
+      group.toggle.setAttribute("aria-label", t(group.key));
+    }
+    for (const control of controls) {
+      const label = t(control.labelKey);
+      control.name.textContent = label;
+      control.detail.textContent = control.available ? t(control.hintKey) : t("needAssets");
+      if (control.kind === "switch") {
+        control.button.setAttribute("aria-label", label);
+      } else {
+        control.input.setAttribute("aria-label", label);
+        control.minus.setAttribute("aria-label", t("decrease", { label }));
+        control.plus.setAttribute("aria-label", t("increase", { label }));
+      }
+    }
+    previewButtons.forEach((button, index) => {
+      const spec = previewSpecs[index];
+      button.innerHTML = `<b>${t(spec.labelKey)}</b><small>${t(spec.detailKey)}</small>`;
+    });
+    for (const driver of drivers) {
+      pilotButtons.get(driver.id)?.setAttribute("aria-label", t("switchToDriver", {
+        driver: t(driver.nameKey),
+        unit: driver.unit,
+      }));
+    }
+    for (const [localeId, button] of languageButtons) {
+      button.setAttribute("aria-pressed", String(localeId === locale));
+    }
+    tpsHud.setAttribute("aria-label", t("tpsAria"));
+    tpsHud.title = t("tpsTitle");
+    refresh();
+    if (panelOpen && panelLeft !== null && panelTop !== null) {
+      requestAnimationFrame(() => {
+        if (panelOpen) setPanelPosition(panelLeft, panelTop);
+      });
+    }
+  }
+
+  const tpsState = {
+    timer: null,
+    turnKey: null,
+    lastTokens: 0,
+    lastAt: 0,
+    current: 0,
+    peak: 0,
+    total: 0,
+    sampleStart: 0,
+    lastChangeAt: 0,
+    samples: [],
+  };
+
+  function estimateTokens(text) {
+    const source = String(text || "");
+    if (!source) return 0;
+    const cjk = source.match(/[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/gu);
+    const cjkCount = cjk ? cjk.length : 0;
+    return cjkCount + Math.max(0, source.length - cjkCount) / 4;
+  }
+
+  function tpsSnapshot() {
+    const turns = [...document.querySelectorAll("[data-turn-key]")].filter(isVisible);
+    const turn = turns[turns.length - 1];
+    if (!turn) return null;
+    const key = turn.getAttribute("data-turn-key") || "";
+    const nodes = [...turn.querySelectorAll(
+      '[data-markdown-text-style="assistant-message"]',
+    )];
+    const text = nodes
+      .map((node) => node.innerText || node.textContent || "")
+      .join("\n")
+      .trim();
+    return { key, tokens: estimateTokens(text) };
+  }
+
+  function resetTps(tokens = 0, now = performance.now()) {
+    tpsState.turnKey = null;
+    tpsState.lastTokens = tokens;
+    tpsState.lastAt = now;
+    tpsState.current = 0;
+    tpsState.peak = 0;
+    tpsState.total = 0;
+    tpsState.sampleStart = 0;
+    tpsState.lastChangeAt = 0;
+    tpsState.samples = [];
+  }
+
+  function drawTps() {
+    const samples = tpsState.samples;
+    const peak = Math.max(1, ...samples);
+    const width = 100;
+    const height = 22;
+    let points;
+    if (samples.length === 0) {
+      points = `0,${height} 100,${height}`;
+    } else if (samples.length === 1) {
+      const y = height - Math.max(1, (samples[0] / peak) * (height - 3));
+      points = `0,${y.toFixed(1)} 100,${y.toFixed(1)}`;
+    } else {
+      const step = width / (samples.length - 1);
+      points = samples.map((value, index) => {
+        const y = height - Math.max(1, (value / peak) * (height - 3));
+        return `${(index * step).toFixed(1)},${y.toFixed(1)}`;
+      }).join(" ");
+    }
+    tpsSpark.setAttribute("points", points);
+  }
+
+  function showTps() {
+    if (!tpsHud.hidden) {
+      drawTps();
+      return;
+    }
+    tpsHud.hidden = false;
+    drawTps();
+  }
+
+  function hideTps() {
+    tpsHud.hidden = true;
+    tpsState.current = 0;
+    tpsState.samples = [];
+  }
+
+  function sampleTps() {
+    if (disposed || !options.tps || document.visibilityState === "hidden") return;
+    const now = performance.now();
+    const running = isTaskRunning();
+    if (!running && tpsHud.hidden && now - tpsState.lastChangeAt > 2400) return;
+    const snapshot = tpsSnapshot();
+    if (!snapshot) {
+      if (!running && now - tpsState.lastChangeAt > 2400) hideTps();
+      return;
+    }
+
+    if (tpsState.turnKey !== snapshot.key) {
+      resetTps(snapshot.tokens, now);
+      tpsState.turnKey = snapshot.key;
+      hideTps();
+    }
+
+    const delta = Math.max(0, snapshot.tokens - tpsState.lastTokens);
+    const elapsed = Math.max(0, (now - tpsState.lastAt) / 1000);
+    let instant = 0;
+    if (delta >= 0.5 && elapsed >= 0.12) {
+      instant = delta / elapsed;
+      tpsState.current = tpsState.current > 0
+        ? tpsState.current * 0.45 + instant * 0.55
+        : instant;
+      tpsState.peak = Math.max(tpsState.peak, instant);
+      tpsState.total += delta;
+      if (!tpsState.sampleStart) tpsState.sampleStart = now - elapsed * 1000;
+      tpsState.lastChangeAt = now;
+    } else if (now - tpsState.lastChangeAt > 1200) {
+      tpsState.current = 0;
+    }
+
+    tpsState.lastTokens = snapshot.tokens;
+    tpsState.lastAt = now;
+    const active = running || now - tpsState.lastChangeAt < 1600;
+    if (!active) {
+      if (now - tpsState.lastChangeAt > 2400) hideTps();
+      return;
+    }
+
+    tpsState.samples.push(instant);
+    if (tpsState.samples.length > 30) tpsState.samples.shift();
+    const average = tpsState.sampleStart && tpsState.lastChangeAt > tpsState.sampleStart
+      ? tpsState.total / ((tpsState.lastChangeAt - tpsState.sampleStart) / 1000)
+      : tpsState.current;
+    tpsValue.textContent = String(Math.max(0, Math.round(tpsState.current)));
+    tpsPeak.textContent = String(Math.max(0, Math.round(tpsState.peak)));
+    tpsAverage.textContent = String(Math.max(0, Math.round(average)));
+    showTps();
+  }
+
+  function startTps() {
+    if (tpsState.timer || disposed) return;
+    const now = performance.now();
+    const snapshot = tpsSnapshot();
+    resetTps(snapshot?.tokens || 0, now);
+    if (snapshot?.key) tpsState.turnKey = snapshot.key;
+    tpsState.timer = setInterval(sampleTps, 400);
+  }
+
+  function stopTps() {
+    if (!tpsState.timer) return;
+    clearInterval(tpsState.timer);
+    tpsState.timer = null;
+  }
 
   function mediaId(driver, kind) {
     const prefix = driver === "rei" ? "rei" : "asuka";
@@ -517,10 +1081,11 @@ function installEvaSkinUi(config) {
       if (control.kind === "switch") {
         const on = Boolean(options[control.key]);
         control.button.setAttribute("aria-checked", String(on));
-        control.button.textContent = on ? "承認" : "否定";
+        control.button.textContent = on ? t("on") : t("off");
         control.button.disabled = !control.available;
       } else {
-        const enabled = control.available && options.portrait;
+        const dependency = control.key === "portraitStrength" ? options.portrait : true;
+        const enabled = control.available && dependency;
         const [min, max] = ranges[control.key];
         const value = options[control.key];
         control.input.value = String(value);
@@ -532,16 +1097,55 @@ function installEvaSkinUi(config) {
       }
     }
     for (const button of previewButtons) {
-      button.disabled = !mediaId(currentDriver, button.dataset.evaPreview);
+      const id = mediaId(currentDriver, button.dataset.evaPreview);
+      button.disabled = !id;
+      button.title = id ? "" : t("needAssets");
     }
+    if (options.tps) startTps();
+    else {
+      stopTps();
+      hideTps();
+    }
+  }
+
+  function clampPanelLeft(value) {
+    const width = panel.offsetWidth || panel.getBoundingClientRect().width;
+    const edge = 10;
+    const max = Math.max(edge, window.innerWidth - width - edge);
+    return Math.min(max, Math.max(edge, Number(value) || edge));
+  }
+
+  function clampPanelTop(value) {
+    const height = panel.offsetHeight || panel.getBoundingClientRect().height;
+    const edge = 10;
+    const max = Math.max(edge, window.innerHeight - height - edge);
+    return Math.min(max, Math.max(edge, Number(value) || edge));
+  }
+
+  function setPanelPosition(left, top) {
+    panelLeft = clampPanelLeft(left);
+    panelTop = clampPanelTop(top);
+    panel.style.setProperty("--eva-panel-left", `${panelLeft}px`);
+    panel.style.setProperty("--eva-panel-right", "auto");
+    panel.style.setProperty("--eva-panel-top", `${panelTop}px`);
+    panel.style.setProperty("--eva-panel-translate-x", "0px");
+    panel.style.setProperty("--eva-panel-translate-y", "0px");
   }
 
   function openPanel() {
     if (panelOpen || disposed) return;
+    if (panelCloseTimer) {
+      clearTimeout(panelCloseTimer);
+      panelCloseTimer = null;
+    }
     panelOpen = true;
     panel.hidden = false;
     settingsButton.setAttribute("aria-expanded", "true");
     refresh();
+    if (panelLeft !== null && panelTop !== null) setPanelPosition(panelLeft, panelTop);
+    requestAnimationFrame(() => {
+      if (panelOpen) panel.classList.add("is-open");
+    });
     const selected = panel.querySelector('[data-eva-ui-driver][aria-pressed="true"]');
     (selected || panel.querySelector(".eva-config-close"))?.focus?.({ preventScroll: true });
   }
@@ -549,9 +1153,14 @@ function installEvaSkinUi(config) {
   function closePanel(restoreFocus = false) {
     if (!panelOpen) return;
     panelOpen = false;
-    panel.hidden = true;
+    panel.classList.remove("is-open");
     settingsButton.setAttribute("aria-expanded", "false");
     stopAudio();
+    if (panelCloseTimer) clearTimeout(panelCloseTimer);
+    panelCloseTimer = setTimeout(() => {
+      panelCloseTimer = null;
+      if (!panelOpen) panel.hidden = true;
+    }, 170);
     if (restoreFocus) settingsButton.focus({ preventScroll: true });
   }
 
@@ -573,13 +1182,30 @@ function installEvaSkinUi(config) {
     event.stopPropagation();
     Object.assign(options, defaults);
     saveOptions();
-    refresh();
+    applyLocale();
   };
   const onKey = (event) => {
-    if (event.key !== "Escape" || !panelOpen) return;
-    event.preventDefault();
-    event.stopPropagation();
-    closePanel(true);
+    if (!panelOpen) return;
+    if (event.key === "Escape") {
+      event.preventDefault();
+      event.stopPropagation();
+      closePanel(true);
+      return;
+    }
+    if (event.key !== "Tab") return;
+    const focusable = [...panel.querySelectorAll(
+      'button:not([disabled]), input:not([disabled]), select:not([disabled]), [href], [tabindex]:not([tabindex="-1"])',
+    )].filter((node) => !node.closest("[hidden]") && node.getClientRects().length > 0);
+    if (!focusable.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus({ preventScroll: true });
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus({ preventScroll: true });
+    }
   };
   const onTypingInput = (event) => {
     const target = event.target;
@@ -593,6 +1219,50 @@ function installEvaSkinUi(config) {
     const target = event.target;
     if (panel.contains(target) || settingsButton.contains(target)) return;
     closePanel(false);
+  };
+  const canDragPanel = () => (
+    panelOpen &&
+    !window.matchMedia("(max-width: 760px)").matches
+  );
+  const onDragStart = (event) => {
+    if (!canDragPanel() || event.button !== 0 || event.target.closest("button")) return;
+    const rect = panel.getBoundingClientRect();
+    dragState = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      startLeft: rect.left,
+      startTop: rect.top,
+    };
+    panel.classList.add("is-dragging");
+    try {
+      panelHead.setPointerCapture?.(event.pointerId);
+    } catch {}
+    event.preventDefault();
+  };
+  const onDragMove = (event) => {
+    if (!dragState || event.pointerId !== dragState.pointerId) return;
+    setPanelPosition(
+      dragState.startLeft + event.clientX - dragState.startX,
+      dragState.startTop + event.clientY - dragState.startY,
+    );
+    event.preventDefault();
+  };
+  const onDragEnd = (event) => {
+    if (!dragState) return;
+    if (event.pointerId !== dragState.pointerId) return;
+    dragState = null;
+    panel.classList.remove("is-dragging");
+    try {
+      if (panelHead.hasPointerCapture?.(event.pointerId)) {
+        panelHead.releasePointerCapture(event.pointerId);
+      }
+    } catch {}
+  };
+  const onResize = () => {
+    if (!panelOpen || panelLeft === null || panelTop === null) return;
+    if (window.matchMedia("(max-width: 760px)").matches) return;
+    setPanelPosition(panelLeft, panelTop);
   };
   const onDriverChange = (event) => {
     const next = event?.detail?.driver;
@@ -790,16 +1460,23 @@ function installEvaSkinUi(config) {
   settingsButton.addEventListener("click", onSettingsClick);
   panel.addEventListener("pointerdown", onPanelPointer);
   panel.addEventListener("click", onPanelClick);
-  panel.querySelector(".eva-config-close").addEventListener("click", onCloseClick);
-  panel.querySelector(".eva-config-reset").addEventListener("click", onResetClick);
+  panelHead.addEventListener("pointerdown", onDragStart);
+  panelHead.addEventListener("pointermove", onDragMove);
+  panelHead.addEventListener("pointerup", onDragEnd);
+  panelHead.addEventListener("pointercancel", onDragEnd);
+  closeButton.addEventListener("click", onCloseClick);
+  resetButton.addEventListener("click", onResetClick);
   document.addEventListener("keydown", onKey, true);
   document.addEventListener("pointerdown", onPointerDown, true);
+  document.addEventListener("pointerup", onDragEnd, true);
+  document.addEventListener("pointercancel", onDragEnd, true);
   document.addEventListener("input", onTypingInput, true);
   root.addEventListener("eva-skin-driver-change", onDriverChange);
   window.addEventListener("eva-skin-boot-finished", onBootFinished);
+  window.addEventListener("resize", onResize);
 
   syncDriver(currentDriver, false);
-  refresh();
+  applyLocale();
 
   completionGate.observe({
     now: performance.now(),
@@ -844,21 +1521,33 @@ function installEvaSkinUi(config) {
     disposed = true;
     stopAudio();
     stopTyping();
+    stopTps();
     if (activityObserver) activityObserver.disconnect();
     activityObserver = null;
     if (activityTimer) clearTimeout(activityTimer);
     if (completionTimer) clearTimeout(completionTimer);
+    if (panelCloseTimer) clearTimeout(panelCloseTimer);
     activityTimer = null;
     completionTimer = null;
+    panelCloseTimer = null;
+    dragState = null;
     document.removeEventListener("keydown", onKey, true);
     document.removeEventListener("pointerdown", onPointerDown, true);
+    document.removeEventListener("pointerup", onDragEnd, true);
+    document.removeEventListener("pointercancel", onDragEnd, true);
     document.removeEventListener("input", onTypingInput, true);
     root.removeEventListener("eva-skin-driver-change", onDriverChange);
     window.removeEventListener("eva-skin-boot-finished", onBootFinished);
+    window.removeEventListener("resize", onResize);
     settingsButton.removeEventListener("click", onSettingsClick);
+    panelHead.removeEventListener("pointerdown", onDragStart);
+    panelHead.removeEventListener("pointermove", onDragMove);
+    panelHead.removeEventListener("pointerup", onDragEnd);
+    panelHead.removeEventListener("pointercancel", onDragEnd);
     panel.remove();
     settingsButton.remove();
     portrait.remove();
+    tpsHud.remove();
     try {
       delete root.dataset.evaPortrait;
       root.style.removeProperty("--eva-portrait-image");

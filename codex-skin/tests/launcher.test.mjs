@@ -126,8 +126,10 @@ test("恢复脚本同时处理 CDP 清理和注入器进程", () => {
 test("package 版本与皮肤版本一致", () => {
   const pkg = JSON.parse(read("package.json"));
   const injector = read("codex-skin/injector.mjs");
-  assert.equal(pkg.version, "0.4.2");
-  assert.match(injector, /export const SKIN_VERSION = "0\.4\.2"/);
+  const launcher = read("codex-skin/Start-EVA.ps1");
+  assert.equal(pkg.version, "0.4.3");
+  assert.match(injector, /export const SKIN_VERSION = "0\.4\.3"/);
+  assert.match(launcher, /\$SkinVersion = '0\.4\.3'/);
 });
 
 test("项目版权以 HamizDev 为主且不保留旧上游声明", () => {

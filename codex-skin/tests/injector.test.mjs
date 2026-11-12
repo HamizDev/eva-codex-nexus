@@ -63,7 +63,7 @@ test("主题与 payload 版本稳定且可切换", () => {
   assert.equal(isDriver("asuka"), true);
   assert.equal(isDriver("rei"), true);
   assert.equal(isDriver("system"), false);
-  assert.equal(SKIN_VERSION, "0.4.2");
+  assert.equal(SKIN_VERSION, "0.4.3");
   const asuka = loadPayload("asuka");
   const rei = loadPayload("rei");
   assert.equal(asuka.driver, "asuka");
@@ -452,8 +452,60 @@ test("内置浏览器打开时重新定位设置入口且不隐藏设置面板",
   assert.doesNotMatch(css, /\.eva-config-panel\s*\{[^}]*display:\s*none/i);
   assert.match(
     css,
-    /#eva-codex-skin-overlay \.eva-config-panel\s*\{[\s\S]*?max-height:\s*min\(810px,\s*calc\(100vh - 20px\)\);/i,
+    /#eva-codex-skin-overlay \.eva-config-panel\s*\{[\s\S]*?max-height:\s*min\(560px,\s*calc\(100vh - 32px\)\);/i,
   );
+});
+
+test("设置面板支持折叠浮层、自由拖动和四语言切换", () => {
+  const js = fs.readFileSync(path.join(root, "assets", "skin-ui.js"), "utf8");
+  const css = fs.readFileSync(path.join(root, "assets", "eva-skin.css"), "utf8");
+  for (const fragment of [
+    'locale: "zh-Hant"',
+    '"zh-Hant", "zh-Hans", "ja", "en"',
+    "eva-config-group-toggle",
+    "eva-config-language",
+    "evaUiLocale",
+    "panel.classList.add(\"is-open\")",
+    "setPanelPosition",
+    "pointermove",
+    "onDragStart",
+    "onDragEnd",
+    "startX",
+    "startLeft",
+    "clampPanelLeft",
+    "clampPanelTop",
+  ]) {
+    assert.ok(js.includes(fragment) || css.includes(fragment), `missing panel contract: ${fragment}`);
+  }
+  assert.match(css, /--eva-panel-left/);
+  assert.match(css, /--eva-panel-right/);
+  assert.match(css, /--eva-panel-translate-x/);
+  assert.match(css, /--eva-panel-translate-y/);
+  assert.match(css, /\.eva-config-panel\.is-open\s*\{/);
+  assert.match(css, /\.eva-config-group-toggle\s*\{/);
+  assert.match(css, /\.eva-config-language\s*\{/);
+  assert.match(css, /\.eva-config-panel\.is-dragging\s*\{/);
+});
+
+test("输出速度 HUD 使用真实流式正文并标明估算", () => {
+  const js = fs.readFileSync(path.join(root, "assets", "skin-ui.js"), "utf8");
+  const css = fs.readFileSync(path.join(root, "assets", "eva-skin.css"), "utf8");
+  for (const fragment of [
+    "eva-tps-hud",
+    "estimateTokens",
+    "[data-turn-key]",
+    'data-markdown-text-style="assistant-message"',
+    "setInterval(sampleTps, 400)",
+    "tok/s",
+    "EST",
+    "PEAK",
+    "AVG",
+    "tps: true",
+  ]) {
+    assert.ok(js.includes(fragment), `missing tps contract: ${fragment}`);
+  }
+  assert.match(css, /#eva-codex-skin-overlay \.eva-tps-hud\s*\{/);
+  assert.match(css, /@keyframes eva-tps-in/);
 });
 
 test("主题资源不包含角色图片或远程引用", () => {

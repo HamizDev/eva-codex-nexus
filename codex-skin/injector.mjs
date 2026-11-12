@@ -6,7 +6,7 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
-export const SKIN_VERSION = "0.4.2";
+export const SKIN_VERSION = "0.4.3";
 export const SKIN_ID = "eva-codex-skin";
 export const DEFAULT_PORT = 9345;
 export const EXACT_MAIN_URL = "app://-/index.html";
