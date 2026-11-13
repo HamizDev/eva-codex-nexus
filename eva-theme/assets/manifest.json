@@ -35,14 +35,14 @@
     "asukaPortrait": {
       "file": "images/asuka-portrait-lineart.png",
       "type": "image/png",
-      "bytes": 999030,
-      "sha256": "5487f9519bc1ed122bd0ad6274f7a7debd320d38cccfe9a2fa87eba8b7fd86dd"
+      "bytes": 346305,
+      "sha256": "f2b67fbfe39f8b0d46c840086a8071fb586afc9e49f32b3d7e4a4f9955b1cf88"
     },
     "asukaHead": {
       "file": "images/asuka-avatar-closed-eyes.png",
       "type": "image/png",
-      "bytes": 1381146,
-      "sha256": "cda9acf24d32932c0f9827da65ea3fe5ac59bb94c28d3b9fe169adfd675e7999"
+      "bytes": 161886,
+      "sha256": "5a10f5b69a24e0e6789f7d65174165ffd90435dfa20722834caf3e784d45649d"
     },
     "asukaVoice": {
       "file": "audio/asuka-voice-boot.mp3",
@@ -72,14 +72,14 @@
     "reiPortrait": {
       "file": "images/rei-portrait-lineart.png",
       "type": "image/png",
-      "bytes": 811658,
-      "sha256": "1d22c5a345573e32c1aebc19eb7aeda5cebd8a5b57fc418fbfd9a7b7e39e5fd4"
+      "bytes": 241324,
+      "sha256": "db1017ff9ce1458e544b504ca603fcfe05fc0996cb91de71489d30d8b491a377"
     },
     "reiHead": {
       "file": "images/rei-avatar-closed-eyes.png",
       "type": "image/png",
-      "bytes": 1118046,
-      "sha256": "cfbf109cf82b881a33d87cccaea3268e40906ea4c1de33972443d6b2de699ff0"
+      "bytes": 114977,
+      "sha256": "d7f9591fb5201bf06b5079230d9250c51fe938be8489e4521f59e0620d3874b7"
     },
     "reiVoice": {
       "file": "audio/rei-voice-boot.mp3",

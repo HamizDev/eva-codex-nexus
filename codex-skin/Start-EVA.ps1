@@ -13,7 +13,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-$SkinVersion = '0.4.3'
+$SkinVersion = '0.4.4'
 $PortExplicit = $PSBoundParameters.ContainsKey('Port')
 $StateRoot = Join-Path $env:LOCALAPPDATA 'EVACodexSkin'
 $StatePath = Join-Path $StateRoot 'state.json'

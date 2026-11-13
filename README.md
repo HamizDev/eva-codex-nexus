@@ -9,11 +9,11 @@
 为**官方 Codex 桌面客户端**打造的 EVA 双角色皮肤，不是另做一个 Codex 工作台。<br />
 明日香的红与黑，绫波丽的白与蓝；侧栏、项目、会话、输入框、审批与快捷键仍保持 Codex 原生。
 
-[![Release](https://img.shields.io/badge/release-v0.4.3-b62026)](https://github.com/HamizDev/eva-codex-nexus/tree/v0.4.3) [![License](https://img.shields.io/badge/code-MIT-176b91)](LICENSE) [![Platform](https://img.shields.io/badge/platform-Windows-236c9d)](#环境要求)
+[![Release](https://img.shields.io/badge/release-v0.4.4-b62026)](https://github.com/HamizDev/eva-codex-nexus/tree/v0.4.4) [![License](https://img.shields.io/badge/code-MIT-176b91)](LICENSE) [![Platform](https://img.shields.io/badge/platform-Windows-236c9d)](#环境要求)
 
-[**下载最新版本**](https://github.com/HamizDev/eva-codex-nexus/archive/refs/tags/v0.4.3.zip) · [安装](#安装) · [使用流程](#使用流程) · [启动动画](#eva-启动素材包) · [更新日志](CHANGELOG.md) · [问题反馈](https://github.com/HamizDev/eva-codex-nexus/issues)
+[**下载最新版本**](https://github.com/HamizDev/eva-codex-nexus/archive/refs/tags/v0.4.4.zip) · [安装](#安装) · [使用流程](#使用流程) · [启动动画](#eva-启动素材包) · [更新日志](CHANGELOG.md) · [问题反馈](https://github.com/HamizDev/eva-codex-nexus/issues)
 
-`eva-codex-nexus` · 当前版本 **v0.4.3（开发预览）**<br />
+`eva-codex-nexus` · 当前版本 **v0.4.4（开发预览）**<br />
 构建与验证基线：`OpenAI.Codex 26.1106.6628.0` · Chromium `157.0.8103.51`
 
 </div>
@@ -55,7 +55,7 @@
    node codex-skin\injector.mjs --verify --port 9345
    ```
 
-   返回 `installed: true`、`pass: true`、`version: "0.4.3"` 和 `driver`（当前驾驶员），即表示注入成功。若 `pass: false`，先查看日志，不要继续重启或修改官方客户端文件。
+   返回 `installed: true`、`pass: true`、`version: "0.4.4"` 和 `driver`（当前驾驶员），即表示注入成功。若 `pass: false`，先查看日志，不要继续重启或修改官方客户端文件。
 
 ### 交给 AI 安装
 
@@ -107,7 +107,7 @@ Windows 的 `.cmd` 文件不能可靠地自定义图标。本项目的做法是�
 Import-EVA-Theme.cmd
 ```
 
-导入器会校验 `eva-theme/assets/manifest.json` 中的字节数和 SHA-256，再把 20 个素材（启动 GIF、警报/插入栓、NERV 标识、两张头像、两张立绘、五类语音、打字音和启动 BGM）复制到 `%LOCALAPPDATA%\EVACodexSkin\eva-theme`，合计 14,586,757 字节。注入器启动时自动读取该目录；校验失败时不会使用损坏或篡改的包。素材只允许在本机导入使用，未经书面授权不得再发布；完整边界和目录结构见 [EVA-THEME.md](EVA-THEME.md) 和 [eva-theme/MEDIA-LICENSE.md](eva-theme/MEDIA-LICENSE.md)。
+导入器会校验 `eva-theme/assets/manifest.json` 中的字节数和 SHA-256，再把 20 个素材（启动 GIF、警报/插入栓、NERV 标识、两张头像、两张立绘、五类语音、打字音和启动 BGM）复制到 `%LOCALAPPDATA%\EVACodexSkin\eva-theme`，合计 11,141,369 字节。注入器启动时自动读取该目录；校验失败时不会使用损坏或篡改的包。素材只允许在本机导入使用，未经书面授权不得再发布；完整边界和目录结构见 [EVA-THEME.md](EVA-THEME.md) 和 [eva-theme/MEDIA-LICENSE.md](eva-theme/MEDIA-LICENSE.md)。
 
 ## 使用流程
 
@@ -135,9 +135,9 @@ Import-EVA-Theme.cmd
 
 | 项目 | 本机构建/验证值 |
 | --- | --- |
-| 皮肤版本 | `0.4.3` |
+| 皮肤版本 | `0.4.4` |
 | 构建/验证日期 | `2026-11-12` |
-| EVA 素材快照 | `0.51.2` / `f8b96381ceda724c58e79ec375e0dfe08d244349`，20 个文件、`14,586,757` 字节 |
+| EVA 素材快照 | `0.51.2` / `f8b96381ceda724c58e79ec375e0dfe08d244349`，20 个文件、`11,141,369` 字节 |
 | 官方 Codex Appx | `OpenAI.Codex 26.1106.6628.0` |
 | Codex 包全名 | `OpenAI.Codex_26.1106.6628.0_x64__2p2nqsd0c76g0` |
 | Renderer | Chromium `157.0.8103.51`，V8 `15.7.112.23` |

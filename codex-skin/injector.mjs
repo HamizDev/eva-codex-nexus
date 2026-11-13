@@ -6,7 +6,7 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
-export const SKIN_VERSION = "0.4.3";
+export const SKIN_VERSION = "0.4.4";
 export const SKIN_ID = "eva-codex-skin";
 export const DEFAULT_PORT = 9345;
 export const EXACT_MAIN_URL = "app://-/index.html";
@@ -415,12 +415,17 @@ function scopeSvgMarkup(markup, scope) {
 const BOOT_PACK_COPY = Object.freeze({
   "zh-Hant": Object.freeze({
     selectTitle: "選擇你的駕駛員",
-    selectHint: "將頭像拖入左側插入栓，或點擊角色卡",
+    selectHint: "將頭像拖入左側插入栓，或點擊頭像裝載",
     enterSelect: "進入選擇",
     exit: "跳過並進入",
     drag: "拖入插入栓",
-    drop: "拖入駕駛員 · DROP PILOT",
+    drop: "拖入駕駛員 · DROP PILOT HERE",
+    loaded: "駕駛員已裝載 · PILOT LOADED",
     awaiting: "等待駕駛員選擇 · AWAITING PILOT",
+    bay: "插入栓，駕駛員頭像放置區",
+    pilots: "駕駛員選擇",
+    entryPlug: "插入栓",
+    progress: "駕駛員啟動語音進度",
     syncTitle: "駕駛員同步中",
     syncHint: "啟動語音播放結束後進入會話",
     syncState: "駕駛員同步中",
@@ -432,6 +437,7 @@ const BOOT_PACK_COPY = Object.freeze({
     dark: "暗色",
     light: "亮色",
     card: "選擇{pilot}，載入{mode}主題",
+    bootLabel: "NERV 駕駛員啟動序列",
     language: "啟動介面語言",
     bgm: "啟動背景音樂",
     bgmOn: "背景音樂播放中 · 點擊靜音",
@@ -442,12 +448,17 @@ const BOOT_PACK_COPY = Object.freeze({
   }),
   "zh-Hans": Object.freeze({
     selectTitle: "选择你的驾驶员",
-    selectHint: "将头像拖入左侧插入栓，或点击角色卡",
+    selectHint: "将头像拖入左侧插入栓，或点击头像装载",
     enterSelect: "进入选择",
     exit: "跳过并进入",
     drag: "拖入插入栓",
-    drop: "拖入驾驶员 · DROP PILOT",
+    drop: "拖入驾驶员 · DROP PILOT HERE",
+    loaded: "驾驶员已装载 · PILOT LOADED",
     awaiting: "等待驾驶员选择 · AWAITING PILOT",
+    bay: "插入栓，驾驶员头像放置区",
+    pilots: "驾驶员选择",
+    entryPlug: "插入栓",
+    progress: "驾驶员启动语音进度",
     syncTitle: "驾驶员同步中",
     syncHint: "启动语音播放结束后进入会话",
     syncState: "驾驶员同步中",
@@ -459,6 +470,7 @@ const BOOT_PACK_COPY = Object.freeze({
     dark: "暗色",
     light: "亮色",
     card: "选择{pilot}，载入{mode}主题",
+    bootLabel: "NERV 驾驶员启动序列",
     language: "启动界面语言",
     bgm: "启动背景音乐",
     bgmOn: "背景音乐播放中 · 点击静音",
@@ -471,10 +483,15 @@ const BOOT_PACK_COPY = Object.freeze({
     selectTitle: "パイロットを選択",
     selectHint: "ポートレートを左のエントリープラグへドラッグ、またはクリック",
     enterSelect: "選択画面へ",
-    exit: "スキップして入る",
+    exit: "スキップして開始",
     drag: "エントリープラグへ",
-    drop: "パイロットを挿入 · DROP PILOT",
+    drop: "パイロットを挿入 · DROP PILOT HERE",
+    loaded: "パイロット搭乗完了 · PILOT LOADED",
     awaiting: "パイロット待機中 · AWAITING PILOT",
+    bay: "エントリープラグ、パイロットのドロップ先",
+    pilots: "パイロット選択",
+    entryPlug: "エントリープラグ",
+    progress: "起動ボイスの再生状況",
     syncTitle: "パイロット同期中",
     syncHint: "起動ボイス終了後にチャットへ移行します",
     syncState: "パイロット同期中",
@@ -485,7 +502,8 @@ const BOOT_PACK_COPY = Object.freeze({
     rei: "綾波レイ",
     dark: "ダーク",
     light: "ライト",
-    card: "{pilot}を選択、{mode}テーマを読み込む",
+    card: "{pilot}を選択して{mode}テーマを読み込む",
+    bootLabel: "NERV パイロット起動シーケンス",
     language: "起動画面の言語",
     bgm: "起動 BGM",
     bgmOn: "BGM 再生中 · クリックでミュート",
@@ -499,9 +517,14 @@ const BOOT_PACK_COPY = Object.freeze({
     selectHint: "Drag a portrait into the entry plug, or click to select",
     enterSelect: "Continue",
     exit: "Skip and enter",
-    drag: "Drag to plug",
+    drag: "Drag to entry plug",
     drop: "DROP PILOT HERE",
+    loaded: "PILOT LOADED",
     awaiting: "AWAITING PILOT",
+    bay: "Entry plug, pilot drop zone",
+    pilots: "Pilot selection",
+    entryPlug: "Entry plug",
+    progress: "Startup voice progress",
     syncTitle: "Synchronizing pilot",
     syncHint: "Enter chat when the startup voice finishes",
     syncState: "PILOT SYNCHRONIZATION",
@@ -513,6 +536,7 @@ const BOOT_PACK_COPY = Object.freeze({
     dark: "Dark",
     light: "Light",
     card: "Select {pilot}, load the {mode} theme",
+    bootLabel: "NERV pilot startup sequence",
     language: "Startup interface language",
     bgm: "Startup music",
     bgmOn: "Music playing · Click to mute",
@@ -580,7 +604,7 @@ function buildBootPackMarkup(driver, pack, syncSecondsByDriver) {
     const label = pilot === "rei" ? "绫波丽" : "明日香";
     return [
       `<button type="button" class="eva-boot-pilot-card" data-eva-pilot="${pilot}"`,
-      ` data-unit="${profile.unit}" aria-label="选择${label}（EVA-${profile.unit}）" aria-pressed="false" draggable="true">`,
+      ` data-unit="${profile.unit}" aria-label="选择${label}（EVA-${profile.unit}）" aria-pressed="false">`,
       `<span class="eva-boot-pilot-card-top"><span>PILOT / ${pilot === "rei" ? "FIRST CHILD" : "SECOND CHILD"}</span><i>NEURAL ID · ${profile.unit}</i></span>`,
       '<span class="eva-boot-pilot-card-face"></span>',
       '<span class="eva-boot-pilot-card-copy">',
@@ -622,7 +646,7 @@ function buildBootPackMarkup(driver, pack, syncSecondsByDriver) {
     '<span class="eva-boot-intro-face"></span>',
     "<b>00</b><small>REI AYANAMI</small>",
     "</div>",
-    '<div class="eva-boot-intro-hud"><span>TOKYO-III / NERV</span><time data-eva-clock>--:--:--</time><small>PILOT AUTHENTICATION</small></div>',
+    '<div class="eva-boot-intro-hud"><span>TOKYO-III / NERV</span><canvas class="eva-boot-clock" data-eva-clock data-eva-clock-size="12" width="112" height="22">--:--:--</canvas><small>PILOT AUTHENTICATION</small></div>',
     '<button type="button" class="eva-boot-intro-next" data-eva-boot-text="enterSelect">進入選擇</button>',
     "</div>",
     '<div class="eva-boot-layer eva-boot-gif-layer" data-eva-layer="gif">',
@@ -634,7 +658,7 @@ function buildBootPackMarkup(driver, pack, syncSecondsByDriver) {
     '<div class="eva-boot-alert-copy">',
     "<b>EMERGENCY</b>",
     "<span>GOD'S IN HIS HEAVEN.<br>ALL'S RIGHT WITH THE WORLD.</span>",
-    '<div class="eva-boot-alert-clock"><time data-eva-clock>--:--:--</time><small>LOCAL TIME · TOKYO-III</small></div>',
+    '<div class="eva-boot-alert-clock"><canvas class="eva-boot-clock" data-eva-clock data-eva-clock-size="28" width="224" height="40">--:--:--</canvas><small>LOCAL TIME · TOKYO-III</small></div>',
     "<small>TOKYO-III // NERV CENTRAL DOGMA // LEVEL 07</small>",
     "</div>",
     "</div>",
@@ -643,24 +667,26 @@ function buildBootPackMarkup(driver, pack, syncSecondsByDriver) {
     '<div class="eva-boot-heading"><div class="eva-boot-brand">' + logoMarkup,
     '<span class="eva-boot-kicker"><b>NERV</b> // PILOT AUTHENTICATION<small>SPECIAL AGENCY · CENTRAL DOGMA</small></span></div>',
     '<h1 class="eva-boot-title" data-eva-boot-text="selectTitle">選擇你的駕駛員</h1>',
-    '<p class="eva-boot-hint" data-eva-boot-text="selectHint">將頭像拖入左側插入栓，或點擊角色卡</p></div>',
+    '<p class="eva-boot-hint" data-eva-boot-text="selectHint">將頭像拖入左側插入栓，或點擊頭像裝載</p></div>',
     '<div class="eva-boot-head-code"><span class="eva-boot-security">TOKYO-III<b>NEURAL INTERFACE · LEVEL 07</b></span>',
-    '<span class="eva-boot-live-clock"><b data-eva-clock>--:--:--</b><small>LOCAL</small></span>',
+    '<span class="eva-boot-live-clock"><canvas class="eva-boot-clock" data-eva-clock data-eva-clock-size="13" width="120" height="22">--:--:--</canvas><small>LOCAL</small></span>',
     '<div class="eva-boot-languages" role="group"><button type="button" data-eva-boot-lang="zh-Hant" lang="zh-Hant">繁</button><button type="button" data-eva-boot-lang="zh-Hans" lang="zh-Hans">简</button><button type="button" data-eva-boot-lang="ja" lang="ja">日本語</button><button type="button" data-eva-boot-lang="en" lang="en">EN</button></div>',
     '<button type="button" class="eva-boot-exit" data-eva-boot-text="exit">跳過並進入</button></div>',
     "</header>",
     '<main class="eva-boot-select-grid">',
-    '<section class="eva-boot-bay eva-boot-select-bay" data-eva-dropzone="true">',
-    '<span class="eva-boot-bay-label">NERV / ENTRY SYSTEM<b>INSERT PILOT / DRAG OR CLICK</b></span>',
-    '<div class="eva-boot-plug eva-boot-select-plug" role="img" aria-label="Entry Plug">' + entryPlug.select + "</div>",
+    '<section class="eva-boot-bay eva-boot-select-bay" data-eva-dropzone="true" role="group" data-eva-boot-aria="bay" aria-label="插入栓，駕駛員頭像放置區">',
+    '<span class="eva-boot-select-glow" aria-hidden="true"></span>',
+    '<span class="eva-boot-bay-label">NERV / ENTRY SYSTEM<b>ENTRY PLUG / STANDBY</b></span>',
+    '<span class="eva-boot-bay-meta"><b>EVANGELION</b><br>DIRECT ENTRY SYSTEM<br>L.C.L. / SEALED</span>',
+    '<div class="eva-boot-plug eva-boot-select-plug" role="img" data-eva-boot-aria="entryPlug" aria-label="插入栓">' + entryPlug.select + "</div>",
     '<span class="eva-boot-bay-lock">INTERLOCK / STANDBY</span>',
-    '<span class="eva-boot-bay-target" data-eva-boot-text="drop">拖入駕駛員 · DROP PILOT</span>',
+    '<span class="eva-boot-bay-target" data-eva-boot-text="drop">拖入駕駛員 · DROP PILOT HERE</span>',
     "</section>",
-    '<section class="eva-boot-pilot-select">',
+    '<section class="eva-boot-pilot-select" role="group" data-eva-boot-aria="pilots" aria-label="駕駛員選擇">',
     '<div class="eva-boot-pilot-cards">',
     pilotCards,
     "</div>",
-    '<p class="eva-boot-select-hint"><b>NERV / OPERATION</b><span data-eva-boot-text="selectHint">將頭像拖入左側插入栓，或點擊角色卡</span></p>',
+    '<p class="eva-boot-select-hint"><b>NERV / OPERATION</b><span data-eva-boot-text="selectHint">將頭像拖入左側插入栓，或點擊頭像裝載</span></p>',
     "</section>",
     "</main>",
     '<footer class="eva-boot-foot"><span class="eva-boot-status"><i></i><span data-eva-boot-text="awaiting">等待駕駛員選擇 · AWAITING PILOT</span></span>',
@@ -671,14 +697,14 @@ function buildBootPackMarkup(driver, pack, syncSecondsByDriver) {
     '<div class="eva-boot-heading"><div class="eva-boot-brand">' + logoMarkup,
     '<span class="eva-boot-kicker"><b>NERV</b> // MAGI SYSTEM<small>SPECIAL AGENCY · CENTRAL DOGMA</small></span></div>',
     `<h1 class="eva-boot-title" data-eva-boot-text="syncTitle">駕駛員同步中</h1><p class="eva-boot-hint" data-eva-boot-text="syncHint">啟動語音播放結束後進入會話</p><small class="eva-boot-source">${source}</small></div>`,
-    '<span class="eva-boot-head-code"><span class="eva-boot-security">TOKYO-III<b>NEURAL INTERFACE · LEVEL 07</b></span><span class="eva-boot-live-clock"><b data-eva-clock>--:--:--</b><small>LOCAL</small></span></span>',
+    '<span class="eva-boot-head-code"><span class="eva-boot-security">TOKYO-III<b>NEURAL INTERFACE · LEVEL 07</b></span><span class="eva-boot-live-clock"><canvas class="eva-boot-clock" data-eva-clock data-eva-clock-size="13" width="120" height="22">--:--:--</canvas><small>LOCAL</small></span></span>',
     "</header>",
     '<main class="eva-boot-grid">',
     '<section class="eva-boot-bay">',
     '<span class="eva-boot-bay-label">NERV / ENTRY SYSTEM<b>ENTRY PLUG / CONNECTED</b></span>',
-    '<div class="eva-boot-plug" role="img" aria-label="Entry Plug">' + entryPlug.sync + "</div>",
+    '<div class="eva-boot-plug" role="img" data-eva-boot-aria="entryPlug" aria-label="插入栓">' + entryPlug.sync + "</div>",
     '<span class="eva-boot-bay-lock">INTERLOCK / ENGAGED</span>',
-    '<span class="eva-boot-bay-target">驾驶员已装载 · PILOT LOADED</span>',
+    '<span class="eva-boot-bay-target" data-eva-boot-text="loaded">駕駛員已裝載 · PILOT LOADED</span>',
     "</section>",
     '<section class="eva-boot-panel">',
     '<div class="eva-boot-pilot">',
@@ -686,7 +712,7 @@ function buildBootPackMarkup(driver, pack, syncSecondsByDriver) {
     '<span class="eva-boot-pilot-face" data-eva-sync-face></span>',
     '<div class="eva-boot-pilot-copy">',
     `<span class="eva-boot-unit">${copy.unit}</span>`,
-    `<h1>${copy.pilotCn}</h1><p>${copy.pilot}</p>`,
+    `<h1 data-eva-sync-name>${copy.pilotCn}</h1><p>${copy.pilot}</p>`,
     `<small>${copy.unitLabel}<br>${mode}</small>`,
     "</div>",
     "</div>",
@@ -701,8 +727,8 @@ function buildBootPackMarkup(driver, pack, syncSecondsByDriver) {
     '<span class="eva-boot-percent">00%</span><small>SYNC RATIO</small>',
     "</div>",
     '<div class="eva-boot-sync-copy"><span class="eva-boot-live"><i></i><span data-eva-boot-text="syncState">駕駛員同步中</span></span>',
-    `<h2>${driver === "rei" ? "绫波丽" : "明日香"}</h2><p><span data-eva-boot-text="voiceHint">啟動語音與同步進度</span><br><span class="eva-boot-sync-caption" data-eva-boot-text="syncCaption">AUDIO SYNCHRONIZATION</span></p>`,
-    '<div class="eva-boot-meter" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i></div>',
+    `<h2 data-eva-sync-name>${driver === "rei" ? "綾波麗" : "明日香"}</h2><p><span data-eva-boot-text="voiceHint">啟動語音與同步進度</span><br><span class="eva-boot-sync-caption" data-eva-boot-text="syncCaption">AUDIO SYNCHRONIZATION</span></p>`,
+    '<div class="eva-boot-meter" role="progressbar" data-eva-boot-aria="progress" aria-label="駕駛員啟動語音進度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i></div>',
     `<div class="eva-boot-meter-copy"><span>00%</span><span>00:00 / 00:${String(syncSeconds).padStart(2, "0")}</span></div><div class="eva-boot-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>`,
     "</div>",
     '<div class="eva-boot-systems" aria-hidden="true">',
@@ -921,7 +947,21 @@ export function buildBootPackSource({ driver, css, bootId, pack, forceDriverToke
     const runtimeKey = ${JSON.stringify(BOOT_RUNTIME_KEY)};
     const finishKey = ${JSON.stringify(BOOT_FINISH_KEY)};
     const resultKey = ${JSON.stringify(BOOT_RESULT_KEY)};
+    try {
+      const previousBoot = window[runtimeKey];
+      if (previousBoot?.cleanup && previousBoot.bootId !== bootId) {
+        previousBoot.cleanup();
+      }
+    } catch {}
     const optionsKey = ${JSON.stringify(OPTIONS_STORAGE_KEY)};
+    const audioLevels = ${JSON.stringify({
+      bgm: 0.68,
+      bgmPick: 0.18,
+      bgmSync: 0.1,
+      voice: 1,
+      pick: 1,
+      typing: 0.48,
+    })};
     const sourceCommit = ${JSON.stringify(sourceCommit)};
     const brandLogo = ${JSON.stringify(pack.assets.logo || "")};
     const profiles = ${JSON.stringify({
@@ -999,6 +1039,12 @@ export function buildBootPackSource({ driver, css, bootId, pack, forceDriverToke
       if (Object.hasOwn(bootCopy, savedLanguage)) language = savedLanguage;
     } catch {}
     let selectionLocked = false;
+    let suppressCardClick = false;
+    let pointerDrag = null;
+    const pointerGhosts = new Map();
+    const pointerCardRects = new Map();
+    let pointerBayRect = null;
+    const dragListeners = [];
     let shownAt = 0;
     let mounted = false;
     let leaving = false;
@@ -1075,7 +1121,7 @@ export function buildBootPackSource({ driver, css, bootId, pack, forceDriverToke
       if (bgm.dataset.ready !== "true") {
         bgm.dataset.ready = "true";
         bgm.src = bootBgm;
-        bgm.volume = 0.24;
+        bgm.volume = audioLevels.bgm;
         try { bgm.load(); } catch {}
       }
       if (!bgm.paused) {
@@ -1096,6 +1142,40 @@ export function buildBootPackSource({ driver, css, bootId, pack, forceDriverToke
         paintSound();
       }
     };
+    const clockColors = new WeakMap();
+    const paintClock = (node, time) => {
+      if (!(node instanceof HTMLCanvasElement)) return false;
+      const ctx = node.getContext("2d");
+      if (!ctx) return false;
+      if (!node.dataset.evaClockScaled) {
+        node.dataset.evaClockScaled = "1";
+        node.dataset.evaClockBaseWidth = String(node.width);
+        node.dataset.evaClockBaseHeight = String(node.height);
+        const scale = Math.min(2, window.devicePixelRatio || 1);
+        if (scale !== 1) {
+          node.width = Math.round(node.width * scale);
+          node.height = Math.round(node.height * scale);
+        }
+      }
+      const baseWidth = Number(node.dataset.evaClockBaseWidth) || node.width;
+      const baseHeight = Number(node.dataset.evaClockBaseHeight) || node.height;
+      const scaleX = node.width / baseWidth;
+      const scaleY = node.height / baseHeight;
+      const size = Number(node.dataset.evaClockSize) || 13;
+      let color = clockColors.get(node);
+      if (!color) {
+        color = getComputedStyle(node).color || "currentColor";
+        clockColors.set(node, color);
+      }
+      ctx.setTransform(scaleX, 0, 0, scaleY, 0, 0);
+      ctx.clearRect(0, 0, baseWidth, baseHeight);
+      ctx.fillStyle = color;
+      ctx.font = "500 " + size + 'px "Bahnschrift", "Segoe UI", monospace';
+      ctx.textAlign = "right";
+      ctx.textBaseline = "middle";
+      ctx.fillText(time, baseWidth - 2, baseHeight / 2 + 1);
+      return true;
+    };
     const updateClock = () => {
       const now = new Date();
       const time = [
@@ -1103,8 +1183,10 @@ export function buildBootPackSource({ driver, css, bootId, pack, forceDriverToke
         String(now.getMinutes()).padStart(2, "0"),
         String(now.getSeconds()).padStart(2, "0"),
       ].join(":");
+      const layer = boot.dataset.phase === "emergency" ? "emergency" : boot.dataset.phase;
       for (const node of boot.querySelectorAll("[data-eva-clock], [data-emergency-clock]")) {
-        if (node.textContent !== time) node.textContent = time;
+        if (!node.closest('[data-eva-layer="' + layer + '"]')) continue;
+        paintClock(node, time);
       }
     };
     const onBootPointer = (event) => {
@@ -1121,6 +1203,10 @@ export function buildBootPackSource({ driver, css, bootId, pack, forceDriverToke
       document.removeEventListener("visibilitychange", onVisibilityChange);
       boot.removeEventListener("pointerdown", onBootPointer, true);
       boot.removeEventListener("keydown", onBootKey, true);
+      for (const [target, type, handler] of dragListeners) {
+        target.removeEventListener(type, handler, true);
+      }
+      dragListeners.length = 0;
     };
     const cleanup = () => {
       for (const timer of timers) clearTimeout(timer);
@@ -1202,11 +1288,7 @@ export function buildBootPackSource({ driver, css, bootId, pack, forceDriverToke
       boot.dataset.phase = phase;
       if (phase === "intro") {
         typeIntroTitle();
-        fadeBgm(0.24, 420);
-      } else if (phase === "select") {
-        requestAnimationFrame(() => {
-          boot.querySelector(".eva-boot-pilot-card")?.focus?.({ preventScroll: true });
-        });
+        fadeBgm(audioLevels.bgm, 420);
       }
     };
     const typeIntroTitle = () => {
@@ -1284,7 +1366,7 @@ export function buildBootPackSource({ driver, css, bootId, pack, forceDriverToke
       const code = boot.querySelector(".eva-boot-console-layer .eva-boot-head strong");
       const syncTitle = boot.querySelector(".eva-boot-sync-copy h2");
       if (unit) unit.textContent = profile.unit;
-      if (name) name.textContent = profile.pilotCn;
+      if (name) name.textContent = text(pilot === "rei" ? "rei" : "asuka");
       if (roman) roman.textContent = profile.pilot;
       if (detail) {
         detail.innerHTML = profile.unitLabel + "<br>" +
@@ -1333,6 +1415,9 @@ export function buildBootPackSource({ driver, css, bootId, pack, forceDriverToke
         if (pilotName) pilotName.textContent = text(pilot === "rei" ? "rei" : "asuka");
         if (mode) mode.textContent = (pilot === "rei" ? text("light") : text("dark")) + " / UNIT " + profiles[pilot].unit;
       }
+      for (const node of boot.querySelectorAll("[data-eva-sync-name]")) {
+        node.textContent = text(selectedDriver === "rei" ? "rei" : "asuka");
+      }
       const introTitle = boot.querySelector(".eva-boot-intro-title");
       const introMeasure = boot.querySelector(".eva-boot-intro-measure");
       if (introTitle) introTitle.setAttribute("aria-label", text("selectTitle"));
@@ -1344,6 +1429,7 @@ export function buildBootPackSource({ driver, css, bootId, pack, forceDriverToke
         skipButton.textContent = text("skip");
         skipButton.setAttribute("aria-label", text("skip"));
       }
+      boot.setAttribute("aria-label", text("bootLabel"));
       if (boot.dataset.phase === "intro") typeIntroTitle();
       paintSound();
     };
@@ -1355,13 +1441,13 @@ export function buildBootPackSource({ driver, css, bootId, pack, forceDriverToke
       const bay = boot.querySelector("[data-eva-dropzone]");
       bay?.classList.remove("is-over");
       bay?.setAttribute("data-loaded", "true");
-      fadeBgm(0.07, 320);
+      fadeBgm(audioLevels.bgmPick, 320);
 
       const pick = boot.querySelector(".eva-boot-pick-voice");
       let delay = 520;
       if (pick && pickVoices[pilot] && bootOptions.pickVoice !== false) {
         pick.src = pickVoices[pilot];
-        pick.volume = 0.78;
+        pick.volume = audioLevels.pick;
         delay = 1100;
         try {
           const playback = pick.play();
@@ -1377,6 +1463,23 @@ export function buildBootPackSource({ driver, css, bootId, pack, forceDriverToke
         }
       }
       later(startSync, delay);
+    };
+    const endPointerDrag = () => {
+      if (!pointerDrag) return;
+      const active = pointerDrag;
+      pointerDrag = null;
+      if (active.frame !== null) cancelAnimationFrame(active.frame);
+      active.frame = null;
+      if (active.ghost) {
+        active.ghost.classList.add("is-warm");
+        active.ghost.style.transform = "translate3d(8px,8px,0)";
+      }
+      boot.querySelector("[data-eva-dropzone]")?.classList.remove("is-over");
+      try {
+        if (active.card.hasPointerCapture?.(active.pointerId)) {
+          active.card.releasePointerCapture(active.pointerId);
+        }
+      } catch {}
     };
     const tickSync = (now) => {
       progressFrame = null;
@@ -1416,12 +1519,12 @@ export function buildBootPackSource({ driver, css, bootId, pack, forceDriverToke
     const startSync = () => {
       if (leaving || boot.dataset.phase === "sync") return;
       setPhase("sync");
-      fadeBgm(0.045, 500);
+      fadeBgm(audioLevels.bgmSync, 500);
       syncStarted = performance.now();
       const voice = boot.querySelector(".eva-boot-voice");
       if (voice && bootOptions.bootVoice !== false) {
         voice.src = bootVoices[selectedDriver] || "";
-        voice.volume = 0.75;
+        voice.volume = audioLevels.voice;
         try {
           Promise.resolve(voice.play()).then(() => {
             if (!leaving) syncVoiceStarted = true;
@@ -1569,48 +1672,167 @@ export function buildBootPackSource({ driver, css, bootId, pack, forceDriverToke
         });
       }
       boot.querySelector(".eva-boot-skip")?.addEventListener("click", onSkip);
-      for (const card of boot.querySelectorAll("[data-eva-pilot]")) {
-        card.addEventListener("click", () => chooseDriver(card.dataset.evaPilot));
-        card.addEventListener("dragstart", (event) => {
-          const pilot = card.dataset.evaPilot;
-          card.classList.add("is-dragging");
-          try {
-            event.dataTransfer.effectAllowed = "copy";
-            event.dataTransfer.setData("application/x-eva-pilot", pilot);
-            event.dataTransfer.setData("text/plain", pilot);
-          } catch {}
-        });
-        card.addEventListener("dragend", () => {
-          card.classList.remove("is-dragging");
-          boot.querySelector("[data-eva-dropzone]")?.classList.remove("is-over");
-        });
-      }
       const bay = boot.querySelector("[data-eva-dropzone]");
-      if (bay) {
-        bay.addEventListener("dragover", (event) => {
-          if (selectionLocked) return;
-          event.preventDefault();
-          event.stopPropagation();
-          try { event.dataTransfer.dropEffect = "copy"; } catch {}
-          bay.classList.add("is-over");
+      const readBayRect = () => bay?.getBoundingClientRect() || null;
+      const refreshDragGeometry = () => {
+        pointerBayRect = readBayRect();
+        for (const card of boot.querySelectorAll("[data-eva-pilot]")) {
+          pointerCardRects.set(card.dataset.evaPilot, card.getBoundingClientRect());
+        }
+        if (pointerDrag) pointerDrag.bayRect = pointerBayRect;
+      };
+      const insideBay = (rect, clientX, clientY) => Boolean(
+        rect && clientX >= rect.left && clientX <= rect.right &&
+        clientY >= rect.top && clientY <= rect.bottom,
+      );
+      const createPointerGhost = (card) => {
+        const ghost = document.createElement("div");
+        ghost.className = "eva-boot-pilot-ghost";
+        ghost.dataset.evaPilot = card.dataset.evaPilot;
+        ghost.classList.add("is-warm");
+        ghost.style.transform = "translate3d(8px,8px,0)";
+        ghost.inert = true;
+        ghost.setAttribute("aria-hidden", "true");
+        const face = document.createElement("span");
+        face.className = "eva-boot-pilot-ghost-face";
+        const copy = document.createElement("span");
+        copy.className = "eva-boot-pilot-ghost-copy";
+        const unit = document.createElement("b");
+        unit.textContent = card.dataset.unit || "";
+        const name = document.createElement("strong");
+        name.textContent = card.querySelector("[data-eva-boot-pilot]")?.textContent || "";
+        const en = document.createElement("small");
+        en.textContent = card.querySelector(".eva-boot-pilot-card-copy small")?.textContent || "";
+        copy.append(unit, name, en);
+        ghost.append(face, copy);
+        boot.appendChild(ghost);
+        return ghost;
+      };
+      const paintPointerDrag = () => {
+        const active = pointerDrag;
+        if (!active) return;
+        active.frame = null;
+        if (active.ghost.classList.contains("is-warm")) {
+          active.ghost.classList.remove("is-warm");
+        }
+        if (!active.bayRect) active.bayRect = readBayRect();
+        const x = active.latestX;
+        const y = active.latestY;
+        active.ghost.style.transform =
+          "translate3d(" + (x - active.width * active.grabX) + "px," +
+          (y - active.height * active.grabY) + "px,0)";
+        const over = insideBay(active.bayRect, x, y);
+        if (active.over !== over) {
+          active.over = over;
+          bay?.classList.toggle("is-over", over);
+        }
+      };
+      const onPilotPointerMove = (event) => {
+        if (!pointerDrag || pointerDrag.pointerId !== event.pointerId || selectionLocked) return;
+        pointerDrag.latestX = event.clientX;
+        pointerDrag.latestY = event.clientY;
+        if (!pointerDrag.dragging) {
+          const dx = event.clientX - pointerDrag.x;
+          const dy = event.clientY - pointerDrag.y;
+          if (dx === 0 && dy === 0) return;
+          pointerDrag.dragging = true;
+          paintPointerDrag();
+          return;
+        }
+        if (pointerDrag.frame === null) {
+          pointerDrag.frame = requestAnimationFrame(paintPointerDrag);
+        }
+      };
+      const onPilotPointerUp = (event) => {
+        if (!pointerDrag || pointerDrag.pointerId !== event.pointerId) return;
+        const active = pointerDrag;
+        const moved = active.dragging || Math.hypot(
+          event.clientX - active.x,
+          event.clientY - active.y,
+        ) >= 8;
+        const pilot = active.card.dataset.evaPilot;
+        const over = insideBay(
+          active.bayRect || readBayRect(),
+          event.clientX,
+          event.clientY,
+        );
+        endPointerDrag();
+        suppressCardClick = moved;
+        if (moved) later(() => { suppressCardClick = false; }, 80);
+        if (moved && over) chooseDriver(pilot);
+      };
+      const onPilotPointerCancel = (event) => {
+        if (!pointerDrag) return;
+        if (event?.pointerId !== undefined && pointerDrag.pointerId !== event.pointerId) return;
+        const moved = pointerDrag.dragging;
+        endPointerDrag();
+        suppressCardClick = moved;
+        if (moved) later(() => { suppressCardClick = false; }, 80);
+      };
+      const onPilotResize = () => {
+        refreshDragGeometry();
+      };
+      dragListeners.push(
+        [document, "pointermove", onPilotPointerMove],
+        [document, "pointerup", onPilotPointerUp],
+        [document, "pointercancel", onPilotPointerCancel],
+        [window, "blur", onPilotPointerCancel],
+        [window, "resize", onPilotResize],
+      );
+      for (const [target, type, handler] of dragListeners) {
+        target.addEventListener(type, handler, true);
+      }
+      for (const card of boot.querySelectorAll("[data-eva-pilot]")) {
+        const ghost = createPointerGhost(card);
+        pointerGhosts.set(card.dataset.evaPilot, ghost);
+        pointerCardRects.set(card.dataset.evaPilot, card.getBoundingClientRect());
+        card.addEventListener("click", (event) => {
+          if (suppressCardClick) {
+            suppressCardClick = false;
+            event.preventDefault();
+            return;
+          }
+          chooseDriver(card.dataset.evaPilot);
         });
-        bay.addEventListener("dragleave", (event) => {
-          if (event.relatedTarget && bay.contains(event.relatedTarget)) return;
-          bay.classList.remove("is-over");
+        card.addEventListener("pointerdown", (event) => {
+          if (selectionLocked || event.button !== 0 || event.isPrimary === false) return;
+          endPointerDrag();
+          suppressCardClick = false;
+          const cardRect = pointerCardRects.get(card.dataset.evaPilot) ||
+            card.getBoundingClientRect();
+          const grabX = cardRect.width > 0
+            ? Math.min(1, Math.max(0, (event.clientX - cardRect.left) / cardRect.width))
+            : 0.5;
+          const grabY = cardRect.height > 0
+            ? Math.min(1, Math.max(0, (event.clientY - cardRect.top) / cardRect.height))
+            : 0.5;
+          pointerDrag = {
+            card,
+            pointerId: event.pointerId,
+            x: event.clientX,
+            y: event.clientY,
+            latestX: event.clientX,
+            latestY: event.clientY,
+            frame: null,
+            ghost: pointerGhosts.get(card.dataset.evaPilot),
+            width: 190,
+            height: 130,
+            grabX,
+            grabY,
+            bayRect: pointerBayRect || readBayRect(),
+            over: false,
+            dragging: false,
+          };
+          try { card.setPointerCapture(event.pointerId); } catch {}
+          try { event.preventDefault(); } catch {}
         });
-        bay.addEventListener("drop", (event) => {
-          if (selectionLocked) return;
-          event.preventDefault();
-          event.stopPropagation();
-          bay.classList.remove("is-over");
-          let pilot = "";
-          try {
-            pilot = event.dataTransfer.getData("application/x-eva-pilot") ||
-              event.dataTransfer.getData("text/plain");
-          } catch {}
-          chooseDriver(pilot);
+        card.addEventListener("lostpointercapture", (event) => {
+          if (pointerDrag?.pointerId === event.pointerId) {
+            endPointerDrag();
+          }
         });
       }
+      pointerBayRect = readBayRect();
       requestAnimationFrame(() => {
         if (!leaving) {
           boot.classList.add("is-active");
@@ -1764,22 +1986,30 @@ export function buildInstallSource({
       return true;
     };
     let observer = null;
+    let headObserver = null;
     if (document.body && typeof MutationObserver === "function") {
-      observer = new MutationObserver(() => {
+      const ensureMounted = () => {
         if (!document.getElementById(${JSON.stringify(STYLE_ID)})) {
           (document.head || root).appendChild(style);
         }
         if (!document.getElementById(${JSON.stringify(OVERLAY_ID)})) {
           (document.body || root).appendChild(overlay);
         }
-      });
+      };
+      observer = new MutationObserver(ensureMounted);
       observer.observe(document.body, { childList: true });
+      if (document.head) {
+        headObserver = new MutationObserver(ensureMounted);
+        headObserver.observe(document.head, { childList: true });
+      }
     }
     const cleanup = () => {
       try { ui?.cleanup?.(); } catch {}
       ui = null;
       try { observer?.disconnect(); } catch {}
+      try { headObserver?.disconnect(); } catch {}
       observer = null;
+      headObserver = null;
       document.getElementById(${JSON.stringify(STYLE_ID)})?.remove();
       document.getElementById(${JSON.stringify(OVERLAY_ID)})?.remove();
       try {

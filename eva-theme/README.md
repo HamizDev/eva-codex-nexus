@@ -7,6 +7,8 @@
 - 4 个角色头像或线稿立绘；
 - 12 个语音、音效或启动 BGM。
 
+角色头像与线稿立绘使用 512 / 768 像素的运行时优化版本，并已预先着色为对应驾驶员配色；来源与权利边界不变，详见 [`NOTICE.md`](NOTICE.md)。
+
 素材包的校验清单在 [`assets/manifest.json`](assets/manifest.json)，包含每个文件的字节数和 SHA-256。`Install-EVA-DesktopShortcut.cmd` 和 `Start-EVA.cmd` 会自动读取并导入这里；手动修复时可在仓库根目录执行：
 
 ```powershell

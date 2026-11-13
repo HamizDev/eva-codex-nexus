@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "project": "eva-codex-nexus",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "files": [
     {
       "path": ".editorconfig",
@@ -30,8 +30,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "bytes": 25468,
-      "sha256": "8647371e2b41f4eda3e227ffcb06402441af08c493b9bdf6e3dc4b99961b80e4"
+      "bytes": 30068,
+      "sha256": "f7fc9f3cfe2941c1d2e012703dcc8762b618bf7950b9f337708c5c4ddec2f70b"
     },
     {
       "path": "CONTRIBUTING.md",
@@ -76,7 +76,7 @@
     {
       "path": "README.md",
       "bytes": 22008,
-      "sha256": "6788babc04b16d9efb980f3fd6c7026ff7aff7c6fd80b489f239cb4a4577725d"
+      "sha256": "13d1871732f1b86bc473f5186b6ed7af1d6ed5d6249ad5aae34d975035f068a4"
     },
     {
       "path": "Restore-EVA.cmd",
@@ -116,7 +116,7 @@
     {
       "path": "codex-skin/Start-EVA.ps1",
       "bytes": 26535,
-      "sha256": "7597c7066f2753303e2001d3ff7c9b55614a5a98b27c2ac2c6de5c255255ee31"
+      "sha256": "e28e27a910f73f6bab22eba57411b6c23882fd7b945df4ca6aff25688923e2a2"
     },
     {
       "path": "codex-skin/assets/README.md",
@@ -135,13 +135,13 @@
     },
     {
       "path": "codex-skin/assets/eva-boot.css",
-      "bytes": 47013,
-      "sha256": "9e2f78983c03a6fce0f897e3836b217e9231da3fae6d721f84bce27bf74cc04f"
+      "bytes": 57162,
+      "sha256": "6e58bb4d92a02fa364dff58b73d9f3b691714f43a4d27608610fc49de4ae9aa4"
     },
     {
       "path": "codex-skin/assets/eva-skin.css",
-      "bytes": 45512,
-      "sha256": "807510030a6255948e19e911265de34238fae791a290ca4878a22d71590307e2"
+      "bytes": 44231,
+      "sha256": "acaae4ba9efbc298956ab49a2359688a93d871c0ec104a9f7c79f1331f29d4f8"
     },
     {
       "path": "codex-skin/assets/linework.svg",
@@ -160,13 +160,13 @@
     },
     {
       "path": "codex-skin/assets/skin-ui.js",
-      "bytes": 58442,
-      "sha256": "85a387fc62d03b6dfeb387279ff2fb14fef6ac376a9251f03f6c73c699e3a304"
+      "bytes": 64888,
+      "sha256": "194ab3aabfc571b2026ca07003c8b0c8f1b05599a3af0bcb3884bdc6e8e947e4"
     },
     {
       "path": "codex-skin/injector.mjs",
-      "bytes": 106510,
-      "sha256": "b3da17258e004f020da20260253037414196b4aed7f0a19d67e71c0bc8a90f56"
+      "bytes": 116747,
+      "sha256": "5e51900bd50ed9f08c49f95f5839f5d483a18729ec569f80ceb4ca0538358422"
     },
     {
       "path": "codex-skin/selectors.json",
@@ -180,13 +180,13 @@
     },
     {
       "path": "codex-skin/tests/injector.test.mjs",
-      "bytes": 28638,
-      "sha256": "b638f7117fe60a423ad69dc3a91d0ca7f6c6916f2a23c9a9937e3d6285207ae3"
+      "bytes": 37585,
+      "sha256": "6c6d19d445147c0427bcd85be6e26475b6d7aff9871aaf1f7632b45d97f6512b"
     },
     {
       "path": "codex-skin/tests/launcher.test.mjs",
       "bytes": 7151,
-      "sha256": "45d1c9303790f7d2a38f4c71b0b0bf03cba8560d76f8abe80c21861cfc624bce"
+      "sha256": "b5101ec1ae04ea69a505e063453bd6251c2e027a5366525963a12a0b88e0d67b"
     },
     {
       "path": "eva-theme/LICENSE",
@@ -200,13 +200,13 @@
     },
     {
       "path": "eva-theme/NOTICE.md",
-      "bytes": 1009,
-      "sha256": "47f26e9ef385d5b883934fc251e93cb5a9e30b2fa7934d4e2af43d730347f5ab"
+      "bytes": 1253,
+      "sha256": "88b1947f0cf1a33db50b35d6f6fc84ae16864e5fdab52fed224cc230abdae5ae"
     },
     {
       "path": "eva-theme/README.md",
-      "bytes": 1458,
-      "sha256": "7979f2a223b59b07804e1b0ec7543873af8eff568027e1f06bb28b35db0f3148"
+      "bytes": 1646,
+      "sha256": "229477df86e18175ac6295865a3da78646eea301242c305f24de0b0cdf3514be"
     },
     {
       "path": "eva-theme/assets/animations/nerv-boot.gif",
@@ -275,28 +275,28 @@
     },
     {
       "path": "eva-theme/assets/images/asuka-avatar-closed-eyes.png",
-      "bytes": 1381146,
-      "sha256": "cda9acf24d32932c0f9827da65ea3fe5ac59bb94c28d3b9fe169adfd675e7999"
+      "bytes": 161886,
+      "sha256": "5a10f5b69a24e0e6789f7d65174165ffd90435dfa20722834caf3e784d45649d"
     },
     {
       "path": "eva-theme/assets/images/asuka-portrait-lineart.png",
-      "bytes": 999030,
-      "sha256": "5487f9519bc1ed122bd0ad6274f7a7debd320d38cccfe9a2fa87eba8b7fd86dd"
+      "bytes": 346305,
+      "sha256": "f2b67fbfe39f8b0d46c840086a8071fb586afc9e49f32b3d7e4a4f9955b1cf88"
     },
     {
       "path": "eva-theme/assets/images/rei-avatar-closed-eyes.png",
-      "bytes": 1118046,
-      "sha256": "cfbf109cf82b881a33d87cccaea3268e40906ea4c1de33972443d6b2de699ff0"
+      "bytes": 114977,
+      "sha256": "d7f9591fb5201bf06b5079230d9250c51fe938be8489e4521f59e0620d3874b7"
     },
     {
       "path": "eva-theme/assets/images/rei-portrait-lineart.png",
-      "bytes": 811658,
-      "sha256": "1d22c5a345573e32c1aebc19eb7aeda5cebd8a5b57fc418fbfd9a7b7e39e5fd4"
+      "bytes": 241324,
+      "sha256": "db1017ff9ce1458e544b504ca603fcfe05fc0996cb91de71489d30d8b491a377"
     },
     {
       "path": "eva-theme/assets/manifest.json",
-      "bytes": 4585,
-      "sha256": "2d6f582ddcda7655586e262975d1792bc745cb12d35386f8633351760f819825"
+      "bytes": 4583,
+      "sha256": "f52c08069c136055457908417c528b8cc5357a07a3056c70e56b02301eba5e97"
     },
     {
       "path": "eva-theme/assets/svg/eva-entry-plug.svg",
@@ -316,7 +316,7 @@
     {
       "path": "package.json",
       "bytes": 470,
-      "sha256": "eb0abccb5dc298dab3c213f65915c0390d972314e2f03c071a6078b472bf82fc"
+      "sha256": "22cb6f4404a3967004c9a887aee5a4049b4b22a0b351dc217dbc8795ae39f209"
     },
     {
       "path": "scripts/Install-EVA-DesktopShortcut.ps1",

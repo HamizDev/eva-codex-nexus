@@ -282,29 +282,19 @@ html[data-eva-skin] [class*="bg-background-neutral-soft-alpha"]:hover {
   border-color: var(--eva-accent) !important;
 }
 
-html[data-eva-skin] [class*="bg-surface-elevated-secondary"][class*="rounded-3xl"]:has(
-  button span.truncate-text
-) {
+html[data-eva-skin] [data-eva-queue-card] {
   border-color: var(--eva-border-strong) !important;
+  background-color: var(--eva-panel) !important;
   box-shadow:
     inset 2px 0 0 var(--eva-accent-strong),
     0 8px 24px var(--eva-shadow) !important;
-  backdrop-filter: blur(14px);
 }
 
-html[data-eva-skin] :is(
-  [class*="rail-"]:has([aria-label="排队消息操作"]),
-  [class*="rail-"]:has([aria-label="删除排队的消息"]),
-  [class*="rail-"]:has([aria-label="引导"])
-) {
+html[data-eva-skin] [data-eva-queue-rail] {
   color: var(--eva-text) !important;
 }
 
-html[data-eva-skin] :is(
-  [class*="rail-"]:has([aria-label="排队消息操作"]),
-  [class*="rail-"]:has([aria-label="删除排队的消息"]),
-  [class*="rail-"]:has([aria-label="引导"])
-) :is(
+html[data-eva-skin] [data-eva-queue-rail] :is(
   [class*="bg-surface-elevated-secondary"],
   [class*="bg-background-neutral-soft-alpha"]
 ) {
@@ -312,19 +302,11 @@ html[data-eva-skin] :is(
   box-shadow: inset 2px 0 0 var(--eva-accent-strong) !important;
 }
 
-html[data-eva-skin] :is(
-  [class*="rail-"]:has([aria-label="排队消息操作"]),
-  [class*="rail-"]:has([aria-label="删除排队的消息"]),
-  [class*="rail-"]:has([aria-label="引导"])
-) button {
+html[data-eva-skin] [data-eva-queue-rail] button {
   color: var(--eva-muted) !important;
 }
 
-html[data-eva-skin] :is(
-  [class*="rail-"]:has([aria-label="排队消息操作"]),
-  [class*="rail-"]:has([aria-label="删除排队的消息"]),
-  [class*="rail-"]:has([aria-label="引导"])
-) button:hover {
+html[data-eva-skin] [data-eva-queue-rail] button:hover {
   background: color-mix(in srgb, var(--eva-accent) 14%, transparent) !important;
   color: var(--eva-accent) !important;
 }
@@ -352,23 +334,23 @@ html[data-eva-skin] .bg-user-message :is(
   color: var(--eva-text-strong) !important;
 }
 
-html[data-eva-skin] aside[data-app-shell-focus-area="right-panel"]:has(
-  [data-browser-sidebar-address-input]
-) {
+html[data-eva-skin] aside[data-app-shell-focus-area="right-panel"][data-eva-browser-rail] {
   border-inline-start: 1px solid var(--eva-border-strong) !important;
   box-shadow: inset 2px 0 0 var(--eva-accent-strong) !important;
 }
 
-html[data-eva-skin] aside[data-app-shell-focus-area="right-panel"]:has(
-  [data-browser-sidebar-address-input]
-) :is([role="tabpanel"], .bg-surface-canvas) {
+html[data-eva-skin] aside[data-app-shell-focus-area="right-panel"][data-eva-browser-rail] :is(
+  [role="tabpanel"],
+  .bg-surface-canvas
+) {
   background-color: var(--eva-bg) !important;
   color: var(--eva-text) !important;
 }
 
-html[data-eva-skin] aside[data-app-shell-focus-area="right-panel"]:has(
-  [data-browser-sidebar-address-input]
-) :is([class*="controlSurface-"], [data-menu-overlay-surface="true"]) {
+html[data-eva-skin] aside[data-app-shell-focus-area="right-panel"][data-eva-browser-rail] :is(
+  [class*="controlSurface-"],
+  [data-menu-overlay-surface="true"]
+) {
   background: var(--eva-panel-raised) !important;
   background-image: none !important;
   border-color: var(--eva-border-strong) !important;
@@ -378,9 +360,8 @@ html[data-eva-skin] aside[data-app-shell-focus-area="right-panel"]:has(
     0 8px 20px var(--eva-shadow) !important;
 }
 
-html[data-eva-skin] aside[data-app-shell-focus-area="right-panel"]:has(
-  [data-browser-sidebar-address-input]
-) [data-menu-overlay-surface="true"]:has([data-browser-sidebar-address-input]) {
+html[data-eva-skin] aside[data-app-shell-focus-area="right-panel"][data-eva-browser-rail]
+  [data-menu-overlay-surface="true"][data-eva-browser-surface] {
   background: color-mix(
     in srgb,
     var(--eva-panel-raised) 86%,
@@ -391,37 +372,32 @@ html[data-eva-skin] aside[data-app-shell-focus-area="right-panel"]:has(
     0 8px 20px var(--eva-shadow) !important;
 }
 
-html[data-eva-skin] aside[data-app-shell-focus-area="right-panel"]:has(
-  [data-browser-sidebar-address-input]
-) [data-browser-sidebar-address-input] {
+html[data-eva-skin] aside[data-app-shell-focus-area="right-panel"][data-eva-browser-rail]
+  [data-browser-sidebar-address-input] {
   background-color: transparent !important;
   color: var(--eva-text-strong) !important;
 }
 
-html[data-eva-skin] aside[data-app-shell-focus-area="right-panel"]:has(
-  [data-browser-sidebar-address-input]
-) [data-browser-sidebar-address-input]::placeholder {
+html[data-eva-skin] aside[data-app-shell-focus-area="right-panel"][data-eva-browser-rail]
+  [data-browser-sidebar-address-input]::placeholder {
   color: var(--eva-muted) !important;
 }
 
-html[data-eva-skin] aside[data-app-shell-focus-area="right-panel"]:has(
-  [data-browser-sidebar-address-input]
-) [data-testid="browser-profile-import-nux-banner"] {
+html[data-eva-skin] aside[data-app-shell-focus-area="right-panel"][data-eva-browser-rail]
+  [data-testid="browser-profile-import-nux-banner"] {
   border-bottom: 1px solid var(--eva-border) !important;
   box-shadow: inset 2px 0 0 var(--eva-accent) !important;
 }
 
-html[data-eva-skin] aside[data-app-shell-focus-area="right-panel"]:has(
-  [data-browser-sidebar-address-input]
-) .bg-neutral-soft-alpha {
+html[data-eva-skin] aside[data-app-shell-focus-area="right-panel"][data-eva-browser-rail]
+  .bg-neutral-soft-alpha {
   background: var(--eva-panel-raised) !important;
   border: 1px solid var(--eva-border) !important;
   color: var(--eva-text) !important;
 }
 
-html[data-eva-skin] aside[data-app-shell-focus-area="right-panel"]:has(
-  [data-browser-sidebar-address-input]
-) .bg-neutral-soft-alpha:hover {
+html[data-eva-skin] aside[data-app-shell-focus-area="right-panel"][data-eva-browser-rail]
+  .bg-neutral-soft-alpha:hover {
   background: color-mix(
     in srgb,
     var(--eva-accent) 14%,
@@ -444,7 +420,7 @@ html[data-eva-skin] header [role="tab"][aria-selected="true"] {
   box-shadow: inset 0 -2px 0 var(--eva-accent) !important;
 }
 
-html[data-eva-skin] [role="dialog"]:has([class~="group/summary-panel"]) {
+html[data-eva-skin] [role="dialog"][data-eva-summary-dialog] {
   border: 0 !important;
   background: transparent !important;
   box-shadow: none !important;
@@ -776,13 +752,13 @@ html[data-eva-skin] :is(.group\/home-suggestions, [class*="home-suggestion"]) bu
 #eva-codex-skin-overlay .eva-scan {
   position: absolute;
   inset: 0;
-  opacity: 0.42;
+  opacity: 0.3;
   background: repeating-linear-gradient(
     180deg,
     transparent 0 3px,
     color-mix(in srgb, var(--eva-accent) 6%, transparent) 3px 4px
   );
-  mix-blend-mode: soft-light;
+  contain: strict;
 }
 
 #eva-codex-skin-overlay .eva-scan:after {
@@ -790,6 +766,7 @@ html[data-eva-skin] :is(.group\/home-suggestions, [class*="home-suggestion"]) bu
   position: absolute;
   left: 0;
   right: 0;
+  top: -18vh;
   height: 12vh;
   background: linear-gradient(
     transparent,
@@ -797,6 +774,7 @@ html[data-eva-skin] :is(.group\/home-suggestions, [class*="home-suggestion"]) bu
     transparent
   );
   animation: eva-skin-scan 9s linear infinite;
+  will-change: transform;
 }
 
 #eva-codex-skin-overlay .eva-art {
@@ -805,20 +783,24 @@ html[data-eva-skin] :is(.group\/home-suggestions, [class*="home-suggestion"]) bu
   top: 5vh;
   width: min(74vw, 1080px);
   height: 90vh;
-  background-image: var(--eva-linework);
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: contain;
+  background-color: var(--eva-accent);
   opacity: var(--eva-art-opacity);
-  filter: drop-shadow(0 0 18px var(--eva-selection));
-  mix-blend-mode: screen;
-  mask-image: linear-gradient(90deg, transparent 4%, #000 38%, #000 100%);
-  -webkit-mask-image: linear-gradient(90deg, transparent 4%, #000 38%, #000 100%);
+  filter: none;
+  mix-blend-mode: normal;
+  mask-image: var(--eva-linework);
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: contain;
+  -webkit-mask-image: var(--eva-linework);
+  -webkit-mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  contain: paint;
 }
 
 html[data-eva-skin="rei"] #eva-codex-skin-overlay .eva-art {
-  mix-blend-mode: multiply;
-  filter: hue-rotate(168deg);
+  mix-blend-mode: normal;
+  filter: none;
 }
 
 #eva-codex-skin-overlay .eva-portrait {
@@ -828,22 +810,19 @@ html[data-eva-skin="rei"] #eva-codex-skin-overlay .eva-art {
   width: min(46vw, 620px);
   height: 78vh;
   pointer-events: none;
-  background: var(--eva-accent);
+  background-color: transparent;
+  background-image: var(--eva-portrait-image);
+  background-position: right center;
+  background-repeat: no-repeat;
+  background-size: contain;
   opacity: var(--eva-portrait-strength, 0.11);
-  filter: drop-shadow(0 0 22px var(--eva-selection));
-  mix-blend-mode: screen;
-  mask-image: var(--eva-portrait-image);
-  mask-position: right center;
-  mask-repeat: no-repeat;
-  mask-size: contain;
-  -webkit-mask-image: var(--eva-portrait-image);
-  -webkit-mask-position: right center;
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-size: contain;
+  filter: none;
+  mix-blend-mode: normal;
+  contain: paint;
 }
 
 html[data-eva-skin="rei"] #eva-codex-skin-overlay .eva-portrait {
-  mix-blend-mode: multiply;
+  mix-blend-mode: normal;
 }
 
 html[data-eva-portrait="off"] #eva-codex-skin-overlay .eva-portrait {
@@ -901,12 +880,11 @@ html[data-eva-portrait="on"] #eva-codex-skin-overlay .eva-art {
   -webkit-app-region: no-drag;
   color: var(--eva-muted);
   background:
-    linear-gradient(135deg, color-mix(in srgb, var(--eva-panel) 94%, transparent), color-mix(in srgb, var(--eva-bg-soft) 88%, transparent));
+    linear-gradient(135deg, var(--eva-panel), var(--eva-bg-soft));
   border: 1px solid var(--eva-border-strong);
   box-shadow:
     0 12px 32px var(--eva-shadow),
     inset 0 1px 0 color-mix(in srgb, var(--eva-accent) 36%, transparent);
-  backdrop-filter: blur(12px);
   clip-path: polygon(0 8px, 8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%);
   cursor: pointer;
   font-family: "Bahnschrift", "Segoe UI", sans-serif;
@@ -964,7 +942,7 @@ html[data-eva-portrait="on"] #eva-codex-skin-overlay .eva-art {
   outline-offset: 2px;
 }
 
-html[data-eva-skin]:has([data-browser-sidebar-address-input])
+html[data-eva-skin][data-eva-browser-active]
   #eva-codex-skin-overlay
   .eva-settings-button {
     top: auto;
@@ -974,7 +952,7 @@ html[data-eva-skin]:has([data-browser-sidebar-address-input])
     transform: none;
 }
 
-html[data-eva-skin]:has([data-browser-sidebar-address-input])
+html[data-eva-skin][data-eva-browser-active]
   #eva-codex-skin-overlay
   .eva-tps-hud {
     right: 8px;
@@ -1003,13 +981,12 @@ html[data-eva-skin]:has([data-browser-sidebar-address-input])
   -webkit-app-region: no-drag;
   color: var(--eva-text);
   background:
-    linear-gradient(145deg, color-mix(in srgb, var(--eva-panel) 96%, transparent), var(--eva-bg-soft));
+    linear-gradient(145deg, var(--eva-panel), var(--eva-bg-soft));
   border: 1px solid var(--eva-border-strong);
   box-shadow:
     0 30px 84px var(--eva-shadow),
     0 0 0 1px color-mix(in srgb, var(--eva-accent) 8%, transparent),
     inset 0 1px 0 color-mix(in srgb, var(--eva-accent) 38%, transparent);
-  backdrop-filter: blur(18px);
   clip-path: polygon(0 10px, 10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
   transition:
     opacity 160ms ease,
@@ -1454,12 +1431,11 @@ html[data-eva-skin]:has([data-browser-sidebar-address-input])
   pointer-events: none !important;
   color: var(--eva-text);
   background:
-    linear-gradient(145deg, color-mix(in srgb, var(--eva-panel) 95%, transparent), var(--eva-bg-soft));
+    linear-gradient(145deg, var(--eva-panel), var(--eva-bg-soft));
   border: 1px solid var(--eva-border-strong);
   box-shadow:
     0 14px 38px var(--eva-shadow),
     inset 0 1px 0 color-mix(in srgb, var(--eva-accent) 38%, transparent);
-  backdrop-filter: blur(14px);
   clip-path: polygon(0 7px, 7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%);
   animation: eva-tps-in 170ms ease-out;
 }
@@ -1477,7 +1453,7 @@ html[data-eva-skin]:has([data-browser-sidebar-address-input])
   display: none !important;
 }
 
-#eva-codex-skin-overlay:has(.eva-config-panel.is-open) .eva-tps-hud {
+#eva-codex-skin-overlay.has-config-open .eva-tps-hud {
   display: none !important;
 }
 
@@ -1562,11 +1538,11 @@ html[data-eva-skin]:has([data-browser-sidebar-address-input])
 }
 
 @keyframes eva-skin-scan {
-  0% {
-    top: -18vh;
+  from {
+    transform: translate3d(0, 0, 0);
   }
-  100% {
-    top: 112vh;
+  to {
+    transform: translate3d(0, 130vh, 0);
   }
 }
 

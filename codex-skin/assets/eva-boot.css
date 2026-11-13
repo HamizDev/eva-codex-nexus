@@ -103,6 +103,49 @@
   visibility: visible;
 }
 
+#eva-codex-skin-boot[data-phase="select"] :is(
+  .eva-boot-intro-layer,
+  .eva-boot-alert-layer,
+  .eva-boot-console-layer
+),
+#eva-codex-skin-boot[data-phase="select"] :is(
+  .eva-boot-intro-layer,
+  .eva-boot-alert-layer,
+  .eva-boot-console-layer
+) *,
+#eva-codex-skin-boot[data-phase="select"] :is(
+  .eva-boot-intro-layer,
+  .eva-boot-alert-layer,
+  .eva-boot-console-layer
+)::before,
+#eva-codex-skin-boot[data-phase="select"] :is(
+  .eva-boot-intro-layer,
+  .eva-boot-alert-layer,
+  .eva-boot-console-layer
+)::after,
+#eva-codex-skin-boot[data-phase="sync"] :is(
+  .eva-boot-intro-layer,
+  .eva-boot-alert-layer,
+  .eva-boot-select-layer
+),
+#eva-codex-skin-boot[data-phase="sync"] :is(
+  .eva-boot-intro-layer,
+  .eva-boot-alert-layer,
+  .eva-boot-select-layer
+) *,
+#eva-codex-skin-boot[data-phase="sync"] :is(
+  .eva-boot-intro-layer,
+  .eva-boot-alert-layer,
+  .eva-boot-select-layer
+)::before,
+#eva-codex-skin-boot[data-phase="sync"] :is(
+  .eva-boot-intro-layer,
+  .eva-boot-alert-layer,
+  .eva-boot-select-layer
+)::after {
+  animation-play-state: paused !important;
+}
+
 #eva-codex-skin-boot .eva-boot-contour-map {
   position: absolute;
   inset: -16%;
@@ -111,6 +154,15 @@
   filter: drop-shadow(0 0 10px color-mix(in srgb, var(--eva-boot-contour) 14%, transparent));
   transform: rotate(-4deg);
   animation: eva-boot-contour-drift 24s ease-in-out infinite alternate;
+}
+
+#eva-codex-skin-boot:is([data-phase="select"], [data-phase="sync"]) .eva-boot-contour-map {
+  filter: none;
+  animation: none;
+}
+
+#eva-codex-skin-boot:is([data-phase="select"], [data-phase="sync"]) .eva-boot-contour-ring {
+  animation: none !important;
 }
 
 #eva-codex-skin-boot .eva-boot-contour-ring {
@@ -332,9 +384,11 @@
   display: block;
   width: 100%;
   aspect-ratio: 1 / 1.22;
-  background: currentColor;
-  mask: var(--eva-boot-avatar) center / contain no-repeat;
-  -webkit-mask: var(--eva-boot-avatar) center / contain no-repeat;
+  background-color: transparent;
+  background-image: var(--eva-boot-avatar);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
   opacity: 0.3;
 }
 
@@ -388,10 +442,15 @@
   letter-spacing: 0.14em;
 }
 
-#eva-codex-skin-boot .eva-boot-intro-hud time {
+#eva-codex-skin-boot .eva-boot-clock {
+  display: block;
+  flex: 0 0 auto;
+}
+
+#eva-codex-skin-boot .eva-boot-intro-hud .eva-boot-clock {
+  width: 70px;
+  height: 14px;
   color: #c6d1ce;
-  font-size: 11px;
-  letter-spacing: 0.06em;
 }
 
 #eva-codex-skin-boot .eva-boot-intro-hud small {
@@ -471,11 +530,10 @@
   border-top: 1px solid rgba(240, 26, 44, 0.4);
 }
 
-#eva-codex-skin-boot .eva-boot-alert-clock time {
+#eva-codex-skin-boot .eva-boot-alert-clock .eva-boot-clock {
+  width: 168px;
+  height: 30px;
   color: #ff3345;
-  font: 500 clamp(18px, 2.2vw, 28px)/1 "Bahnschrift", monospace;
-  letter-spacing: 0.07em;
-  text-shadow: 0 0 12px rgba(240, 26, 44, 0.4);
 }
 
 #eva-codex-skin-boot .eva-boot-alert-clock small {
@@ -485,14 +543,36 @@
 }
 
 #eva-codex-skin-boot .eva-boot-select-layer {
+  --eva-boot-surface: #eef6fa;
+  --eva-boot-panel: #f9fcfe;
+  --eva-boot-panel-2: #e5f0f6;
+  --eva-boot-ink: #17364a;
+  --eva-boot-dim: #60798a;
+  --eva-boot-accent: #176b91;
+  --eva-boot-hot: #53a6ce;
+  --eva-boot-line: rgba(23, 107, 145, 0.3);
+  --eva-boot-grid: rgba(23, 107, 145, 0.075);
+  --eva-boot-contour: #d79557;
+  --eva-boot-wash: rgba(23, 107, 145, 0.08);
+  --eva-boot-glow: rgba(23, 107, 145, 0.2);
   grid-template-rows: auto minmax(0, 1fr) auto;
   gap: clamp(12px, 2.4vh, 24px);
   padding: clamp(16px, 3vh, 30px) clamp(20px, 4vw, 64px) clamp(12px, 2.4vh, 24px);
   pointer-events: auto;
+  border: 1px solid color-mix(in srgb, var(--eva-boot-line) 72%, transparent);
   background:
     radial-gradient(circle at 30% 50%, var(--eva-boot-grid), transparent 42%),
     repeating-linear-gradient(0deg, transparent 0 31px, var(--eva-boot-grid) 32px),
-    color-mix(in srgb, var(--eva-boot-surface) 86%, transparent);
+    color-mix(in srgb, var(--eva-boot-surface) 96%, transparent);
+}
+
+#eva-codex-skin-boot .eva-boot-select-layer::before {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  z-index: 0;
+  pointer-events: none;
+  border: 1px solid color-mix(in srgb, var(--eva-boot-line) 48%, transparent);
 }
 
 #eva-codex-skin-boot .eva-boot-select-grid {
@@ -556,19 +636,68 @@
 #eva-codex-skin-boot .eva-boot-select-bay.is-over,
 #eva-codex-skin-boot .eva-boot-select-bay[data-loaded="true"] {
   border-color: var(--eva-boot-accent);
-  background-color: color-mix(in srgb, var(--eva-boot-accent) 8%, var(--eva-boot-panel));
-  box-shadow: inset 0 0 80px color-mix(in srgb, var(--eva-boot-accent) 16%, transparent);
+}
+
+#eva-codex-skin-boot .eva-boot-select-glow {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    color-mix(in srgb, var(--eva-boot-accent) 17%, transparent),
+    transparent 68%
+  );
+  opacity: 0;
+  transition: opacity 160ms ease;
+  will-change: opacity;
+}
+
+#eva-codex-skin-boot .eva-boot-select-bay.is-over .eva-boot-select-glow,
+#eva-codex-skin-boot .eva-boot-select-bay[data-loaded="true"] .eva-boot-select-glow {
+  opacity: 1;
 }
 
 #eva-codex-skin-boot .eva-boot-select-bay .eva-boot-plug {
-  width: min(48%, 205px);
-  max-height: 72%;
+  width: min(58%, 255px);
+  max-height: 80%;
+  filter: none;
+  contain: layout style;
+  background: radial-gradient(
+    ellipse at center,
+    color-mix(in srgb, var(--eva-boot-accent) 13%, transparent),
+    transparent 68%
+  );
 }
 
-#eva-codex-skin-boot .eva-boot-select-bay.is-over .eva-boot-plug {
-  filter:
-    drop-shadow(0 0 22px color-mix(in srgb, var(--eva-boot-accent) 54%, transparent))
-    saturate(1.1);
+#eva-codex-skin-boot .eva-boot-select-plug > svg {
+  transform: rotate(14deg) translateZ(0);
+  transform-origin: 50% 52%;
+  backface-visibility: hidden;
+}
+
+#eva-codex-skin-boot .eva-boot-select-plug .eva-plug-roll {
+  transform-box: view-box;
+  transform-origin: 200px 400px;
+  will-change: transform, opacity;
+  animation: eva-boot-plug-roll 10s linear infinite;
+}
+
+#eva-codex-skin-boot .eva-boot-select-plug .eva-plug-roll-back {
+  opacity: 0;
+  animation-delay: -5s;
+}
+
+#eva-codex-skin-boot .eva-boot-select-plug .eva-plug-micro {
+  font: 7px "Bahnschrift", monospace;
+  letter-spacing: 1px;
+  stroke: none;
+}
+
+#eva-codex-skin-boot .eva-boot-select-plug .eva-plug-stencil {
+  font: 500 33px "Bahnschrift", monospace;
+  letter-spacing: -1px;
+  stroke: none;
 }
 
 #eva-codex-skin-boot .eva-boot-pilot-select {
@@ -596,16 +725,18 @@
   min-height: 0;
   overflow: hidden;
   padding: clamp(10px, 2vh, 18px);
-  color: var(--eva-boot-ink);
+  color: var(--eva-card-ink, var(--eva-boot-ink));
   text-align: left;
   pointer-events: auto;
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--eva-boot-panel-2) 88%, transparent), var(--eva-boot-panel));
-  border: 1px solid var(--eva-boot-line);
+  background: var(--eva-card-surface, var(--eva-boot-panel));
+  border: 1px solid var(--eva-card-line, var(--eva-boot-line));
+  border-left: 3px solid var(--eva-card-accent, var(--eva-boot-accent));
   border-radius: 0;
   cursor: grab;
+  touch-action: none;
+  user-select: none;
   font: inherit;
-  transition: border-color 140ms ease, background-color 140ms ease, transform 140ms ease;
+  transition: border-color 140ms ease;
 }
 
 #eva-codex-skin-boot .eva-boot-pilot-card::before {
@@ -613,21 +744,37 @@
   position: absolute;
   inset: 0 0 0 36%;
   z-index: 0;
-  background: var(--eva-boot-portrait) right center / contain no-repeat;
-  opacity: 0.06;
+  background-color: transparent;
+  background-image: var(--eva-boot-portrait);
+  background-position: right center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  opacity: var(--eva-card-art-opacity, 0.06);
   pointer-events: none;
 }
 
 #eva-codex-skin-boot .eva-boot-pilot-card[data-eva-pilot="asuka"] {
-  --eva-boot-accent: #f13a50;
-  --eva-boot-line: rgba(241, 58, 80, 0.34);
+  --eva-boot-accent: #ff354d;
+  --eva-card-accent: #ff354d;
+  --eva-card-surface: #0d0f13;
+  --eva-card-panel: #14171c;
+  --eva-card-line: rgba(243, 58, 81, 0.58);
+  --eva-card-ink: #fff1e7;
+  --eva-card-dim: #c6b7ac;
+  --eva-card-art-opacity: 0.16;
   --eva-boot-avatar: var(--eva-boot-asuka-head);
   --eva-boot-portrait: var(--eva-boot-asuka-portrait);
 }
 
 #eva-codex-skin-boot .eva-boot-pilot-card[data-eva-pilot="rei"] {
-  --eva-boot-accent: #1873a2;
-  --eva-boot-line: rgba(24, 115, 162, 0.33);
+  --eva-boot-accent: #176b91;
+  --eva-card-accent: #176b91;
+  --eva-card-surface: #eff6fa;
+  --eva-card-panel: #f7fbfd;
+  --eva-card-line: rgba(40, 105, 138, 0.35);
+  --eva-card-ink: #203849;
+  --eva-card-dim: #476173;
+  --eva-card-art-opacity: 0.075;
   --eva-boot-avatar: var(--eva-boot-rei-head);
   --eva-boot-portrait: var(--eva-boot-rei-portrait);
 }
@@ -635,41 +782,135 @@
 #eva-codex-skin-boot .eva-boot-pilot-card::after {
   content: "";
   position: absolute;
-  inset: 0 auto 0 0;
-  width: 3px;
-  background: var(--eva-boot-accent);
-  opacity: 0;
-  transition: opacity 140ms ease;
+  right: 8px;
+  bottom: 8px;
+  width: 14px;
+  height: 14px;
+  border-right: 1px solid var(--eva-card-accent, var(--eva-boot-accent));
+  border-bottom: 1px solid var(--eva-card-accent, var(--eva-boot-accent));
+  opacity: 0.8;
+  pointer-events: none;
 }
 
 #eva-codex-skin-boot .eva-boot-pilot-card:hover,
 #eva-codex-skin-boot .eva-boot-pilot-card:focus-visible,
 #eva-codex-skin-boot .eva-boot-pilot-card[aria-pressed="true"] {
-  border-color: var(--eva-boot-accent);
-  background-color: color-mix(in srgb, var(--eva-boot-accent) 8%, var(--eva-boot-panel));
+  border-color: var(--eva-card-accent, var(--eva-boot-accent));
   outline: none;
-  transform: translateX(-3px);
 }
 
-#eva-codex-skin-boot .eva-boot-pilot-card:hover::after,
-#eva-codex-skin-boot .eva-boot-pilot-card:focus-visible::after,
-#eva-codex-skin-boot .eva-boot-pilot-card[aria-pressed="true"]::after {
-  opacity: 1;
+#eva-codex-skin-boot .eva-boot-pilot-card:focus-visible {
+  outline: 1px solid var(--eva-card-accent, var(--eva-boot-accent));
+  outline-offset: -3px;
 }
 
-#eva-codex-skin-boot .eva-boot-pilot-card.is-dragging {
-  opacity: 0.48;
+#eva-codex-skin-boot .eva-boot-pilot-card[aria-pressed="true"] {
+  background: var(--eva-card-panel, var(--eva-card-surface, var(--eva-boot-panel)));
+}
+
+#eva-codex-skin-boot .eva-boot-pilot-card:active {
   cursor: grabbing;
+}
+
+#eva-codex-skin-boot .eva-boot-pilot-ghost {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 2147483646;
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  width: 190px;
+  height: 130px;
+  padding: 12px;
+  pointer-events: none;
+  overflow: hidden;
+  color: var(--eva-ghost-ink, var(--eva-boot-ink));
+  background: var(--eva-ghost-surface, var(--eva-boot-panel));
+  border: 1px solid var(--eva-ghost-accent, var(--eva-boot-accent));
+  border-left: 3px solid var(--eva-ghost-accent, var(--eva-boot-accent));
+  opacity: 0.92;
+  transform-origin: 50% 50%;
+  will-change: transform;
+  transition: none !important;
+  animation: none !important;
+  contain: strict;
+}
+
+#eva-codex-skin-boot .eva-boot-pilot-ghost[hidden] {
+  display: none !important;
+}
+
+#eva-codex-skin-boot .eva-boot-pilot-ghost.is-warm {
+  z-index: 2147483646;
+  opacity: 0.001;
+  pointer-events: none;
+}
+
+#eva-codex-skin-boot .eva-boot-pilot-ghost[data-eva-pilot="asuka"] {
+  --eva-ghost-accent: #ff354d;
+  --eva-ghost-surface: #0d0f13;
+  --eva-ghost-ink: #fff1e7;
+  --eva-ghost-dim: #c6b7ac;
+  --eva-ghost-avatar: var(--eva-boot-asuka-head);
+}
+
+#eva-codex-skin-boot .eva-boot-pilot-ghost[data-eva-pilot="rei"] {
+  --eva-ghost-accent: #176b91;
+  --eva-ghost-surface: #eff6fa;
+  --eva-ghost-ink: #203849;
+  --eva-ghost-dim: #476173;
+  --eva-ghost-avatar: var(--eva-boot-rei-head);
+}
+
+#eva-codex-skin-boot .eva-boot-pilot-ghost-face {
+  display: block;
+  width: 64px;
+  height: 96px;
+  background-color: transparent;
+  background-image: var(--eva-ghost-avatar);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  opacity: 0.9;
+}
+
+#eva-codex-skin-boot .eva-boot-pilot-ghost-copy {
+  display: grid;
+  align-content: center;
+  min-width: 0;
+}
+
+#eva-codex-skin-boot .eva-boot-pilot-ghost-copy b {
+  color: var(--eva-ghost-accent, var(--eva-boot-accent));
+  font: 800 30px/1 "Bahnschrift", sans-serif;
+}
+
+#eva-codex-skin-boot .eva-boot-pilot-ghost-copy strong {
+  margin-top: 5px;
+  color: var(--eva-ghost-accent, var(--eva-boot-accent));
+  font: 600 17px/1.25 "Microsoft YaHei UI", sans-serif;
+  letter-spacing: 0.08em;
+}
+
+#eva-codex-skin-boot .eva-boot-pilot-ghost-copy small {
+  margin-top: 5px;
+  color: var(--eva-ghost-dim, var(--eva-boot-dim));
+  font: 600 7px/1.3 "Bahnschrift", monospace;
+  letter-spacing: 0.12em;
 }
 
 #eva-codex-skin-boot .eva-boot-pilot-card-face {
   position: relative;
   z-index: 1;
   width: 100%;
-  height: min(20vh, 162px);
-  background: var(--eva-boot-accent);
-  mask: var(--eva-boot-avatar) center / contain no-repeat;
-  -webkit-mask: var(--eva-boot-avatar) center / contain no-repeat;
+  height: min(23vh, 190px);
+  background-color: transparent;
+  background-image: var(--eva-boot-avatar);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
   opacity: 0.92;
 }
 
@@ -682,27 +923,35 @@
 }
 
 #eva-codex-skin-boot .eva-boot-pilot-card-copy b {
-  color: var(--eva-boot-accent);
-  font: 800 clamp(34px, 5vw, 64px)/0.9 "Bahnschrift", sans-serif;
+  color: var(--eva-card-accent, var(--eva-boot-accent));
+  font: 800 clamp(38px, 5.4vw, 72px)/0.9 "Bahnschrift", sans-serif;
 }
 
 #eva-codex-skin-boot .eva-boot-pilot-card-copy strong {
   margin-top: 8px;
-  color: var(--eva-boot-ink);
-  font: 600 clamp(20px, 2.7vw, 34px)/1.2 "Microsoft YaHei UI", sans-serif;
+  color: var(--eva-card-accent, var(--eva-boot-accent));
+  font: 600 clamp(22px, 2.8vw, 36px)/1.2 "Microsoft YaHei UI", sans-serif;
   letter-spacing: 0.08em;
 }
 
 #eva-codex-skin-boot .eva-boot-pilot-card-copy small {
   margin-top: 5px;
-  color: var(--eva-boot-dim);
+  color: color-mix(
+    in srgb,
+    var(--eva-card-accent, var(--eva-boot-accent)) 68%,
+    var(--eva-card-dim, var(--eva-boot-dim))
+  );
   font: 600 9px/1.4 "Bahnschrift", monospace;
   letter-spacing: 0.16em;
 }
 
 #eva-codex-skin-boot .eva-boot-pilot-card-copy em {
   margin-top: 9px;
-  color: var(--eva-boot-dim);
+  color: color-mix(
+    in srgb,
+    var(--eva-card-accent, var(--eva-boot-accent)) 55%,
+    var(--eva-card-dim, var(--eva-boot-dim))
+  );
   font: normal 8px/1.4 "Bahnschrift", monospace;
   letter-spacing: 0.1em;
 }
@@ -716,13 +965,13 @@
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  color: var(--eva-boot-accent);
+  color: var(--eva-card-accent, var(--eva-boot-accent));
   font: 7px/1.4 "Bahnschrift", monospace;
   letter-spacing: 0.12em;
 }
 
 #eva-codex-skin-boot .eva-boot-pilot-card-top i {
-  color: var(--eva-boot-dim);
+  color: var(--eva-card-dim, var(--eva-boot-dim));
   font-style: normal;
 }
 
@@ -731,8 +980,8 @@
   right: -0.02em;
   bottom: -0.18em;
   z-index: 0;
-  color: var(--eva-boot-accent);
-  opacity: 0.055;
+  color: var(--eva-card-accent, var(--eva-boot-accent));
+  opacity: 0.065;
   font: 800 clamp(100px, 13vw, 210px)/1 "Bahnschrift", monospace;
   letter-spacing: -0.1em;
   pointer-events: none;
@@ -740,9 +989,9 @@
 
 #eva-codex-skin-boot .eva-boot-pilot-card-drag {
   position: absolute;
-  right: 12px;
+  left: 12px;
   bottom: 9px;
-  color: var(--eva-boot-dim);
+  color: var(--eva-card-dim, var(--eva-boot-dim));
   font: 7px/1.4 "Bahnschrift", monospace;
   letter-spacing: 0.12em;
   z-index: 3;
@@ -899,10 +1148,10 @@
   letter-spacing: 0.14em;
 }
 
-#eva-codex-skin-boot .eva-boot-live-clock b {
+#eva-codex-skin-boot .eva-boot-live-clock .eva-boot-clock {
+  width: 88px;
+  height: 16px;
   color: var(--eva-boot-accent);
-  font: 500 13px/1.2 "Bahnschrift", monospace;
-  letter-spacing: 0.05em;
 }
 
 #eva-codex-skin-boot .eva-boot-live-clock small {
@@ -939,6 +1188,73 @@
 #eva-codex-skin-boot .eva-boot-languages button:focus-visible {
   color: var(--eva-boot-accent);
   outline: none;
+}
+
+#eva-codex-skin-boot .eva-boot-exit {
+  position: relative;
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 120px;
+  min-height: 32px;
+  padding: 7px 27px 7px 12px;
+  border: 1px solid color-mix(in srgb, var(--eva-boot-accent) 60%, var(--eva-boot-line));
+  border-left: 3px solid var(--eva-boot-accent);
+  border-radius: 0;
+  appearance: none;
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--eva-boot-accent) 16%, transparent), transparent 78%),
+    color-mix(in srgb, var(--eva-boot-surface) 92%, transparent);
+  color: var(--eva-boot-ink);
+  cursor: pointer;
+  font: 600 9px/1.2 "Bahnschrift", "Microsoft YaHei UI", sans-serif;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--eva-boot-ink) 5%, transparent),
+    0 0 16px color-mix(in srgb, var(--eva-boot-accent) 12%, transparent);
+  transition:
+    background-color 140ms ease,
+    border-color 140ms ease,
+    box-shadow 140ms ease,
+    color 140ms ease;
+}
+
+#eva-codex-skin-boot .eva-boot-exit::after {
+  content: "";
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  border-top: 1px solid var(--eva-boot-accent);
+  border-right: 1px solid var(--eva-boot-accent);
+  transform: translateY(-50%) rotate(45deg);
+  transition: transform 140ms ease;
+}
+
+#eva-codex-skin-boot .eva-boot-exit:hover,
+#eva-codex-skin-boot .eva-boot-exit:focus-visible {
+  border-color: var(--eva-boot-accent);
+  background: var(--eva-boot-accent);
+  color: #fff;
+  box-shadow: 0 0 20px color-mix(in srgb, var(--eva-boot-accent) 28%, transparent);
+}
+
+#eva-codex-skin-boot .eva-boot-exit:hover::after,
+#eva-codex-skin-boot .eva-boot-exit:focus-visible::after {
+  border-color: #fff;
+  transform: translate(2px, -50%) rotate(45deg);
+}
+
+#eva-codex-skin-boot .eva-boot-exit:focus-visible {
+  outline: 2px solid var(--eva-boot-accent);
+  outline-offset: 3px;
+}
+
+#eva-codex-skin-boot .eva-boot-exit:active {
+  transform: translateY(1px);
 }
 
 #eva-codex-skin-boot .eva-boot-grid {
@@ -1002,6 +1318,22 @@
   display: block;
   color: var(--eva-boot-accent);
   font-size: 10px;
+  font-weight: 500;
+}
+
+#eva-codex-skin-boot .eva-boot-bay-meta {
+  position: absolute;
+  z-index: 2;
+  right: 16px;
+  top: 14px;
+  color: var(--eva-boot-dim);
+  text-align: right;
+  font: 7px/1.65 "Bahnschrift", monospace;
+  letter-spacing: 0.1em;
+}
+
+#eva-codex-skin-boot .eva-boot-bay-meta b {
+  color: var(--eva-boot-accent);
   font-weight: 500;
 }
 
@@ -1073,9 +1405,11 @@
   flex: 0 0 auto;
   width: clamp(76px, 12vw, 132px);
   height: clamp(76px, 12vw, 132px);
-  background: var(--eva-boot-accent);
-  -webkit-mask: var(--eva-boot-avatar) center / contain no-repeat;
-  mask: var(--eva-boot-avatar) center / contain no-repeat;
+  background-color: transparent;
+  background-image: var(--eva-boot-avatar);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
   opacity: 0.94;
 }
 
@@ -1089,9 +1423,11 @@
   position: absolute;
   inset: -8% 0 -14% 29%;
   z-index: 0;
-  background: var(--eva-boot-accent);
-  mask: var(--eva-boot-portrait) right center / contain no-repeat;
-  -webkit-mask: var(--eva-boot-portrait) right center / contain no-repeat;
+  background-color: transparent;
+  background-image: var(--eva-boot-portrait);
+  background-position: right center;
+  background-repeat: no-repeat;
+  background-size: contain;
   opacity: 0.085;
   pointer-events: none;
 }
@@ -1370,6 +1706,17 @@
   background: rgba(0, 0, 0, 0.82);
 }
 
+#eva-codex-skin-boot[data-phase="select"] .eva-boot-sound {
+  color: #176b91;
+  border-color: rgba(23, 107, 145, 0.3);
+  background: rgba(249, 252, 254, 0.94);
+}
+
+#eva-codex-skin-boot[data-phase="select"] .eva-boot-sound:hover,
+#eva-codex-skin-boot[data-phase="select"] .eva-boot-sound:focus-visible {
+  color: #0d4b66;
+}
+
 #eva-codex-skin-boot .eva-boot-skip {
   position: absolute;
   z-index: 4;
@@ -1410,6 +1757,15 @@
 @keyframes eva-boot-plug-in {
   from { opacity: 0; transform: translateY(28px) scale(0.97); }
   to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes eva-boot-plug-roll {
+  0%, 100% { transform: translateX(0) scaleX(1); opacity: 1; }
+  12.5% { transform: translateX(45px) scaleX(0.78); opacity: 0.94; }
+  24.9% { transform: translateX(62px) scaleX(0.62); opacity: 0; }
+  25%, 74.9% { transform: translateX(62px) scaleX(0.62); opacity: 0; }
+  75% { transform: translateX(-62px) scaleX(0.62); opacity: 0; }
+  87.5% { transform: translateX(-45px) scaleX(0.78); opacity: 0.94; }
 }
 
 @keyframes eva-boot-contour-drift {
@@ -1595,8 +1951,9 @@
     gap: 7px;
     font-size: 6px;
   }
-  #eva-codex-skin-boot .eva-boot-intro-hud time {
-    font-size: 9px;
+  #eva-codex-skin-boot .eva-boot-intro-hud .eva-boot-clock {
+    width: 58px;
+    height: 12px;
   }
   #eva-codex-skin-boot .eva-boot-intro-hud small {
     display: none;
@@ -1642,6 +1999,7 @@
     display: none;
   }
   #eva-codex-skin-boot .eva-boot-bay-label,
+  #eva-codex-skin-boot .eva-boot-bay-meta,
   #eva-codex-skin-boot .eva-boot-bay-lock {
     display: none;
   }
@@ -1700,6 +2058,15 @@
     padding: 7px 9px;
     font-size: 7px;
   }
+  #eva-codex-skin-boot .eva-boot-exit {
+    min-width: 102px;
+    min-height: 28px;
+    padding: 6px 23px 6px 9px;
+    font-size: 8px;
+  }
+  #eva-codex-skin-boot .eva-boot-exit::after {
+    right: 10px;
+  }
 }
 
 @media (max-width: 700px) {
@@ -1708,8 +2075,8 @@
     grid-template-rows: minmax(150px, 0.85fr) minmax(0, 1.15fr);
   }
   #eva-codex-skin-boot .eva-boot-select-bay .eva-boot-plug {
-    width: min(28%, 130px);
-    max-height: 78%;
+    width: min(36%, 160px);
+    max-height: 84%;
   }
   #eva-codex-skin-boot .eva-boot-pilot-cards {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -1755,6 +2122,9 @@
   }
   #eva-codex-skin-boot .eva-boot-pilot-card-face {
     height: 72px;
+  }
+  #eva-codex-skin-boot .eva-boot-select-bay .eva-boot-plug {
+    max-height: 72%;
   }
   #eva-codex-skin-boot .eva-boot-select-hint {
     display: none;
@@ -1806,5 +2176,11 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+  #eva-codex-skin-boot .eva-boot-select-plug .eva-plug-roll {
+    animation: none !important;
+  }
+  #eva-codex-skin-boot .eva-boot-select-plug .eva-plug-roll-back {
+    opacity: 0;
   }
 }

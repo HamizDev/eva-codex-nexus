@@ -64,7 +64,7 @@ test("主题与 payload 版本稳定且可切换", () => {
   assert.equal(isDriver("asuka"), true);
   assert.equal(isDriver("rei"), true);
   assert.equal(isDriver("system"), false);
-  assert.equal(SKIN_VERSION, "0.4.3");
+  assert.equal(SKIN_VERSION, "0.4.4");
   const asuka = loadPayload("asuka");
   const rei = loadPayload("rei");
   assert.equal(asuka.driver, "asuka");
@@ -254,8 +254,8 @@ test("EVA 主题素材包按清单校验并生成本地启动序列", () => {
       "portraitStrength",
       "approvalVoice",
       "completeVoice",
-      "审核自动语音",
-      "完成自动语音",
+      "审批提示语音",
+      "完成提示语音",
       "data-codex-approval-surface",
       "data-local-conversation-final-assistant",
       "isTaskRunning",
@@ -283,7 +283,46 @@ test("EVA 主题素材包按清单校验并生成本地启动序列", () => {
       "eva-boot-bgm",
       "data-eva-pilot",
       "data-eva-dropzone",
+      'data-eva-boot-text=\\"loaded\\"',
+      'data-eva-boot-aria=\\"bay\\"',
+      'data-eva-boot-aria=\\"pilots\\"',
+      'data-eva-boot-aria=\\"progress\\"',
+      "data-eva-sync-name",
+      "eva-boot-select-glow",
+      "eva-boot-bay-meta",
+      "eva-boot-pilot-ghost",
       "chooseDriver",
+      "setPointerCapture",
+      "onPilotPointerMove",
+      "onPilotPointerUp",
+      "paintPointerDrag",
+      "insideBay",
+      "readBayRect",
+      "createPointerGhost",
+      "ghost.classList.add(\"is-warm\")",
+      "translate3d(8px,8px,0)",
+      "active.ghost.classList.remove(\"is-warm\")",
+      "bayRect: pointerBayRect || readBayRect()",
+      "pointerDrag.dragging = true",
+      "paintPointerDrag();",
+      "if (dx === 0 && dy === 0) return;",
+      "active.width * active.grabX",
+      "active.height * active.grabY",
+      "const grabX = cardRect.width > 0",
+      "const grabY = cardRect.height > 0",
+      "pointerGhosts = new Map()",
+      "pointerGhosts.set(card.dataset.evaPilot, ghost)",
+      "ghost: pointerGhosts.get(card.dataset.evaPilot)",
+      "active.ghost.classList.add(\"is-warm\")",
+      "refreshDragGeometry",
+      "pointerCardRects.set(card.dataset.evaPilot",
+      "pointerBayRect = readBayRect()",
+      "pointerBayRect || readBayRect()",
+      "requestAnimationFrame(paintPointerDrag)",
+      "translate3d(",
+      "width: 190",
+      "height: 130",
+      "suppressCardClick",
       "pickVoices",
       ".eva-boot-console-layer .eva-boot-head strong",
       ".eva-boot-sync-copy h2",
@@ -292,6 +331,8 @@ test("EVA 主题素材包按清单校验并生成本地启动序列", () => {
       "EVA BOOT 9.9.9",
       "GOD'S IN HIS HEAVEN",
       "syncVoiceStarted",
+      'NERV 駕駛員啟動序列',
+      '駕駛員已裝載 · PILOT LOADED',
       "pagehide",
       "app-ready",
       "prefers-reduced-motion",
@@ -311,6 +352,8 @@ test("EVA 主题素材包按清单校验并生成本地启动序列", () => {
     ]) {
       assert.ok(payload.bootSource.includes(fragment), `missing EVA boot contract: ${fragment}`);
     }
+    assert.doesNotMatch(payload.bootSource, /draggable="true"/);
+    assert.doesNotMatch(payload.bootSource, /dataTransfer/);
     assert.doesNotMatch(payload.bootSource, /document\.hasFocus/);
     assert.doesNotMatch(payload.bootSource, /later\(\(\) => setPhase\("emergency"\)/);
     assert.doesNotMatch(payload.bootSource, /phaseTimer/);
@@ -400,8 +443,8 @@ test("皮肤 CSS 使用稳定选择器并禁用远程资源", () => {
     "[class*=\"_ComposerLayoutRoot_\"]",
     "[class*=\"bg-surface-elevated-secondary\"]",
     "[class*=\"bg-background-neutral-soft-alpha\"]",
-    "[class*=\"rail-\"]:has([aria-label=\"排队消息操作\"])",
-    "[aria-label=\"删除排队的消息\"]",
+    "[data-eva-queue-rail]",
+    "[data-eva-queue-card]",
     "[role=\"tooltip\"]",
     ".bg-user-message",
     ".rich-text-user-turn",
@@ -427,7 +470,7 @@ test("皮肤 CSS 使用稳定选择器并禁用远程资源", () => {
     ".eva-config-range",
     "-webkit-app-region: no-drag",
     "pointer-events: auto !important",
-    "html[data-eva-skin]:has([data-browser-sidebar-address-input])",
+    "html[data-eva-skin][data-eva-browser-active]",
     "@media (max-width: 900px)",
     "@media (max-width: 760px)",
     "pointer-events: none !important",
@@ -438,6 +481,7 @@ test("皮肤 CSS 使用稳定选择器并禁用远程资源", () => {
   assert.ok(!css.includes("@import"));
   assert.ok(!/url\(\s*https?:/i.test(css));
   assert.ok(!/<script/i.test(css));
+  assert.ok(!css.includes(":has("), "runtime CSS must not use :has()");
   for (const fragment of [
     "#eva-codex-skin-boot",
     "@keyframes eva-boot-scan",
@@ -461,8 +505,16 @@ test("皮肤 CSS 使用稳定选择器并禁用远程资源", () => {
     "@keyframes eva-boot-intro-scan",
     "@keyframes eva-boot-intro-out",
     ".eva-boot-select-bay",
+    ".eva-boot-select-glow",
     ".eva-boot-pilot-card",
+    '.eva-boot-pilot-card[data-eva-pilot="asuka"]',
+    "--eva-card-surface: #0d0f13",
     ".eva-boot-select-bay.is-over",
+    ".eva-boot-pilot-ghost",
+    ".eva-boot-bay-meta",
+    ".eva-boot-exit",
+    "@keyframes eva-boot-plug-roll",
+    "transform: rotate(14deg)",
     ".eva-boot-pilot-face",
     ".eva-boot-ring-meter",
     "@media (max-width: 700px)",
@@ -478,8 +530,96 @@ test("皮肤 CSS 使用稳定选择器并禁用远程资源", () => {
     evaBootCss,
     /\.eva-boot-select-bay\s*\{[\s\S]*?pointer-events:\s*auto;/i,
   );
+  assert.match(
+    evaBootCss,
+    /\.eva-boot-pilot-ghost\s*\{[\s\S]*?transition:\s*none\s*!important;[\s\S]*?contain:\s*strict;/i,
+  );
+  assert.match(
+    evaBootCss,
+    /\.eva-boot-pilot-ghost\s*\{[\s\S]*?width:\s*190px;[\s\S]*?height:\s*130px;/i,
+  );
+  assert.match(
+    evaBootCss,
+    /\.eva-boot-pilot-ghost\.is-warm\s*\{[\s\S]*?opacity:\s*0\.001;[\s\S]*?pointer-events:\s*none;/i,
+  );
+  const pilotHoverRule = evaBootCss.match(
+    /\.eva-boot-pilot-card:hover,\s*[\s\S]*?\{([\s\S]*?)\}/i,
+  )?.[1] || "";
+  assert.doesNotMatch(pilotHoverRule, /background:|transform:|box-shadow:/i);
+  assert.match(
+    evaBootCss,
+    /\.eva-boot-select-bay\.is-over \.eva-boot-select-glow[\s\S]*?opacity:\s*1;/i,
+  );
+  assert.doesNotMatch(evaBootCss, /is-pilot-dragging/i);
+  assert.match(
+    evaBootCss,
+    /:is\(\[data-phase="select"\], \[data-phase="sync"\]\) \.eva-boot-contour-map\s*\{[\s\S]*?filter:\s*none;[\s\S]*?animation:\s*none;/i,
+  );
+  assert.match(
+    evaBootCss,
+    /:is\(\[data-phase="select"\], \[data-phase="sync"\]\) \.eva-boot-contour-ring\s*\{[\s\S]*?animation:\s*none\s*!important;/i,
+  );
+  assert.doesNotMatch(
+    evaBootCss,
+    /\.is-pilot-dragging \.eva-boot-contour-map\s*\{/i,
+  );
+  assert.doesNotMatch(
+    evaBootCss,
+    /#eva-codex-skin-boot\.is-pilot-dragging\s+\*\s*\{/i,
+  );
+  assert.doesNotMatch(
+    evaBootCss,
+    /\.eva-boot-select-bay\.is-over\s*\{[^}]*animation:\s*eva-boot-bay-ready/i,
+  );
+  const selectPlugRule = evaBootCss.match(
+    /\.eva-boot-select-bay \.eva-boot-plug\s*\{([\s\S]*?)\}/i,
+  )?.[1] || "";
+  assert.match(selectPlugRule, /contain:\s*layout style;/i);
+  assert.match(selectPlugRule, /filter:\s*none;/i);
+  assert.doesNotMatch(selectPlugRule, /drop-shadow|saturate|contrast/i);
+  assert.match(evaBootCss, /transform:\s*rotate\(14deg\)\s+translateZ\(0\);/i);
+  const plugRollFrames = evaBootCss.match(
+    /@keyframes eva-boot-plug-roll\s*\{([\s\S]*?)\n\}/i,
+  )?.[1] || "";
+  assert.match(plugRollFrames, /scaleX\(0\.62\)/i);
+  assert.doesNotMatch(plugRollFrames, /scaleX\(0(?:\.006)?\)/i);
+  assert.match(
+    evaBootCss,
+    /\.eva-boot-exit\s*\{[\s\S]*?min-width:\s*120px;[\s\S]*?border-left:\s*3px solid var\(--eva-boot-accent\);[\s\S]*?background:/i,
+  );
+  assert.match(
+    evaBootCss,
+    /\.eva-boot-exit:hover[\s\S]*?background:\s*var\(--eva-boot-accent\);/i,
+  );
   assert.ok(!evaBootCss.includes("@import"));
   assert.ok(!/url\(\s*https?:/i.test(evaBootCss));
+});
+
+test("性能热路径保持合成友好且不强制布局", () => {
+  const css = fs.readFileSync(path.join(root, "assets", "eva-skin.css"), "utf8");
+  const evaBootCss = fs.readFileSync(path.join(root, "assets", "eva-boot.css"), "utf8");
+  const ui = fs.readFileSync(path.join(root, "assets", "skin-ui.js"), "utf8");
+  const injector = fs.readFileSync(path.join(root, "injector.mjs"), "utf8");
+  assert.ok(!css.includes("backdrop-filter"));
+  assert.doesNotMatch(css, /mix-blend-mode:\s*(?:soft-light|multiply|screen|overlay)/i);
+  assert.ok(!css.includes(":has("), "style invalidation hot path must not use :has()");
+  assert.match(css, /@keyframes eva-skin-scan\s*\{[\s\S]*?translate3d\(0,\s*130vh,\s*0\)/i);
+  const isVisibleStart = ui.indexOf("function isVisible(node)");
+  const isVisibleEnd = ui.indexOf("function bootOverlayActive()", isVisibleStart);
+  const isVisibleSource = ui.slice(isVisibleStart, isVisibleEnd);
+  assert.ok(isVisibleStart >= 0 && isVisibleEnd > isVisibleStart);
+  assert.doesNotMatch(isVisibleSource, /checkVisibility|getBoundingClientRect/);
+  assert.match(ui, /function bootOverlayActive\(\)/);
+  assert.match(ui, /document\.getElementById\("eva-codex-skin-boot"\)/);
+  assert.match(ui, /function refreshSkinMarkers\(\)/);
+  assert.match(ui, /data-eva-queue-rail/);
+  assert.match(ui, /data-eva-browser-rail/);
+  assert.match(ui, /function syncActivityMonitoring\(\)/);
+  assert.match(ui, /options\.approvalVoice \|\| options\.completeVoice/);
+  assert.match(injector, /const paintClock = \(node, time\) =>/);
+  assert.match(injector, /getContext\("2d"\)/);
+  assert.doesNotMatch(injector, /eva-boot-pilot-card[^;]{0,120}\.focus\?\./);
+  assert.match(evaBootCss, /\.eva-boot-clock\s*\{/);
 });
 
 test("应用内切换驾驶员不会启动开机动画", () => {
@@ -536,7 +676,7 @@ test("内置浏览器打开时重新定位设置入口且不隐藏设置面板",
   const css = fs.readFileSync(path.join(root, "assets", "eva-skin.css"), "utf8");
   assert.match(
     css,
-    /html\[data-eva-skin\]:has\(\[data-browser-sidebar-address-input\]\)[\s\S]*?\.eva-settings-button\s*\{[\s\S]*?bottom:\s*64px;/i,
+    /html\[data-eva-skin\]\[data-eva-browser-active\][\s\S]*?\.eva-settings-button\s*\{[\s\S]*?bottom:\s*64px;/i,
   );
   assert.ok(!css.includes(".eva-driver-switch"));
   assert.doesNotMatch(css, /\.eva-config-panel\s*\{[^}]*display:\s*none/i);
@@ -583,6 +723,8 @@ test("输出速度 HUD 使用真实流式正文并标明估算", () => {
   for (const fragment of [
     "eva-tps-hud",
     "estimateTokens",
+    "assistantTokenCache",
+    "nodeTokenCount",
     "TPS_TOKEN_WEIGHTS",
     "TPS_WINDOW_MS = 2400",
     "TPS_SAMPLE_MS = 320",
@@ -600,8 +742,83 @@ test("输出速度 HUD 使用真实流式正文并标明估算", () => {
   }
   assert.ok(!js.includes("setInterval(sampleTps, 400)"));
   assert.ok(!js.includes("cjkCount +"));
+  assert.doesNotMatch(js, /\.map\(\(node\) => node\.textContent \|\| ""\)/);
   assert.match(css, /#eva-codex-skin-overlay \.eva-tps-hud\s*\{/);
   assert.match(css, /@keyframes eva-tps-in/);
+});
+
+test("默认音频音量提高且语音播放时继续压低 BGM", () => {
+  const js = fs.readFileSync(path.join(root, "assets", "skin-ui.js"), "utf8");
+  const source = fs.readFileSync(path.join(root, "injector.mjs"), "utf8");
+  assert.match(
+    js,
+    /audioLevels = Object\.freeze\(\{[\s\S]*?preview: 1,[\s\S]*?voice: 1,[\s\S]*?task: 1,[\s\S]*?typing: 0\.4,/,
+  );
+  assert.ok(!js.includes("playMedia(id, null, 0.78)"));
+  assert.match(js, /playMedia\(id, null, audioLevels\.task\)/);
+  for (const fragment of [
+    "bgm: 0.68",
+    "bgmPick: 0.18",
+    "bgmSync: 0.1",
+    "voice: 1",
+    "pick: 1",
+    "bgm.volume = audioLevels.bgm",
+    "fadeBgm(audioLevels.bgmPick, 320)",
+    "fadeBgm(audioLevels.bgmSync, 500)",
+    "pick.volume = audioLevels.pick",
+    "voice.volume = audioLevels.voice",
+  ]) {
+    assert.ok(source.includes(fragment), `missing audio level contract: ${fragment}`);
+  }
+});
+
+test("启动层四语言文案完成校对并同步更新同步页", () => {
+  const js = fs.readFileSync(path.join(root, "assets", "skin-ui.js"), "utf8");
+  const source = fs.readFileSync(path.join(root, "injector.mjs"), "utf8");
+  for (const fragment of [
+    "下次啟動時播放駕駛員選擇與 NERV 序列",
+    "下次启动时播放驾驶员选择与 NERV 序列",
+    "次回起動時にパイロット選択と NERV シーケンスを再生",
+    "Play the pilot selection and NERV sequence on next launch",
+    "審核提示語音",
+    "审批提示语音",
+    "承認待ちボイス",
+    "完了通知ボイス",
+    'on: "オン"',
+    'off: "オフ"',
+    "スライディングウィンドウ",
+  ]) {
+    assert.ok(js.includes(fragment), `missing localized settings copy: ${fragment}`);
+  }
+  for (const fragment of [
+    'data-eva-boot-text="loaded"',
+    "data-eva-sync-name",
+    'data-eva-boot-aria="bay"',
+    'data-eva-boot-aria="pilots"',
+    'data-eva-boot-aria="progress"',
+    "駕駛員已裝載 · PILOT LOADED",
+    "パイロット搭乗完了 · PILOT LOADED",
+    "パイロットを挿入 · DROP PILOT HERE",
+    "Drag to entry plug",
+    "將頭像拖入左側插入栓，或點擊頭像裝載",
+    "将头像拖入左侧插入栓，或点击头像装载",
+    "ポートレートを左のエントリープラグへドラッグ、またはクリック",
+    "Entry plug, pilot drop zone",
+    "NERV pilot startup sequence",
+    "boot.setAttribute(\"aria-label\", text(\"bootLabel\"))",
+    "name.textContent = text(pilot === \"rei\" ? \"rei\" : \"asuka\")",
+  ]) {
+    assert.ok(source.includes(fragment), `missing localized boot copy: ${fragment}`);
+  }
+  for (const stale of [
+    "審核自動語音",
+    "完成自動語音",
+    "审核自动语音",
+    "完成自动语音",
+    "drop: \"パイロットを挿入 · DROP PILOT\",",
+  ]) {
+    assert.ok(!source.includes(stale) && !js.includes(stale), `stale copy remains: ${stale}`);
+  }
 });
 
 test("主题资源不包含角色图片或远程引用", () => {

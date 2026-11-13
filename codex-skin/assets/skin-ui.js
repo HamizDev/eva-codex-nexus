@@ -118,7 +118,22 @@ function createCompletionGate({ stableMs = 3000 } = {}) {
     return Math.max(0, holdMs - (Number(now) - pending.since));
   }
 
-  return { observe, pendingDelay };
+  function reset() {
+    initialized = false;
+    running = false;
+    sawRunning = false;
+    baselineKey = null;
+    baselineSignature = "";
+    baselineConversation = null;
+    lastKey = null;
+    lastSignature = "";
+    lastConversation = null;
+    pending = null;
+    triggeredKey = null;
+    triggeredConversation = null;
+  }
+
+  return { observe, pendingDelay, reset };
 }
 
 function installEvaSkinUi(config) {
@@ -165,16 +180,16 @@ function installEvaSkinUi(config) {
       groupVisual: "外觀與輸出",
       languageAria: "介面語言",
       boot: "開機動畫",
-      bootHint: "下次啟動播放駕駛員選擇與 NERV 序列；應用內換膚不播放",
+      bootHint: "下次啟動時播放駕駛員選擇與 NERV 序列；在應用內換膚時不播放",
       bootVoice: "啟動語音",
       bootVoiceHint: "同步階段播放目前駕駛員語音",
       pickVoice: "選擇應答",
       pickVoiceHint: "切換駕駛員時播放短語音",
       welcomeVoice: "歡迎語音",
       welcomeVoiceHint: "啟動完成後播放",
-      approvalVoice: "審核自動語音",
-      approvalVoiceHint: "待審批出現時播放一次",
-      completeVoice: "完成自動語音",
+      approvalVoice: "審核提示語音",
+      approvalVoiceHint: "待審核出現時播放一次",
+      completeVoice: "完成提示語音",
       completeVoiceHint: "主任務完成時播放一次",
       typing: "介面打字音",
       typingHint: "在輸入框中鍵入時播放短促提示",
@@ -191,7 +206,7 @@ function installEvaSkinUi(config) {
       previewWelcome: "歡迎語音",
       previewWelcomeHint: "啟動完成後播放",
       previewApproval: "審核提醒",
-      previewApprovalHint: "人工審批待處理",
+      previewApprovalHint: "人工審核待處理",
       previewComplete: "完成提醒",
       previewCompleteHint: "主任務正常完成",
       needAssets: "需要先匯入本機 EVA 主題素材",
@@ -220,16 +235,16 @@ function installEvaSkinUi(config) {
       groupVisual: "外观与输出",
       languageAria: "界面语言",
       boot: "开机动画",
-      bootHint: "下次启动播放驾驶员选择与 NERV 序列；应用内换肤不播放",
+      bootHint: "下次启动时播放驾驶员选择与 NERV 序列；在应用内换肤时不播放",
       bootVoice: "启动语音",
       bootVoiceHint: "同步阶段播放当前驾驶员语音",
       pickVoice: "选择应答",
       pickVoiceHint: "切换驾驶员时播放短语音",
       welcomeVoice: "欢迎语音",
       welcomeVoiceHint: "启动完成后播放",
-      approvalVoice: "审核自动语音",
+      approvalVoice: "审批提示语音",
       approvalVoiceHint: "待审批出现时播放一次",
-      completeVoice: "完成自动语音",
+      completeVoice: "完成提示语音",
       completeVoiceHint: "主任务完成时播放一次",
       typing: "界面打字音",
       typingHint: "在输入框中键入时播放短促提示",
@@ -275,16 +290,16 @@ function installEvaSkinUi(config) {
       groupVisual: "外観と出力",
       languageAria: "表示言語",
       boot: "起動アニメーション",
-      bootHint: "次回起動時にパイロット選択と NERV シーケンスを再生",
+      bootHint: "次回起動時にパイロット選択と NERV シーケンスを再生；アプリ内のテーマ切り替えでは再生しません",
       bootVoice: "起動ボイス",
-      bootVoiceHint: "シンク段階で現在のパイロット音声を再生",
+      bootVoiceHint: "同期中に現在のパイロット音声を再生",
       pickVoice: "選択応答",
       pickVoiceHint: "パイロット切り替え時に短い音声を再生",
       welcomeVoice: "歓迎ボイス",
       welcomeVoiceHint: "起動完了後に再生",
-      approvalVoice: "承認自動ボイス",
+      approvalVoice: "承認待ちボイス",
       approvalVoiceHint: "承認待ちが表示された時に一度再生",
-      completeVoice: "完了自動ボイス",
+      completeVoice: "完了通知ボイス",
       completeVoiceHint: "メインタスク完了時に一度再生",
       typing: "入力サウンド",
       typingHint: "入力欄でキー入力時に短い音を再生",
@@ -295,19 +310,19 @@ function installEvaSkinUi(config) {
       tps: "出力速度 HUD",
       tpsHint: "ストリーミング本文から token を推定し、平滑化した現在・ピーク・平均速度を表示",
       previewBoot: "起動ボイス",
-      previewBootHint: "シンク段階で再生",
+      previewBootHint: "同期中に再生",
       previewPick: "選択応答",
       previewPickHint: "パイロット切り替え時に再生",
       previewWelcome: "歓迎ボイス",
       previewWelcomeHint: "起動完了後に再生",
-      previewApproval: "審査リマインド",
+      previewApproval: "承認待ち通知",
       previewApprovalHint: "手動承認待ち",
-      previewComplete: "完了リマインド",
+      previewComplete: "完了通知",
       previewCompleteHint: "メインタスク正常完了",
       needAssets: "先にローカル EVA テーマ素材をインポートしてください",
       reset: "全てリセット",
-      on: "承認",
-      off: "否定",
+      on: "オン",
+      off: "オフ",
       driverAsuka: "アスカ",
       driverRei: "レイ",
       switchToDriver: "{driver}に切り替え（EVA-{unit}）",
@@ -315,7 +330,7 @@ function installEvaSkinUi(config) {
       increase: "{label}を上げる",
       packUnavailable: "EVA テーマ素材が未インポートです",
       tpsAria: "推定出力速度",
-      tpsTitle: "推定値：2.4 秒の移動窓内の文字増分から換算",
+      tpsTitle: "推定値：2.4 秒のスライディングウィンドウ内の文字増分から換算",
     },
     en: {
       panelTitle: "DISPLAY CONFIG",
@@ -330,7 +345,7 @@ function installEvaSkinUi(config) {
       groupVisual: "APPEARANCE & OUTPUT",
       languageAria: "Interface language",
       boot: "Boot animation",
-      bootHint: "Play pilot select and NERV sequence on next launch; not replayed in-app",
+      bootHint: "Play the pilot selection and NERV sequence on next launch; not replayed when switching themes in-app",
       bootVoice: "Startup voice",
       bootVoiceHint: "Play the current pilot voice during sync",
       pickVoice: "Select response",
@@ -385,6 +400,12 @@ function installEvaSkinUi(config) {
   const completionStableMs = 3000;
   const welcomeFreshMs = 30000;
   const ranges = Object.freeze({ portraitStrength: [0.03, 0.28] });
+  const audioLevels = Object.freeze({
+    preview: 1,
+    voice: 1,
+    task: 1,
+    typing: 0.4,
+  });
   const hasMedia = (id) => typeof media[id] === "string" && media[id].startsWith("data:");
   const hasAny = (ids) => ids.some(hasMedia);
   let currentDriver = root.dataset.evaSkin === "rei" ? "rei" : "asuka";
@@ -396,10 +417,18 @@ function installEvaSkinUi(config) {
   let typingAt = 0;
   let activityObserver = null;
   let activityTimer = null;
+  let activityPollTimer = null;
+  let markerPollTimer = null;
   let completionTimer = null;
+  let activityMonitorActive = false;
   let lastApprovalAt = 0;
   const seenApprovals = new Set();
   const completionGate = createCompletionGate({ stableMs: completionStableMs });
+  let markedBrowserRail = null;
+  let markedBrowserSurface = null;
+  let markedSummaryDialog = null;
+  const markedQueueRails = new Set();
+  const markedQueueCards = new Set();
 
   function normalize(key, value) {
     if (!Object.hasOwn(defaults, key)) return undefined;
@@ -682,7 +711,7 @@ function installEvaSkinUi(config) {
       syncDriver(driver.id, false);
       if (changed && options.pickVoice) {
         const id = mediaId(driver.id, "pick");
-        if (id) playMedia(id, null, 0.78);
+        if (id) playMedia(id, null, audioLevels.voice);
       }
     });
     pilotGrid.appendChild(button);
@@ -757,7 +786,13 @@ function installEvaSkinUi(config) {
     button.addEventListener("click", () => {
       const id = mediaId(currentDriver, spec.id);
       if (!id) return;
-      playMedia(id, button, spec.id === "approval" || spec.id === "complete" ? 0.88 : 0.8);
+      playMedia(
+        id,
+        button,
+        spec.id === "approval" || spec.id === "complete"
+          ? audioLevels.task
+          : audioLevels.preview,
+      );
     });
     previewGrid.appendChild(button);
     previewButtons.push(button);
@@ -845,6 +880,7 @@ function installEvaSkinUi(config) {
     history: [],
     samples: [],
   };
+  const assistantTokenCache = new WeakMap();
 
   function estimateTokens(text) {
     const source = String(text || "");
@@ -864,19 +900,47 @@ function installEvaSkinUi(config) {
     return Math.max(1, tokens);
   }
 
+  function nodeTokenCount(node) {
+    const text = node.textContent || "";
+    const previous = assistantTokenCache.get(node);
+    if (previous?.text === text) return previous.tokens;
+    let tokens;
+    if (previous && text.length > previous.length && text.startsWith(previous.text)) {
+      tokens = previous.tokens + estimateTokens(text.slice(previous.length));
+    } else {
+      tokens = estimateTokens(text);
+    }
+    assistantTokenCache.set(node, { text, length: text.length, tokens });
+    return tokens;
+  }
+
   function tpsSnapshot() {
-    const turns = [...document.querySelectorAll("[data-turn-key]")].filter(isVisible);
-    const turn = turns[turns.length - 1];
+    const turns = document.querySelectorAll("[data-turn-key]");
+    let turn = null;
+    for (let index = turns.length - 1; index >= 0; index -= 1) {
+      if (isVisible(turns[index])) {
+        turn = turns[index];
+        break;
+      }
+    }
     if (!turn) return null;
     const key = turn.getAttribute("data-turn-key") || "";
-    const nodes = [...turn.querySelectorAll(
+    const nodes = turn.querySelectorAll(
       '[data-markdown-text-style="assistant-message"]',
-    )];
-    const text = nodes
-      .map((node) => node.innerText || node.textContent || "")
-      .join("\n")
-      .trim();
-    return { key, tokens: estimateTokens(text) };
+    );
+    let tokens = 0;
+    for (let index = 0; index < nodes.length; index += 1) {
+      const node = nodes[index];
+      if (index < nodes.length - 1) {
+        const cached = assistantTokenCache.get(node);
+        if (cached) {
+          tokens += cached.tokens;
+          continue;
+        }
+      }
+      tokens += nodeTokenCount(node);
+    }
+    return { key, tokens };
   }
 
   function resetTps(tokens = 0, now = performance.now()) {
@@ -940,7 +1004,12 @@ function installEvaSkinUi(config) {
   }
 
   function sampleTps() {
-    if (disposed || !options.tps || document.visibilityState === "hidden") return;
+    if (
+      disposed ||
+      !options.tps ||
+      document.visibilityState === "hidden" ||
+      bootOverlayActive()
+    ) return;
     const now = performance.now();
     const running = isTaskRunning();
     if (tpsState.lastSampleAt && now - tpsState.lastSampleAt > TPS_WINDOW_MS * 2) {
@@ -1040,7 +1109,7 @@ function installEvaSkinUi(config) {
     audio = null;
   }
 
-  function playMedia(id, button = null, volume = 0.82) {
+  function playMedia(id, button = null, volume = audioLevels.preview) {
     if (disposed || !hasMedia(id)) return false;
     if (button && audioButton === button && audio && !audio.paused) {
       stopAudio();
@@ -1075,7 +1144,7 @@ function installEvaSkinUi(config) {
       if (!typingAudio) {
         typingAudio = new Audio(media.typing);
         typingAudio.preload = "auto";
-        typingAudio.volume = 0.34;
+        typingAudio.volume = audioLevels.typing;
       }
       typingAudio.currentTime = 0;
       Promise.resolve(typingAudio.play()).catch(() => {});
@@ -1113,12 +1182,14 @@ function installEvaSkinUi(config) {
     applyPortrait();
     if (playResponse && options.pickVoice && changed) {
       const id = mediaId(driver, "pick");
-      if (id) playMedia(id, null, 0.78);
+      if (id) playMedia(id, null, audioLevels.voice);
     }
   }
 
   function refresh() {
     applyPortrait();
+    refreshSkinMarkers();
+    syncActivityMonitoring();
     for (const control of controls) {
       if (control.kind === "switch") {
         const on = Boolean(options[control.key]);
@@ -1182,6 +1253,7 @@ function installEvaSkinUi(config) {
     }
     panelOpen = true;
     panel.hidden = false;
+    overlay.classList.add("has-config-open");
     settingsButton.setAttribute("aria-expanded", "true");
     refresh();
     if (panelLeft !== null && panelTop !== null) setPanelPosition(panelLeft, panelTop);
@@ -1196,6 +1268,7 @@ function installEvaSkinUi(config) {
     if (!panelOpen) return;
     panelOpen = false;
     panel.classList.remove("is-open");
+    overlay.classList.remove("has-config-open");
     settingsButton.setAttribute("aria-expanded", "false");
     stopAudio();
     if (panelCloseTimer) clearTimeout(panelCloseTimer);
@@ -1335,20 +1408,21 @@ function installEvaSkinUi(config) {
         sessionStorage.setItem(sessionKey, "1");
       } catch {}
     }
-    playMedia(id, null, 0.78);
+    playMedia(id, null, audioLevels.voice);
   };
 
   function isVisible(node) {
     if (!(node instanceof Element) || !node.isConnected) return false;
-    if (node.closest("[hidden], [inert], [aria-hidden='true']")) return false;
-    const rect = node.getBoundingClientRect();
-    const style = getComputedStyle(node);
-    return rect.width > 0 && rect.height > 0 &&
-      style.display !== "none" && style.visibility !== "hidden";
+    return !node.closest("[hidden], [inert], [aria-hidden='true']");
+  }
+
+  function bootOverlayActive() {
+    const boot = document.getElementById("eva-codex-skin-boot");
+    return Boolean(boot && boot.isConnected);
   }
 
   function isTaskRunning() {
-    return [...document.querySelectorAll([
+    const nodes = document.querySelectorAll([
       'button[aria-label="停止"]',
       'button[aria-label="Stop"]',
       'button[aria-label="Stop generating"]',
@@ -1356,7 +1430,73 @@ function installEvaSkinUi(config) {
       '[data-app-action-sidebar-thread-active="true"] [data-loading-indicator]',
       '[data-app-action-sidebar-thread-active="true"] [aria-label="处理中"]',
       '[data-app-action-sidebar-thread-active="true"] [aria-label="Working"]',
-    ].join(","))].some(isVisible);
+    ].join(","));
+    for (const node of nodes) {
+      if (isVisible(node)) return true;
+    }
+    return false;
+  }
+
+  function reconcileMarkedNodes(marked, next, attribute) {
+    for (const node of marked) {
+      if (!next.has(node)) node.removeAttribute(attribute);
+    }
+    for (const node of next) {
+      if (!marked.has(node)) node.setAttribute(attribute, "");
+    }
+    marked.clear();
+    for (const node of next) marked.add(node);
+  }
+
+  function refreshSkinMarkers() {
+    if (disposed) return;
+    const browserInput = document.querySelector("[data-browser-sidebar-address-input]");
+    const browserRail = browserInput?.closest(
+      'aside[data-app-shell-focus-area="right-panel"]',
+    ) || null;
+    const browserSurface = browserInput?.closest(
+      '[data-menu-overlay-surface="true"]',
+    ) || null;
+    if (markedBrowserRail !== browserRail) {
+      markedBrowserRail?.removeAttribute("data-eva-browser-rail");
+      browserRail?.setAttribute("data-eva-browser-rail", "");
+      markedBrowserRail = browserRail;
+    }
+    if (markedBrowserSurface !== browserSurface) {
+      markedBrowserSurface?.removeAttribute("data-eva-browser-surface");
+      browserSurface?.setAttribute("data-eva-browser-surface", "");
+      markedBrowserSurface = browserSurface;
+    }
+    const hasBrowser = Boolean(browserInput);
+    if (root.hasAttribute("data-eva-browser-active") !== hasBrowser) {
+      root.toggleAttribute("data-eva-browser-active", hasBrowser);
+    }
+
+    const queueRails = new Set();
+    for (const action of document.querySelectorAll(
+      'button[aria-label="引导"],button[aria-label="删除排队的消息"],button[aria-label="排队消息操作"]',
+    )) {
+      const rail = action.closest('[class*="rail-"]');
+      if (rail) queueRails.add(rail);
+    }
+    reconcileMarkedNodes(markedQueueRails, queueRails, "data-eva-queue-rail");
+
+    const queueCards = new Set();
+    for (const card of document.querySelectorAll(
+      '[class*="bg-surface-elevated-secondary"][class*="rounded-3xl"]',
+    )) {
+      if (card.querySelector("button span.truncate-text")) queueCards.add(card);
+    }
+    reconcileMarkedNodes(markedQueueCards, queueCards, "data-eva-queue-card");
+
+    const summaryDialog = document.querySelector(
+      '[class~="group/summary-panel"]',
+    )?.closest('[role="dialog"]') || null;
+    if (markedSummaryDialog !== summaryDialog) {
+      markedSummaryDialog?.removeAttribute("data-eva-summary-dialog");
+      summaryDialog?.setAttribute("data-eva-summary-dialog", "");
+      markedSummaryDialog = summaryDialog;
+    }
   }
 
   function hashText(value) {
@@ -1377,7 +1517,7 @@ function installEvaSkinUi(config) {
       node.querySelector("[data-content-search-unit-key]")
         ?.getAttribute("data-content-search-unit-key");
     if (searchKey) return searchKey;
-    const text = (node.innerText || node.textContent || "").replace(/\s+/g, " ").trim();
+    const text = (node.textContent || "").replace(/\s+/g, " ").trim();
     return `text:${hashText(text)}:${text.length}`;
   }
 
@@ -1399,7 +1539,7 @@ function installEvaSkinUi(config) {
         ? { key: null, signature: "", conversation: activeConversation }
         : null;
     }
-    const text = (node.innerText || node.textContent || "")
+    const text = (node.textContent || "")
       .replace(/\s+/g, " ")
       .trim();
     const conversation = activeConversation ||
@@ -1414,20 +1554,21 @@ function installEvaSkinUi(config) {
     };
   }
 
-  function hasVisibleApproval() {
-    return [...document.querySelectorAll(
+  function hasVisibleApproval(nodes = null) {
+    const source = nodes || document.querySelectorAll(
       '[data-codex-approval-surface="true"]',
-    )].some(isVisible);
+    );
+    return [...source].some(isVisible);
   }
 
   function approvalKey(node) {
-    const text = (node.innerText || node.textContent || "")
+    const text = (node.textContent || "")
       .replace(/\s+/g, " ")
       .trim()
       .slice(0, 360);
     const buttons = [...node.querySelectorAll("button")]
       .map((button) => (
-        button.innerText ||
+        button.textContent ||
         button.getAttribute("aria-label") ||
         ""
       ).replace(/\s+/g, " ").trim())
@@ -1439,7 +1580,7 @@ function installEvaSkinUi(config) {
   function playTaskVoice(kind) {
     const id = mediaId(currentDriver, kind);
     if (!id) return false;
-    return playMedia(id, null, 0.88);
+    return playMedia(id, null, audioLevels.task);
   }
 
   function scheduleCompletionCheck(delay) {
@@ -1453,16 +1594,16 @@ function installEvaSkinUi(config) {
   }
 
   function checkActivity() {
-    if (disposed) return;
+    if (disposed || document.visibilityState === "hidden" || bootOverlayActive()) return;
     const now = performance.now();
     const running = isTaskRunning();
-    const approvalVisible = hasVisibleApproval();
+    const approvalNodes = [...document.querySelectorAll(
+      '[data-codex-approval-surface="true"]',
+    )].filter(isVisible);
+    const approvalVisible = approvalNodes.length > 0;
     const snapshot = latestFinalSnapshot();
 
-    for (const node of document.querySelectorAll(
-      '[data-codex-approval-surface="true"]',
-    )) {
-      if (!isVisible(node)) continue;
+    for (const node of approvalNodes) {
       const key = approvalKey(node);
       if (seenApprovals.has(key)) continue;
       seenApprovals.add(key);
@@ -1496,7 +1637,74 @@ function installEvaSkinUi(config) {
       try {
         checkActivity();
       } catch {}
-    }, 180);
+    }, 240);
+  }
+
+  function activityMonitoringWanted() {
+    return Boolean(options.approvalVoice || options.completeVoice);
+  }
+
+  function stopActivityMonitor() {
+    activityMonitorActive = false;
+    if (activityObserver) activityObserver.disconnect();
+    activityObserver = null;
+    if (activityTimer) clearTimeout(activityTimer);
+    if (activityPollTimer) clearInterval(activityPollTimer);
+    if (completionTimer) clearTimeout(completionTimer);
+    activityTimer = null;
+    activityPollTimer = null;
+    completionTimer = null;
+  }
+
+  function startActivityMonitor() {
+    if (activityMonitorActive || disposed || !activityMonitoringWanted()) return;
+    if (!document.body || typeof MutationObserver !== "function") return;
+    completionGate.reset();
+    seenApprovals.clear();
+    completionGate.observe({
+      now: performance.now(),
+      running: isTaskRunning(),
+      approvalVisible: hasVisibleApproval(),
+      snapshot: latestFinalSnapshot(),
+    });
+    for (const node of document.querySelectorAll(
+      '[data-codex-approval-surface="true"]',
+    )) {
+      if (isVisible(node)) seenApprovals.add(approvalKey(node));
+    }
+    activityObserver = new MutationObserver((records) => {
+      for (const record of records) {
+        const target = record.target;
+        if (target instanceof Element &&
+          target.closest("#eva-codex-skin-overlay, #eva-codex-skin-boot")) {
+          continue;
+        }
+        scheduleActivityCheck();
+        return;
+      }
+    });
+    activityObserver.observe(document.body, {
+      subtree: true,
+      attributes: true,
+      attributeFilter: [
+        "aria-label",
+        "data-codex-approval-surface",
+        "data-local-conversation-final-assistant",
+        "data-app-action-sidebar-thread-active",
+        "data-app-action-sidebar-thread-id",
+        "data-sidebar-indicator",
+        "data-loading-indicator",
+      ],
+    });
+    activityPollTimer = setInterval(() => {
+      if (document.visibilityState !== "hidden") scheduleActivityCheck();
+    }, 1000);
+    activityMonitorActive = true;
+  }
+
+  function syncActivityMonitoring() {
+    if (activityMonitoringWanted()) startActivityMonitor();
+    else stopActivityMonitor();
   }
 
   settingsButton.addEventListener("click", onSettingsClick);
@@ -1519,35 +1727,9 @@ function installEvaSkinUi(config) {
 
   syncDriver(currentDriver, false);
   applyLocale();
-
-  completionGate.observe({
-    now: performance.now(),
-    running: isTaskRunning(),
-    approvalVisible: hasVisibleApproval(),
-    snapshot: latestFinalSnapshot(),
-  });
-  for (const node of document.querySelectorAll(
-    '[data-codex-approval-surface="true"]',
-  )) {
-    if (isVisible(node)) seenApprovals.add(approvalKey(node));
-  }
-  if (document.body && typeof MutationObserver === "function") {
-    activityObserver = new MutationObserver(scheduleActivityCheck);
-    activityObserver.observe(document.body, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: [
-        "aria-label",
-        "data-codex-approval-surface",
-        "data-local-conversation-final-assistant",
-        "data-app-action-sidebar-thread-active",
-        "data-app-action-sidebar-thread-id",
-        "data-sidebar-indicator",
-        "data-loading-indicator",
-      ],
-    });
-  }
+  refreshSkinMarkers();
+  markerPollTimer = setInterval(refreshSkinMarkers, 1000);
+  syncActivityMonitoring();
 
   if (bootResultKey) {
     try {
@@ -1564,15 +1746,21 @@ function installEvaSkinUi(config) {
     stopAudio();
     stopTyping();
     stopTps();
-    if (activityObserver) activityObserver.disconnect();
-    activityObserver = null;
-    if (activityTimer) clearTimeout(activityTimer);
-    if (completionTimer) clearTimeout(completionTimer);
+    stopActivityMonitor();
+    if (markerPollTimer) clearInterval(markerPollTimer);
     if (panelCloseTimer) clearTimeout(panelCloseTimer);
-    activityTimer = null;
-    completionTimer = null;
+    markerPollTimer = null;
     panelCloseTimer = null;
     dragState = null;
+    markedBrowserRail?.removeAttribute("data-eva-browser-rail");
+    markedBrowserSurface?.removeAttribute("data-eva-browser-surface");
+    markedSummaryDialog?.removeAttribute("data-eva-summary-dialog");
+    for (const node of markedQueueRails) node.removeAttribute("data-eva-queue-rail");
+    for (const node of markedQueueCards) node.removeAttribute("data-eva-queue-card");
+    markedQueueRails.clear();
+    markedQueueCards.clear();
+    root.removeAttribute("data-eva-browser-active");
+    overlay.classList.remove("has-config-open");
     document.removeEventListener("keydown", onKey, true);
     document.removeEventListener("pointerdown", onPointerDown, true);
     document.removeEventListener("pointerup", onDragEnd, true);
