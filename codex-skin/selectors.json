@@ -1,16 +1,17 @@
 {
   "schema": "eva-codex-skin-selectors/1",
   "verifiedAgainst": {
-    "codexVersion": "26.1106.6628.0",
+    "codexVersion": "26.1111.2228.0",
     "platform": "windows",
-    "renderer": "Chromium 157.0.8103.51",
-    "date": "2026-11-11",
+    "renderer": "Chromium 157.0.8103.78",
+    "date": "2026-11-14",
     "note": "只使用稳定属性、语义标签和 CSS Module 前缀，不匹配完整 hash。"
   },
   "selectors": {
     "shellMain": "main:is(.main-surface, [data-app-shell-main-surface], [class*=\"_MainContentSurface_\"]), main",
     "sidebar": "aside.app-shell-left-panel",
     "header": "header:is(.app-header-tint, [data-app-shell-header-edge-scroll], [class*=\"_Header_\"])",
+    "applicationMenuBar": "[class*=\"ApplicationMenuTopBar-\"]",
     "homeIcon": "[data-testid=\"home-icon\"]",
     "homeRoute": "[role=\"main\"]:has([data-testid=\"home-icon\"]), [role=\"main\"]",
     "composer": ":is(.composer-surface-chrome, [class*=\"_ComposerLayoutRoot_\"], [data-composer-surface-variant][data-composer-radius-variant])",

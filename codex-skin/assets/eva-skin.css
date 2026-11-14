@@ -135,6 +135,39 @@ html[data-eva-skin] aside.app-shell-left-panel {
   box-shadow: inset 3px 0 0 var(--eva-accent-strong);
 }
 
+html[data-eva-skin] [data-eva-application-menu] {
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--eva-sidebar-top) 86%, var(--eva-bg)) 0 min(360px, 52%),
+      var(--eva-bg-soft) 78%
+    )
+    !important;
+  border-bottom: 1px solid var(--eva-border-strong) !important;
+  color: var(--eva-text) !important;
+  box-shadow:
+    inset 0 2px 0 var(--eva-accent-strong),
+    inset 0 -1px 0 color-mix(in srgb, var(--eva-accent) 14%, transparent) !important;
+}
+
+html[data-eva-skin] [data-eva-application-menu] [role="menubar"] {
+  color: var(--eva-muted) !important;
+}
+
+html[data-eva-skin] [data-eva-application-menu] :is(button, [role="menuitem"]) {
+  color: var(--eva-muted) !important;
+  border-color: transparent !important;
+  transition:
+    background-color 120ms ease,
+    color 120ms ease !important;
+}
+
+html[data-eva-skin] [data-eva-application-menu] :is(button, [role="menuitem"]):hover,
+html[data-eva-skin] [data-eva-application-menu] :is(button, [role="menuitem"]):focus-visible {
+  background: color-mix(in srgb, var(--eva-accent) 16%, transparent) !important;
+  color: var(--eva-text-strong) !important;
+}
+
 html[data-eva-skin] [class*="ConversationSidebar"] {
   background-color: transparent !important;
   color: var(--eva-text) !important;
@@ -752,7 +785,7 @@ html[data-eva-skin] :is(.group\/home-suggestions, [class*="home-suggestion"]) bu
 #eva-codex-skin-overlay .eva-scan {
   position: absolute;
   inset: 0;
-  opacity: 0.3;
+  opacity: var(--eva-scan-strength, 0.3);
   background: repeating-linear-gradient(
     180deg,
     transparent 0 3px,
@@ -864,6 +897,71 @@ html[data-eva-portrait="on"] #eva-codex-skin-overlay .eva-art {
   opacity: 0.32;
 }
 
+#eva-codex-skin-overlay .eva-clock-hud {
+  position: absolute;
+  z-index: 2;
+  top: calc(50% - 70px);
+  right: 6px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  align-items: end;
+  gap: 1px 6px;
+  width: 92px;
+  min-height: 44px;
+  padding: 6px 7px 6px 10px;
+  pointer-events: none !important;
+  color: var(--eva-muted);
+  background:
+    linear-gradient(135deg, var(--eva-panel), var(--eva-bg-soft));
+  border: 1px solid var(--eva-border-strong);
+  box-shadow:
+    0 12px 32px var(--eva-shadow),
+    inset 0 1px 0 color-mix(in srgb, var(--eva-accent) 32%, transparent);
+  clip-path: polygon(0 7px, 7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%);
+  scale: var(--eva-hud-scale, 1);
+  transform-origin: right center;
+}
+
+#eva-codex-skin-overlay .eva-clock-hud:before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 2px;
+  background: var(--eva-accent);
+  box-shadow: 0 0 10px var(--eva-accent);
+}
+
+#eva-codex-skin-overlay .eva-clock-hud span,
+#eva-codex-skin-overlay .eva-clock-hud small {
+  color: var(--eva-muted);
+  font: 600 6px/1 "Bahnschrift", "Segoe UI", sans-serif;
+  letter-spacing: 0.12em;
+}
+
+#eva-codex-skin-overlay .eva-clock-hud b {
+  grid-column: 1 / -1;
+  color: var(--eva-text-strong);
+  font: 700 15px/1 "Bahnschrift", "Segoe UI", sans-serif;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+
+#eva-codex-skin-overlay .eva-clock-hud small {
+  text-align: right;
+}
+
+html[data-eva-clock-hud="off"] #eva-codex-skin-overlay .eva-clock-hud {
+  display: none !important;
+}
+
+html[data-eva-skin] #eva-codex-skin-overlay.has-config-open .eva-clock-hud,
+html[data-eva-skin][data-eva-browser-active]
+  #eva-codex-skin-overlay
+  .eva-clock-hud {
+  display: none !important;
+}
+
 #eva-codex-skin-overlay .eva-settings-button {
   position: absolute;
   z-index: 2;
@@ -891,6 +989,7 @@ html[data-eva-portrait="on"] #eva-codex-skin-overlay .eva-art {
   text-align: left;
   transition:
     color 140ms ease,
+    opacity 140ms ease,
     background-color 140ms ease,
     border-color 140ms ease,
     box-shadow 160ms ease,
@@ -1196,6 +1295,26 @@ html[data-eva-skin][data-eva-browser-active]
   border-color: var(--eva-accent);
 }
 
+#eva-codex-skin-overlay .eva-config-action {
+  min-width: 64px;
+  height: 23px;
+  padding: 0 8px;
+  pointer-events: auto;
+  color: var(--eva-accent);
+  background: var(--eva-bg-soft);
+  border: 1px solid var(--eva-border-strong);
+  cursor: pointer;
+  font: 600 8px/1 "Microsoft YaHei UI", "Segoe UI", sans-serif;
+  letter-spacing: 0.04em;
+}
+
+#eva-codex-skin-overlay .eva-config-action:hover,
+#eva-codex-skin-overlay .eva-config-action:focus-visible {
+  color: var(--eva-on-accent);
+  background: var(--eva-accent);
+  border-color: var(--eva-accent);
+}
+
 #eva-codex-skin-overlay .eva-config-switch:disabled,
 #eva-codex-skin-overlay .eva-config-preview:disabled,
 #eva-codex-skin-overlay .eva-config-range button:disabled {
@@ -1207,6 +1326,7 @@ html[data-eva-skin][data-eva-browser-active]
 #eva-codex-skin-overlay .eva-config-preview:focus-visible,
 #eva-codex-skin-overlay .eva-config-range button:focus-visible,
 #eva-codex-skin-overlay .eva-config-pilot:focus-visible,
+#eva-codex-skin-overlay .eva-config-action:focus-visible,
 #eva-codex-skin-overlay .eva-config-reset:focus-visible {
   outline: 2px solid var(--eva-warn);
   outline-offset: 2px;
@@ -1437,6 +1557,8 @@ html[data-eva-skin][data-eva-browser-active]
     0 14px 38px var(--eva-shadow),
     inset 0 1px 0 color-mix(in srgb, var(--eva-accent) 38%, transparent);
   clip-path: polygon(0 7px, 7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%);
+  scale: var(--eva-hud-scale, 1);
+  transform-origin: right bottom;
   animation: eva-tps-in 170ms ease-out;
 }
 
@@ -1580,6 +1702,13 @@ html[data-eva-skin][data-eva-browser-active]
     display: none;
   }
 
+  #eva-codex-skin-overlay .eva-clock-hud {
+    top: calc(50% - 64px);
+    right: 5px;
+    width: 72px;
+    padding-inline: 8px 5px;
+  }
+
   #eva-codex-skin-overlay .eva-config-panel {
     right: var(--eva-panel-right, 84px);
     width: min(304px, calc(100vw - 98px));
@@ -1590,6 +1719,12 @@ html[data-eva-skin][data-eva-browser-active]
   #eva-codex-skin-overlay .eva-settings-button {
     right: 4px;
     width: 60px;
+  }
+
+  #eva-codex-skin-overlay.has-config-open .eva-settings-button {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none !important;
   }
 
   #eva-codex-skin-overlay .eva-config-panel {
@@ -1611,6 +1746,10 @@ html[data-eva-skin][data-eva-browser-active]
     right: 8px;
     bottom: auto;
     width: 120px;
+  }
+
+  #eva-codex-skin-overlay .eva-clock-hud {
+    display: none !important;
   }
 }
 

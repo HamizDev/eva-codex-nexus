@@ -6,7 +6,7 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
-export const SKIN_VERSION = "0.4.4";
+export const SKIN_VERSION = "0.4.5";
 export const SKIN_ID = "eva-codex-skin";
 export const DEFAULT_PORT = 9345;
 export const EXACT_MAIN_URL = "app://-/index.html";
@@ -162,6 +162,7 @@ export function buildProbeExpression() {
       shell: Boolean(q(s.shellMain)),
       sidebar: Boolean(q(s.sidebar)),
       header: Boolean(q(s.header)),
+      appMenu: Boolean(q(s.applicationMenuBar)),
       home: Boolean(q(s.homeIcon)),
       composer: Boolean(q(s.composer)),
       input: Boolean(q(s.composerInput)),
@@ -445,6 +446,10 @@ const BOOT_PACK_COPY = Object.freeze({
     skip: "跳過 / ESC",
     alert: "NERV 警報啟動畫面",
     handoff: "同步完成，正在進入聊天",
+    hatchLeft: "NERV / 插入栓系統 · 互鎖解除",
+    hatchRight: "A.T. 力場 · 通信通道開啟",
+    hatchComplete: "同步完成",
+    hatchMeta: "SYNCHRONIZATION COMPLETE",
   }),
   "zh-Hans": Object.freeze({
     selectTitle: "选择你的驾驶员",
@@ -478,6 +483,10 @@ const BOOT_PACK_COPY = Object.freeze({
     skip: "跳过 / ESC",
     alert: "NERV 警报启动画面",
     handoff: "同步完成，正在进入聊天",
+    hatchLeft: "NERV / 插入栓系统 · 互锁解除",
+    hatchRight: "A.T. 力场 · 通信通道开启",
+    hatchComplete: "同步完成",
+    hatchMeta: "SYNCHRONIZATION COMPLETE",
   }),
   ja: Object.freeze({
     selectTitle: "パイロットを選択",
@@ -511,6 +520,10 @@ const BOOT_PACK_COPY = Object.freeze({
     skip: "スキップ / ESC",
     alert: "NERV 警報起動画面",
     handoff: "同期完了、チャットへ移行中",
+    hatchLeft: "NERV / エントリープラグ · インターロック解除",
+    hatchRight: "A.T. フィールド · 通信回線開放",
+    hatchComplete: "同期完了",
+    hatchMeta: "SYNCHRONIZATION COMPLETE",
   }),
   en: Object.freeze({
     selectTitle: "Select your pilot",
@@ -544,6 +557,10 @@ const BOOT_PACK_COPY = Object.freeze({
     skip: "Skip / ESC",
     alert: "NERV emergency startup",
     handoff: "Sync complete, entering chat",
+    hatchLeft: "NERV / ENTRY SYSTEM · INTERLOCK RELEASED",
+    hatchRight: "A.T. FIELD · COMMUNICATION CHANNEL OPEN",
+    hatchComplete: "Sync complete",
+    hatchMeta: "SYNCHRONIZATION COMPLETE",
   }),
 });
 
@@ -708,6 +725,7 @@ function buildBootPackMarkup(driver, pack, syncSecondsByDriver) {
     "</section>",
     '<section class="eva-boot-panel">',
     '<div class="eva-boot-pilot">',
+    `<span class="eva-boot-pilot-meta" aria-hidden="true"><span>PILOT / ${driver === "rei" ? "FIRST CHILD" : "SECOND CHILD"}</span><span>NEURAL ID · ${copy.unit}</span></span>`,
     '<span class="eva-boot-sync-portrait" data-eva-sync-portrait aria-hidden="true"></span>',
     '<span class="eva-boot-pilot-face" data-eva-sync-face></span>',
     '<div class="eva-boot-pilot-copy">',
@@ -1053,6 +1071,8 @@ export function buildBootPackSource({ driver, css, bootId, pack, forceDriverToke
     let sequenceDone = false;
     let attemptTimer = null;
     let cleanupTimer = null;
+    let handoffResultTimer = null;
+    let handoffResize = null;
     let progressFrame = null;
     let phaseClockFrame = null;
     let phaseClockLast = 0;
@@ -1207,12 +1227,15 @@ export function buildBootPackSource({ driver, css, bootId, pack, forceDriverToke
         target.removeEventListener(type, handler, true);
       }
       dragListeners.length = 0;
+      if (handoffResize) window.removeEventListener("resize", handoffResize);
+      handoffResize = null;
     };
     const cleanup = () => {
       for (const timer of timers) clearTimeout(timer);
       timers.clear();
       if (attemptTimer) clearInterval(attemptTimer);
       if (cleanupTimer) clearTimeout(cleanupTimer);
+      if (handoffResultTimer) clearTimeout(handoffResultTimer);
       if (progressFrame !== null) cancelAnimationFrame(progressFrame);
       if (phaseClockFrame !== null) cancelAnimationFrame(phaseClockFrame);
       if (bgmFrame !== null) cancelAnimationFrame(bgmFrame);
@@ -1220,6 +1243,7 @@ export function buildBootPackSource({ driver, css, bootId, pack, forceDriverToke
       if (introTypeTimer !== null) clearTimeout(introTypeTimer);
       attemptTimer = null;
       cleanupTimer = null;
+      handoffResultTimer = null;
       progressFrame = null;
       phaseClockFrame = null;
       bgmFrame = null;
@@ -1246,34 +1270,91 @@ export function buildBootPackSource({ driver, css, bootId, pack, forceDriverToke
         }
       }
     };
-    const leave = () => {
+    const announceResult = () => {
+      if (resultAnnounced) return;
+      resultAnnounced = true;
+      const detail = {
+        bootId,
+        driver: selectedDriver,
+        completed: Boolean(sequenceDone),
+        endedAt: Date.now(),
+      };
+      try { window[resultKey] = detail; } catch {}
+      try {
+        window.dispatchEvent(new CustomEvent("eva-skin-boot-finished", { detail }));
+      } catch {}
+    };
+    const createHandoffVisuals = () => {
+      const unit = selectedDriver === "rei" ? "00" : "02";
+      const handoff = document.createElement("div");
+      handoff.className = "eva-boot-handoff";
+      handoff.setAttribute("aria-hidden", "true");
+      handoff.innerHTML = [
+        '<div class="eva-boot-gate left"><span class="eva-boot-gate-label" data-eva-boot-text="hatchLeft">NERV / 插入栓系統 · 互鎖解除</span><i class="eva-boot-gate-stripe" aria-hidden="true"></i><i class="eva-boot-gate-lock" aria-hidden="true"></i></div>',
+        '<div class="eva-boot-gate right"><span class="eva-boot-gate-label" data-eva-boot-text="hatchRight">A.T. 力場 · 通信通道開啟</span><i class="eva-boot-gate-stripe" aria-hidden="true"></i><i class="eva-boot-gate-lock" aria-hidden="true"></i></div>',
+        '<div class="eva-boot-clearance"><b data-eva-boot-text="hatchComplete">同步完成</b><small><span data-eva-boot-text="hatchMeta">SYNCHRONIZATION COMPLETE</span> / EVA ' + unit + "</small></div>",
+      ].join("");
+      boot.appendChild(handoff);
+
+      const frame = document.createElement("div");
+      frame.className = "eva-boot-composer-frame";
+      frame.setAttribute("aria-hidden", "true");
+      boot.appendChild(frame);
+      const locateComposer = () => {
+        const candidates = document.querySelectorAll(
+          'textarea, [contenteditable="true"], [role="textbox"], .composer-surface-chrome, [class*="_ComposerLayoutRoot_"]',
+        );
+        let target = null;
+        for (const node of candidates) {
+          const rect = node.getBoundingClientRect();
+          if (rect.width > 0 && rect.height > 0) {
+            target = node;
+            break;
+          }
+        }
+        if (!target) {
+          frame.hidden = true;
+          return;
+        }
+        const rect = target.getBoundingClientRect();
+        frame.hidden = false;
+        Object.assign(frame.style, {
+          left: rect.left - 8 + "px",
+          top: rect.top - 8 + "px",
+          width: rect.width + 16 + "px",
+          height: rect.height + 16 + "px",
+        });
+      };
+      locateComposer();
+      handoffResize = locateComposer;
+      window.addEventListener("resize", handoffResize);
+      paintLanguage();
+    };
+    const leave = (config = {}) => {
       if (leaving) return;
       leaving = true;
       finishedPlayback = true;
       try { localStorage.setItem(storageKey, bootId); } catch {}
       stopAudio();
-      if (!resultAnnounced) {
-        resultAnnounced = true;
-        const detail = {
-          bootId,
-          driver: selectedDriver,
-          completed: Boolean(sequenceDone),
-          endedAt: Date.now(),
-        };
-        try { window[resultKey] = detail; } catch {}
-        try {
-          window.dispatchEvent(new CustomEvent("eva-skin-boot-finished", { detail }));
-        } catch {}
-      }
       boot.dataset.phase = "handoff";
-      boot.classList.add("is-leaving");
       boot.style.pointerEvents = "none";
-      cleanupTimer = setTimeout(cleanup, 760);
+      const hatch = config.hatch === true && bootOptions.hatch !== false;
+      if (!hatch) {
+        announceResult();
+        boot.classList.add("is-leaving");
+        cleanupTimer = setTimeout(cleanup, 760);
+        return;
+      }
+      boot.classList.add("is-hatching");
+      createHandoffVisuals();
+      boot.setAttribute("aria-label", text("handoff"));
+      cleanupTimer = setTimeout(cleanup, 1780);
+      handoffResultTimer = setTimeout(announceResult, 1420);
     };
     const maybeFinish = () => {
       if (leaving || !sequenceDone) return;
       const elapsed = performance.now() - shownAt;
-      if (appReady || elapsed >= 15000) leave();
+      if (appReady || elapsed >= 15000) leave({ hatch: true });
     };
     const finish = (reason) => {
       if (reason === "app-ready") {
@@ -1286,6 +1367,8 @@ export function buildBootPackSource({ driver, css, bootId, pack, forceDriverToke
     const setPhase = (phase) => {
       if (leaving) return;
       boot.dataset.phase = phase;
+      updateClock();
+      if (phase === "sync") later(updateClock, 120);
       if (phase === "intro") {
         typeIntroTitle();
         fadeBgm(audioLevels.bgm, 420);

@@ -172,9 +172,9 @@ test("package 版本与皮肤版本一致", () => {
   const pkg = JSON.parse(read("package.json"));
   const injector = read("codex-skin/injector.mjs");
   const launcher = read("codex-skin/Start-EVA.ps1");
-  assert.equal(pkg.version, "0.4.4");
-  assert.match(injector, /export const SKIN_VERSION = "0\.4\.4"/);
-  assert.match(launcher, /\$SkinVersion = '0\.4\.4'/);
+  assert.equal(pkg.version, "0.4.5");
+  assert.match(injector, /export const SKIN_VERSION = "0\.4\.5"/);
+  assert.match(launcher, /\$SkinVersion = '0\.4\.5'/);
 });
 
 test("项目版权以 HamizDev 为主且不保留旧上游声明", () => {

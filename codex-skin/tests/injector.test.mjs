@@ -64,7 +64,7 @@ test("主题与 payload 版本稳定且可切换", () => {
   assert.equal(isDriver("asuka"), true);
   assert.equal(isDriver("rei"), true);
   assert.equal(isDriver("system"), false);
-  assert.equal(SKIN_VERSION, "0.4.4");
+  assert.equal(SKIN_VERSION, "0.4.5");
   const asuka = loadPayload("asuka");
   const rei = loadPayload("rei");
   assert.equal(asuka.driver, "asuka");
@@ -291,6 +291,9 @@ test("EVA 主题素材包按清单校验并生成本地启动序列", () => {
       "eva-boot-select-glow",
       "eva-boot-bay-meta",
       "eva-boot-pilot-ghost",
+      "eva-boot-pilot-meta",
+      "PILOT / FIRST CHILD",
+      "NEURAL ID · 00",
       "chooseDriver",
       "setPointerCapture",
       "onPilotPointerMove",
@@ -349,6 +352,18 @@ test("EVA 主题素材包按清单校验并生成本地启动序列", () => {
       "is-leaving",
       "is-arriving",
       "data-boot-unit",
+      "eva-boot-handoff",
+      "eva-boot-gate",
+      "eva-boot-gate-label",
+      "eva-boot-gate-stripe",
+      "eva-boot-gate-lock",
+      "eva-boot-clearance",
+      "eva-boot-composer-frame",
+      "bootOptions.hatch !== false",
+      "leave({ hatch: true })",
+      "hatchLeft",
+      "hatchRight",
+      "hatchComplete",
     ]) {
       assert.ok(payload.bootSource.includes(fragment), `missing EVA boot contract: ${fragment}`);
     }
@@ -357,7 +372,7 @@ test("EVA 主题素材包按清单校验并生成本地启动序列", () => {
     assert.doesNotMatch(payload.bootSource, /document\.hasFocus/);
     assert.doesNotMatch(payload.bootSource, /later\(\(\) => setPhase\("emergency"\)/);
     assert.doesNotMatch(payload.bootSource, /phaseTimer/);
-    const leaveIndex = payload.bootSource.indexOf("const leave = () =>");
+    const leaveIndex = payload.bootSource.indexOf("const leave = (config = {}) =>");
     const maybeFinishIndex = payload.bootSource.indexOf("const maybeFinish = () =>");
     const chooseIndex = payload.bootSource.indexOf("const chooseDriver = (pilot) =>");
     const tickSyncIndex = payload.bootSource.indexOf("const tickSync = (now) =>");
@@ -516,7 +531,17 @@ test("皮肤 CSS 使用稳定选择器并禁用远程资源", () => {
     "@keyframes eva-boot-plug-roll",
     "transform: rotate(14deg)",
     ".eva-boot-pilot-face",
+    ".eva-boot-pilot-meta",
     ".eva-boot-ring-meter",
+    ".eva-boot-handoff",
+    ".eva-boot-gate",
+    ".eva-boot-gate-label",
+    ".eva-boot-gate-stripe",
+    ".eva-boot-gate-lock",
+    ".eva-boot-clearance",
+    ".eva-boot-composer-frame",
+    "@keyframes eva-boot-gate-left",
+    "@keyframes eva-boot-gate-right",
     "@media (max-width: 700px)",
     "@media (prefers-reduced-motion: reduce)",
   ]) {
@@ -558,6 +583,18 @@ test("皮肤 CSS 使用稳定选择器并禁用远程资源", () => {
   assert.match(
     evaBootCss,
     /:is\(\[data-phase="select"\], \[data-phase="sync"\]\) \.eva-boot-contour-ring\s*\{[\s\S]*?animation:\s*none\s*!important;/i,
+  );
+  assert.match(
+    evaBootCss,
+    /\.eva-boot-pilot-meta\s*\{[\s\S]*?position:\s*absolute;[\s\S]*?justify-content:\s*space-between;/i,
+  );
+  assert.match(
+    evaBootCss,
+    /--eva-boot-pilot-font:\s*"Songti TC"/,
+  );
+  assert.match(
+    evaBootCss,
+    /\.eva-boot-console-layer\s*\{[\s\S]*?--eva-boot-contour:\s*#d79557;/i,
   );
   assert.doesNotMatch(
     evaBootCss,
@@ -614,6 +651,7 @@ test("性能热路径保持合成友好且不强制布局", () => {
   assert.match(ui, /function refreshSkinMarkers\(\)/);
   assert.match(ui, /data-eva-queue-rail/);
   assert.match(ui, /data-eva-browser-rail/);
+  assert.match(ui, /data-eva-application-menu/);
   assert.match(ui, /function syncActivityMonitoring\(\)/);
   assert.match(ui, /options\.approvalVoice \|\| options\.completeVoice/);
   assert.match(injector, /const paintClock = \(node, time\) =>/);
@@ -632,7 +670,8 @@ test("应用内切换驾驶员不会启动开机动画", () => {
   assert.match(source, /setDriver/);
   assert.doesNotMatch(source, /eva-boot-select-layer/);
   assert.doesNotMatch(source, /data-eva-dropzone/);
-  assert.doesNotMatch(source, /eva-codex-skin-boot-launch/);
+  assert.doesNotMatch(source, /buildBootPackSource/);
+  assert.match(source, /removeItem\(bootLaunchKey\)/);
 });
 
 test("启动层在主文档稳定后、Codex 主界面探测前挂载", () => {
@@ -704,6 +743,16 @@ test("设置面板支持折叠浮层、自由拖动和四语言切换", () => {
     "startLeft",
     "clampPanelLeft",
     "clampPanelTop",
+    "hatch: true",
+    "clock: true",
+    "scanline: 0.3",
+    "hudScale: 1",
+    "eva-clock-hud",
+    "eva-config-action",
+    "dataset.evaSetting",
+    "aria-live",
+    "replayBoot",
+    "removeItem(bootLaunchKey)",
   ]) {
     assert.ok(js.includes(fragment) || css.includes(fragment), `missing panel contract: ${fragment}`);
   }
@@ -715,6 +764,14 @@ test("设置面板支持折叠浮层、自由拖动和四语言切换", () => {
   assert.match(css, /\.eva-config-group-toggle\s*\{/);
   assert.match(css, /\.eva-config-language\s*\{/);
   assert.match(css, /\.eva-config-panel\.is-dragging\s*\{/);
+  assert.match(css, /\.eva-clock-hud\s*\{/);
+  assert.match(css, /--eva-scan-strength/);
+  assert.match(css, /--eva-hud-scale/);
+  assert.match(css, /\.eva-config-action\s*\{/);
+  assert.match(
+    css,
+    /@media \(max-width: 760px\)[\s\S]*?\.has-config-open \.eva-settings-button\s*\{[\s\S]*?visibility:\s*hidden;/i,
+  );
 });
 
 test("输出速度 HUD 使用真实流式正文并标明估算", () => {
@@ -787,6 +844,21 @@ test("启动层四语言文案完成校对并同步更新同步页", () => {
     'on: "オン"',
     'off: "オフ"',
     "スライディングウィンドウ",
+    "機械艙門過渡",
+    "メカニカルハッチ",
+    "Mechanical hatch",
+    "常駐時鐘",
+    "常驻时钟",
+    "常駐クロック",
+    "Persistent clock",
+    "掃描線強度",
+    "扫描线强度",
+    "スキャンライン強度",
+    "Scanline strength",
+    "下次啟動重播",
+    "下次启动重播",
+    "次回起動時に再生",
+    "Replay next launch",
   ]) {
     assert.ok(js.includes(fragment), `missing localized settings copy: ${fragment}`);
   }
@@ -805,6 +877,13 @@ test("启动层四语言文案完成校对并同步更新同步页", () => {
     "ポートレートを左のエントリープラグへドラッグ、またはクリック",
     "Entry plug, pilot drop zone",
     "NERV pilot startup sequence",
+    "hatchLeft",
+    "hatchRight",
+    "hatchComplete",
+    "NERV / 插入栓系統 · 互鎖解除",
+    "A.T. 力場 · 通信通道開啟",
+    "NERV / ENTRY SYSTEM · INTERLOCK RELEASED",
+    "A.T. FIELD · COMMUNICATION CHANNEL OPEN",
     "boot.setAttribute(\"aria-label\", text(\"bootLabel\"))",
     "name.textContent = text(pilot === \"rei\" ? \"rei\" : \"asuka\")",
   ]) {
@@ -833,7 +912,10 @@ test("主题资源不包含角色图片或远程引用", () => {
 test("选择器合同保留稳定锚点", () => {
   const selectors = JSON.parse(fs.readFileSync(path.join(root, "selectors.json"), "utf8"));
   assert.equal(selectors.schema, "eva-codex-skin-selectors/1");
+  assert.equal(selectors.verifiedAgainst.codexVersion, "26.1111.2228.0");
+  assert.equal(selectors.verifiedAgainst.renderer, "Chromium 157.0.8103.78");
   assert.equal(selectors.selectors.sidebar, "aside.app-shell-left-panel");
+  assert.equal(selectors.selectors.applicationMenuBar, "[class*=\"ApplicationMenuTopBar-\"]");
   assert.equal(selectors.selectors.homeIcon, "[data-testid=\"home-icon\"]");
   assert.equal(selectors.selectors.tooltip, "[role=\"tooltip\"]");
   assert.equal(selectors.selectors.elevatedSurface, "[class*=\"bg-surface-elevated-secondary\"]");
@@ -879,6 +961,25 @@ test("选择器合同保留稳定锚点", () => {
   assert.equal(
     selectors.excludedTargets.avatarOverlay,
     "app://-/index.html?initialRoute=/avatar-overlay",
+  );
+});
+
+test("适配新版 Codex 应用菜单栏", () => {
+  const css = fs.readFileSync(path.join(root, "assets", "eva-skin.css"), "utf8");
+  const ui = fs.readFileSync(path.join(root, "assets", "skin-ui.js"), "utf8");
+  assert.match(ui, /applicationMenu\?\.setAttribute\("data-eva-application-menu"/);
+  assert.match(ui, /markedApplicationMenu\?\.removeAttribute\("data-eva-application-menu"\)/);
+  assert.match(
+    css,
+    /html\[data-eva-skin\] \[data-eva-application-menu\]\s*\{[\s\S]*?linear-gradient\([\s\S]*?var\(--eva-bg-soft\)/i,
+  );
+  assert.match(
+    css,
+    /\[data-eva-application-menu\][\s\S]*?\[role="menubar"\]/i,
+  );
+  assert.match(
+    css,
+    /\[data-eva-application-menu\][\s\S]*?:hover,[\s\S]*?:focus-visible\s*\{[\s\S]*?var\(--eva-accent\)/i,
   );
 });
 

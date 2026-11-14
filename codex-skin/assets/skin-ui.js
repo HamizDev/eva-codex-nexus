@@ -144,10 +144,12 @@ function installEvaSkinUi(config) {
   const media = config.media && typeof config.media === "object" ? config.media : {};
   const setDriver = typeof config.setDriver === "function" ? config.setDriver : null;
   const optionsKey = String(config.optionsKey || "eva-codex-skin-options-v1");
+  const bootLaunchKey = "eva-codex-skin-boot-launch";
   const welcomeConsumedKey = String(config.welcomeConsumedKey || "");
   const bootResultKey = String(config.bootResultKey || "");
   const defaults = Object.freeze({
     boot: true,
+    hatch: true,
     bootVoice: true,
     pickVoice: true,
     welcomeVoice: true,
@@ -156,6 +158,9 @@ function installEvaSkinUi(config) {
     typing: true,
     portrait: true,
     portraitStrength: 0.11,
+    clock: true,
+    scanline: 0.3,
+    hudScale: 1,
     tps: true,
     locale: "zh-Hant",
   });
@@ -199,6 +204,18 @@ function installEvaSkinUi(config) {
       portraitStrengthHint: "線稿背景透明度",
       tps: "輸出速度 HUD",
       tpsHint: "依串流回覆文字估算 token，以平滑視窗顯示即時、峰值與平均速度",
+      hatch: "機械艙門過渡",
+      hatchHint: "下次啟動的同步完成後播放雙側艙門開啟；跳過啟動時不播放",
+      clock: "常駐時鐘",
+      clockHint: "在右側顯示東京-III 本地時間",
+      scanline: "掃描線強度",
+      scanlineHint: "調整全介面掃描線透明度；設為 0 可關閉",
+      hudScale: "HUD 尺寸",
+      hudScaleHint: "調整常駐時鐘與輸出速度面板大小",
+      replayBoot: "下次啟動重播",
+      replayBootHint: "清除播放記錄，下次啟動時重新播放開機動畫",
+      replayBootAction: "安排重播",
+      replayBootDone: "已安排",
       previewBoot: "啟動語音",
       previewBootHint: "同步階段播放",
       previewPick: "選擇應答",
@@ -254,6 +271,18 @@ function installEvaSkinUi(config) {
       portraitStrengthHint: "线稿背景透明度",
       tps: "输出速度 HUD",
       tpsHint: "根据流式回复文字估算 token，以平滑窗口显示即时、峰值与平均速度",
+      hatch: "机械舱门过渡",
+      hatchHint: "下次启动的同步完成后播放双侧舱门开启；跳过启动时不播放",
+      clock: "常驻时钟",
+      clockHint: "在右侧显示东京-III 本地时间",
+      scanline: "扫描线强度",
+      scanlineHint: "调整全界面扫描线透明度；设为 0 可关闭",
+      hudScale: "HUD 尺寸",
+      hudScaleHint: "调整常驻时钟与输出速度面板大小",
+      replayBoot: "下次启动重播",
+      replayBootHint: "清除播放记录，下次启动时重新播放开机动画",
+      replayBootAction: "安排重播",
+      replayBootDone: "已安排",
       previewBoot: "启动语音",
       previewBootHint: "同步阶段播放",
       previewPick: "选择应答",
@@ -309,6 +338,18 @@ function installEvaSkinUi(config) {
       portraitStrengthHint: "線画背景の透明度",
       tps: "出力速度 HUD",
       tpsHint: "ストリーミング本文から token を推定し、平滑化した現在・ピーク・平均速度を表示",
+      hatch: "メカニカルハッチ",
+      hatchHint: "次回起動の同期完了後に左右のハッチを開放。スキップ時は再生しません",
+      clock: "常駐クロック",
+      clockHint: "右側に東京-III のローカル時刻を表示",
+      scanline: "スキャンライン強度",
+      scanlineHint: "画面全体の走査線の透明度を調整。0 で無効",
+      hudScale: "HUD サイズ",
+      hudScaleHint: "常駐クロックと出力速度パネルの大きさを調整",
+      replayBoot: "次回起動時に再生",
+      replayBootHint: "再生履歴を消去し、次回起動時にオープニングを再生",
+      replayBootAction: "再生を予約",
+      replayBootDone: "予約済み",
       previewBoot: "起動ボイス",
       previewBootHint: "同期中に再生",
       previewPick: "選択応答",
@@ -364,6 +405,18 @@ function installEvaSkinUi(config) {
       portraitStrengthHint: "Line-art background opacity",
       tps: "Output speed HUD",
       tpsHint: "Estimate tokens from streamed reply text with a smoothed rate window",
+      hatch: "Mechanical hatch",
+      hatchHint: "Open the twin hatches after sync on the next launch; skipped launches use a quick fade",
+      clock: "Persistent clock",
+      clockHint: "Show Tokyo-III local time on the right",
+      scanline: "Scanline strength",
+      scanlineHint: "Adjust interface scanline opacity; set to 0 to disable",
+      hudScale: "HUD scale",
+      hudScaleHint: "Resize the persistent clock and output speed panel",
+      replayBoot: "Replay next launch",
+      replayBootHint: "Clear the local launch record and replay the opening next time",
+      replayBootAction: "Schedule replay",
+      replayBootDone: "Scheduled",
       previewBoot: "Startup voice",
       previewBootHint: "Play during sync",
       previewPick: "Select response",
@@ -399,7 +452,11 @@ function installEvaSkinUi(config) {
   };
   const completionStableMs = 3000;
   const welcomeFreshMs = 30000;
-  const ranges = Object.freeze({ portraitStrength: [0.03, 0.28] });
+  const ranges = Object.freeze({
+    portraitStrength: [0.03, 0.28],
+    scanline: [0, 0.6],
+    hudScale: [0.8, 1.4],
+  });
   const audioLevels = Object.freeze({
     preview: 1,
     voice: 1,
@@ -426,6 +483,7 @@ function installEvaSkinUi(config) {
   const completionGate = createCompletionGate({ stableMs: completionStableMs });
   let markedBrowserRail = null;
   let markedBrowserSurface = null;
+  let markedApplicationMenu = null;
   let markedSummaryDialog = null;
   const markedQueueRails = new Set();
   const markedQueueCards = new Set();
@@ -483,6 +541,12 @@ function installEvaSkinUi(config) {
   portrait.setAttribute("aria-hidden", "true");
   overlay.appendChild(portrait);
 
+  const clockHud = document.createElement("div");
+  clockHud.className = "eva-clock-hud";
+  clockHud.setAttribute("aria-hidden", "true");
+  clockHud.innerHTML = "<span>TOKYO-III</span><b>--:--:--</b><small>LOCAL</small>";
+  overlay.appendChild(clockHud);
+
   const settingsButton = document.createElement("button");
   settingsButton.type = "button";
   settingsButton.className = "eva-settings-button";
@@ -531,11 +595,13 @@ function installEvaSkinUi(config) {
   const closeButton = panel.querySelector(".eva-config-close");
   const resetButton = panel.querySelector(".eva-config-reset");
   const panelHead = panel.querySelector(".eva-config-head");
+  const clockHudValue = clockHud.querySelector("b");
   const tpsValue = tpsHud.querySelector(".eva-tps-value");
   const tpsPeak = tpsHud.querySelector(".eva-tps-meta b");
   const tpsAverage = tpsHud.querySelectorAll(".eva-tps-meta b")[1];
   const tpsSpark = tpsHud.querySelector(".eva-tps-spark polyline");
   const controls = [];
+  const actionControls = [];
   const previewButtons = [];
   const groupNodes = [];
   const pilotButtons = new Map();
@@ -544,6 +610,7 @@ function installEvaSkinUi(config) {
   const packCommit = String(config.packCommit || "").trim().slice(0, 8);
   let openGroupKey = "groupPilot";
   let panelCloseTimer = null;
+  let clockHudTimer = null;
   let panelLeft = null;
   let panelTop = null;
   let dragState = null;
@@ -602,6 +669,7 @@ function installEvaSkinUi(config) {
   function addSwitch(group, key, label, hint, available = true) {
     const row = document.createElement("div");
     row.className = "eva-config-row";
+    row.dataset.evaSetting = key;
     const copy = document.createElement("div");
     copy.className = "eva-config-copy";
     const name = document.createElement("b");
@@ -629,6 +697,7 @@ function installEvaSkinUi(config) {
   function addRange(group, key, label, hint, available = true) {
     const row = document.createElement("div");
     row.className = "eva-config-row eva-config-range-row";
+    row.dataset.evaSetting = key;
     const copy = document.createElement("div");
     copy.className = "eva-config-copy";
     const name = document.createElement("b");
@@ -684,6 +753,49 @@ function installEvaSkinUi(config) {
       plus,
       available,
     });
+  }
+
+  function addAction(group, key, label, hint, action) {
+    const row = document.createElement("div");
+    row.className = "eva-config-row eva-config-action-row";
+    row.dataset.evaSetting = key;
+    const copy = document.createElement("div");
+    copy.className = "eva-config-copy";
+    const name = document.createElement("b");
+    name.textContent = t(label);
+    const detail = document.createElement("small");
+    detail.textContent = t(hint);
+    copy.append(name, detail);
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "eva-config-action";
+    button.textContent = t("replayBootAction");
+    button.setAttribute("aria-label", t(label));
+    button.setAttribute("aria-live", "polite");
+    const entry = {
+      key,
+      labelKey: label,
+      hintKey: hint,
+      name,
+      detail,
+      button,
+      done: false,
+      timer: null,
+    };
+    button.addEventListener("click", () => {
+      action();
+      entry.done = true;
+      button.textContent = t("replayBootDone");
+      if (entry.timer) clearTimeout(entry.timer);
+      entry.timer = setTimeout(() => {
+        entry.timer = null;
+        entry.done = false;
+        button.textContent = t("replayBootAction");
+      }, 2600);
+    });
+    row.append(copy, button);
+    group.content.appendChild(row);
+    actionControls.push(entry);
   }
 
   const pilotGroup = addGroup("groupPilot");
@@ -754,6 +866,21 @@ function installEvaSkinUi(config) {
     "boot",
     "bootHint",
   );
+  addSwitch(bootGroup, "hatch", "hatch", "hatchHint");
+  addAction(
+    bootGroup,
+    "replayBoot",
+    "replayBoot",
+    "replayBootHint",
+    () => {
+      options.boot = true;
+      saveOptions();
+      try {
+        localStorage.removeItem(bootLaunchKey);
+      } catch {}
+      refresh();
+    },
+  );
   addSwitch(bootGroup, "bootVoice", "bootVoice", "bootVoiceHint", hasBootVoice());
   addSwitch(bootGroup, "pickVoice", "pickVoice", "pickVoiceHint", hasPickVoice());
   addSwitch(bootGroup, "welcomeVoice", "welcomeVoice", "welcomeVoiceHint", hasWelcomeVoice());
@@ -801,6 +928,9 @@ function installEvaSkinUi(config) {
   const visualGroup = addGroup("groupVisual");
   addSwitch(visualGroup, "portrait", "portrait", "portraitHint", hasPortrait());
   addRange(visualGroup, "portraitStrength", "portraitStrength", "portraitStrengthHint", hasPortrait());
+  addSwitch(visualGroup, "clock", "clock", "clockHint");
+  addRange(visualGroup, "scanline", "scanline", "scanlineHint");
+  addRange(visualGroup, "hudScale", "hudScale", "hudScaleHint");
   addSwitch(visualGroup, "tps", "tps", "tpsHint");
 
   function applyLocale() {
@@ -833,6 +963,13 @@ function installEvaSkinUi(config) {
         control.plus.setAttribute("aria-label", t("increase", { label }));
       }
     }
+    for (const action of actionControls) {
+      const label = t(action.labelKey);
+      action.name.textContent = label;
+      action.detail.textContent = t(action.hintKey);
+      action.button.textContent = t(action.done ? "replayBootDone" : "replayBootAction");
+      action.button.setAttribute("aria-label", label);
+    }
     previewButtons.forEach((button, index) => {
       const spec = previewSpecs[index];
       button.innerHTML = `<b>${t(spec.labelKey)}</b><small>${t(spec.detailKey)}</small>`;
@@ -848,6 +985,7 @@ function installEvaSkinUi(config) {
     }
     tpsHud.setAttribute("aria-label", t("tpsAria"));
     tpsHud.title = t("tpsTitle");
+    clockHud.title = t("clockHint");
     refresh();
     if (panelOpen && panelLeft !== null && panelTop !== null) {
       requestAnimationFrame(() => {
@@ -1172,6 +1310,34 @@ function installEvaSkinUi(config) {
     );
   }
 
+  function paintClockHud() {
+    const now = new Date();
+    const pad = (value) => String(value).padStart(2, "0");
+    const next = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+    if (clockHudValue.textContent !== next) clockHudValue.textContent = next;
+  }
+
+  function startClockHud() {
+    paintClockHud();
+    if (clockHudTimer) return;
+    clockHudTimer = setInterval(() => {
+      if (document.visibilityState !== "hidden") paintClockHud();
+    }, 1000);
+  }
+
+  function stopClockHud() {
+    if (clockHudTimer) clearInterval(clockHudTimer);
+    clockHudTimer = null;
+  }
+
+  function applyAppearance() {
+    root.dataset.evaClockHud = options.clock ? "on" : "off";
+    root.style.setProperty("--eva-scan-strength", String(options.scanline));
+    root.style.setProperty("--eva-hud-scale", String(options.hudScale));
+    if (options.clock) startClockHud();
+    else stopClockHud();
+  }
+
   function syncDriver(driver, playResponse = false) {
     if (driver !== "asuka" && driver !== "rei") return;
     const changed = currentDriver !== driver;
@@ -1188,6 +1354,7 @@ function installEvaSkinUi(config) {
 
   function refresh() {
     applyPortrait();
+    applyAppearance();
     refreshSkinMarkers();
     syncActivityMonitoring();
     for (const control of controls) {
@@ -1296,6 +1463,11 @@ function installEvaSkinUi(config) {
     event.preventDefault();
     event.stopPropagation();
     Object.assign(options, defaults);
+    for (const action of actionControls) {
+      if (action.timer) clearTimeout(action.timer);
+      action.timer = null;
+      action.done = false;
+    }
     saveOptions();
     applyLocale();
   };
@@ -1450,6 +1622,14 @@ function installEvaSkinUi(config) {
 
   function refreshSkinMarkers() {
     if (disposed) return;
+    const applicationMenu = document.querySelector(
+      '[class*="ApplicationMenuTopBar-"]',
+    ) || null;
+    if (markedApplicationMenu !== applicationMenu) {
+      markedApplicationMenu?.removeAttribute("data-eva-application-menu");
+      applicationMenu?.setAttribute("data-eva-application-menu", "");
+      markedApplicationMenu = applicationMenu;
+    }
     const browserInput = document.querySelector("[data-browser-sidebar-address-input]");
     const browserRail = browserInput?.closest(
       'aside[data-app-shell-focus-area="right-panel"]',
@@ -1746,14 +1926,20 @@ function installEvaSkinUi(config) {
     stopAudio();
     stopTyping();
     stopTps();
+    stopClockHud();
     stopActivityMonitor();
     if (markerPollTimer) clearInterval(markerPollTimer);
     if (panelCloseTimer) clearTimeout(panelCloseTimer);
+    for (const action of actionControls) {
+      if (action.timer) clearTimeout(action.timer);
+      action.timer = null;
+    }
     markerPollTimer = null;
     panelCloseTimer = null;
     dragState = null;
     markedBrowserRail?.removeAttribute("data-eva-browser-rail");
     markedBrowserSurface?.removeAttribute("data-eva-browser-surface");
+    markedApplicationMenu?.removeAttribute("data-eva-application-menu");
     markedSummaryDialog?.removeAttribute("data-eva-summary-dialog");
     for (const node of markedQueueRails) node.removeAttribute("data-eva-queue-rail");
     for (const node of markedQueueCards) node.removeAttribute("data-eva-queue-card");
@@ -1776,12 +1962,16 @@ function installEvaSkinUi(config) {
     panelHead.removeEventListener("pointercancel", onDragEnd);
     panel.remove();
     settingsButton.remove();
+    clockHud.remove();
     portrait.remove();
     tpsHud.remove();
     try {
       delete root.dataset.evaPortrait;
+      delete root.dataset.evaClockHud;
       root.style.removeProperty("--eva-portrait-image");
       root.style.removeProperty("--eva-portrait-strength");
+      root.style.removeProperty("--eva-scan-strength");
+      root.style.removeProperty("--eva-hud-scale");
     } catch {}
   };
 

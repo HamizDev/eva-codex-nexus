@@ -13,6 +13,7 @@
   --eva-boot-wash: rgba(241, 58, 80, 0.12);
   --eva-boot-glow: rgba(241, 58, 80, 0.32);
   --eva-boot-progress: 0;
+  --eva-boot-pilot-font: "Songti TC", "Songti SC", "Noto Serif CJK TC", "Noto Serif CJK SC", "Source Han Serif TC", "PMingLiU", "SimSun", serif;
   --boot-line: var(--eva-boot-line);
   --boot-accent: var(--eva-boot-accent);
   --boot-dim: var(--eva-boot-dim);
@@ -87,6 +88,7 @@
   position: absolute;
   inset: 0;
   z-index: 0;
+  --eva-boot-contour: #d79557;
   overflow: hidden;
   opacity: 0;
   visibility: hidden;
@@ -101,6 +103,10 @@
 #eva-codex-skin-boot:is([data-phase="select"], [data-phase="sync"]) .eva-boot-atmosphere {
   opacity: 1;
   visibility: visible;
+}
+
+#eva-codex-skin-boot .eva-boot-console-layer {
+  --eva-boot-contour: #d79557;
 }
 
 #eva-codex-skin-boot[data-phase="select"] :is(
@@ -150,7 +156,7 @@
   position: absolute;
   inset: -16%;
   color: var(--eva-boot-contour);
-  opacity: 0.34;
+  opacity: 0.48;
   filter: drop-shadow(0 0 10px color-mix(in srgb, var(--eva-boot-contour) 14%, transparent));
   transform: rotate(-4deg);
   animation: eva-boot-contour-drift 24s ease-in-out infinite alternate;
@@ -159,6 +165,7 @@
 #eva-codex-skin-boot:is([data-phase="select"], [data-phase="sync"]) .eva-boot-contour-map {
   filter: none;
   animation: none;
+  opacity: 0.82;
 }
 
 #eva-codex-skin-boot:is([data-phase="select"], [data-phase="sync"]) .eva-boot-contour-ring {
@@ -592,8 +599,8 @@
 #eva-codex-skin-boot .eva-boot-title {
   margin: 6px 0 0;
   color: var(--eva-boot-ink) !important;
-  font: 500 clamp(22px, 2.8vw, 42px)/1.2 "Microsoft YaHei UI", "Yu Gothic UI", sans-serif;
-  letter-spacing: 0.08em;
+  font: 500 clamp(23px, 3vw, 46px)/1.18 var(--eva-boot-pilot-font);
+  letter-spacing: 0.06em;
 }
 
 #eva-codex-skin-boot .eva-boot-hint {
@@ -1018,11 +1025,13 @@
   gap: clamp(12px, 2.4vh, 28px);
   padding: clamp(16px, 3vh, 34px) clamp(20px, 4vw, 68px) clamp(12px, 2.4vh, 26px);
   background:
+    radial-gradient(ellipse at 9% 7%, color-mix(in srgb, var(--eva-boot-contour) 10%, transparent), transparent 34%),
+    radial-gradient(ellipse at 96% 96%, color-mix(in srgb, var(--eva-boot-contour) 8%, transparent), transparent 38%),
     linear-gradient(90deg, transparent 0 49.92%, var(--eva-boot-grid) 50%, transparent 50.08%),
     repeating-linear-gradient(0deg, transparent 0 31px, var(--eva-boot-grid) 32px),
     radial-gradient(ellipse at 8% 18%, color-mix(in srgb, var(--eva-boot-accent) 11%, transparent), transparent 56%),
     radial-gradient(ellipse at 100% 100%, color-mix(in srgb, var(--eva-boot-hot) 8%, transparent), transparent 45%),
-    color-mix(in srgb, var(--eva-boot-surface) 58%, transparent);
+    color-mix(in srgb, var(--eva-boot-surface) 50%, transparent);
 }
 
 #eva-codex-skin-boot .eva-boot-console-layer::before {
@@ -1277,7 +1286,7 @@
   background:
     repeating-linear-gradient(90deg, transparent 0 47px, var(--eva-boot-grid) 48px),
     repeating-linear-gradient(0deg, transparent 0 47px, var(--eva-boot-grid) 48px),
-    color-mix(in srgb, var(--eva-boot-panel) 88%, transparent);
+    color-mix(in srgb, var(--eva-boot-panel) 80%, transparent);
 }
 
 #eva-codex-skin-boot .eva-boot-bay::before,
@@ -1391,10 +1400,10 @@
   align-items: center;
   gap: clamp(12px, 2.2vw, 28px);
   min-height: 0;
-  padding: clamp(10px, 1.8vh, 18px) clamp(12px, 2vw, 24px);
+  padding: clamp(14px, 2vh, 20px) clamp(14px, 2.2vw, 26px) clamp(10px, 1.8vh, 18px);
   border: 1px solid var(--eva-boot-line);
   border-left: 3px solid var(--eva-boot-accent);
-  background: color-mix(in srgb, var(--eva-boot-panel) 92%, transparent);
+  background: color-mix(in srgb, var(--eva-boot-panel) 84%, transparent);
   overflow: hidden;
   isolation: isolate;
 }
@@ -1411,6 +1420,23 @@
   background-repeat: no-repeat;
   background-size: contain;
   opacity: 0.94;
+}
+
+#eva-codex-skin-boot .eva-boot-pilot-meta {
+  position: absolute;
+  z-index: 3;
+  inset: 10px 14px auto;
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  color: var(--eva-boot-dim);
+  font: 7px/1.4 "Bahnschrift", monospace;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+#eva-codex-skin-boot .eva-boot-pilot-meta span:first-child {
+  color: var(--eva-boot-accent);
 }
 
 #eva-codex-skin-boot .eva-boot-pilot-copy {
@@ -1435,15 +1461,15 @@
 #eva-codex-skin-boot .eva-boot-unit {
   display: block;
   color: var(--eva-boot-accent);
-  font: 700 clamp(28px, 4.4vw, 72px)/0.9 "Bahnschrift", monospace;
+  font: 700 clamp(30px, 4.8vw, 78px)/0.88 "Bahnschrift", monospace;
   letter-spacing: -0.06em;
 }
 
 #eva-codex-skin-boot .eva-boot-pilot-copy h1 {
-  margin: 8px 0 0;
+  margin: 9px 0 0;
   color: var(--eva-boot-ink);
-  font: 500 clamp(22px, 2.8vw, 40px)/1.2 "Microsoft YaHei UI", sans-serif;
-  letter-spacing: 0.08em;
+  font: 500 clamp(25px, 3.1vw, 46px)/1.14 var(--eva-boot-pilot-font);
+  letter-spacing: 0.055em;
 }
 
 #eva-codex-skin-boot .eva-boot-pilot-copy p {
@@ -1471,14 +1497,14 @@
   border: 1px solid var(--eva-boot-line);
   background:
     linear-gradient(135deg, color-mix(in srgb, var(--eva-boot-accent) 6%, transparent), transparent 58%),
-    color-mix(in srgb, var(--eva-boot-panel-2) 92%, transparent);
+    color-mix(in srgb, var(--eva-boot-panel-2) 82%, transparent);
 }
 
 #eva-codex-skin-boot .eva-boot-sync-ring {
   position: relative;
   display: grid;
   place-items: center;
-  width: min(100%, 190px);
+  width: min(100%, 208px);
   aspect-ratio: 1;
   justify-self: center;
   color: var(--eva-boot-accent);
@@ -1503,7 +1529,7 @@
 #eva-codex-skin-boot .eva-boot-percent {
   position: relative;
   color: var(--eva-boot-ink);
-  font: 500 clamp(24px, 3.6vw, 48px)/1 "Bahnschrift", monospace;
+  font: 500 clamp(28px, 4vw, 56px)/1 "Bahnschrift", monospace;
 }
 
 #eva-codex-skin-boot .eva-boot-sync-ring small {
@@ -1540,8 +1566,8 @@
 #eva-codex-skin-boot .eva-boot-sync-copy h2 {
   margin: 8px 0 0;
   color: var(--eva-boot-ink);
-  font: 500 clamp(24px, 3vw, 44px)/1.2 "Microsoft YaHei UI", sans-serif;
-  letter-spacing: 0.09em;
+  font: 500 clamp(27px, 3.3vw, 50px)/1.14 var(--eva-boot-pilot-font);
+  letter-spacing: 0.06em;
 }
 
 #eva-codex-skin-boot .eva-boot-sync-copy p {
@@ -1631,6 +1657,7 @@
 #eva-codex-skin-boot .eva-boot-systems span {
   padding: 7px 9px;
   border: 1px solid var(--eva-boot-line);
+  background: color-mix(in srgb, var(--eva-boot-panel) 48%, transparent);
   color: var(--eva-boot-dim);
   font: 7px/1.4 "Bahnschrift", monospace;
   letter-spacing: 0.08em;
@@ -1752,6 +1779,273 @@
 
 #eva-codex-skin-boot .eva-boot-voice {
   display: none;
+}
+
+#eva-codex-skin-boot.is-hatching {
+  opacity: 1;
+  visibility: visible;
+  background: transparent !important;
+}
+
+#eva-codex-skin-boot[data-phase="handoff"] :is(
+  .eva-boot-atmosphere,
+  .eva-boot-intro-layer,
+  .eva-boot-alert-layer,
+  .eva-boot-select-layer,
+  .eva-boot-console-layer,
+  .eva-boot-sound,
+  .eva-boot-skip
+) {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+#eva-codex-skin-boot .eva-boot-handoff {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+#eva-codex-skin-boot .eva-boot-gate {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50.2%;
+  overflow: hidden;
+  contain: strict;
+  color: var(--eva-boot-accent);
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--eva-boot-accent) 5%, transparent),
+      transparent 16% 84%,
+      color-mix(in srgb, var(--eva-boot-accent) 6%, transparent)
+    ),
+    repeating-linear-gradient(
+      180deg,
+      transparent 0 58px,
+      color-mix(in srgb, var(--eva-boot-accent) 8%, transparent) 58px 59px,
+      transparent 59px 60px
+    ),
+    var(--eva-boot-surface);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--eva-boot-accent) 14%, transparent),
+    inset 0 0 88px color-mix(in srgb, var(--eva-boot-accent) 7%, transparent);
+  will-change: transform;
+}
+
+#eva-codex-skin-boot .eva-boot-gate::before {
+  content: "";
+  position: absolute;
+  inset: 20px;
+  border: 1px solid color-mix(in srgb, var(--eva-boot-accent) 42%, transparent);
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0 18%,
+      color-mix(in srgb, var(--eva-boot-accent) 5%, transparent) 18% 18.3%,
+      transparent 18.3% 81.7%,
+      color-mix(in srgb, var(--eva-boot-accent) 5%, transparent) 81.7% 82%,
+      transparent 82%
+    ),
+    repeating-linear-gradient(
+      135deg,
+      transparent 0 18px,
+      color-mix(in srgb, var(--eva-boot-accent) 3%, transparent) 18px 19px
+    );
+  box-shadow:
+    inset 0 0 0 7px color-mix(in srgb, var(--eva-boot-surface) 82%, transparent),
+    inset 0 0 0 8px color-mix(in srgb, var(--eva-boot-accent) 12%, transparent);
+}
+
+#eva-codex-skin-boot .eva-boot-gate::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  opacity: 0.72;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      var(--eva-boot-accent) 0 12px,
+      transparent 12px 20px
+    );
+}
+
+#eva-codex-skin-boot .eva-boot-gate.left {
+  left: 0;
+  border-right: 2px solid var(--eva-boot-accent);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--eva-boot-accent) 14%, transparent),
+    inset 0 0 88px color-mix(in srgb, var(--eva-boot-accent) 7%, transparent),
+    10px 0 34px color-mix(in srgb, var(--eva-boot-accent) 10%, transparent);
+  animation: eva-boot-gate-left 1.6s cubic-bezier(0.65, 0, 0.2, 1) both;
+}
+
+#eva-codex-skin-boot .eva-boot-gate.right {
+  right: 0;
+  border-left: 2px solid var(--eva-boot-accent);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--eva-boot-accent) 14%, transparent),
+    inset 0 0 88px color-mix(in srgb, var(--eva-boot-accent) 7%, transparent),
+    -10px 0 34px color-mix(in srgb, var(--eva-boot-accent) 10%, transparent);
+  animation: eva-boot-gate-right 1.6s cubic-bezier(0.65, 0, 0.2, 1) both;
+}
+
+#eva-codex-skin-boot .eva-boot-gate.left::after {
+  right: 10px;
+}
+
+#eva-codex-skin-boot .eva-boot-gate.right::after {
+  left: 10px;
+}
+
+#eva-codex-skin-boot .eva-boot-gate-label {
+  position: absolute;
+  top: 50%;
+  z-index: 1;
+  padding: 10px 6px;
+  color: var(--eva-boot-accent);
+  background: color-mix(in srgb, var(--eva-boot-surface) 82%, transparent);
+  border-block: 1px solid color-mix(in srgb, var(--eva-boot-accent) 30%, transparent);
+  font: 9px/1 ui-monospace, "Cascadia Mono", monospace;
+  letter-spacing: 0.2em;
+  text-shadow: 0 0 10px color-mix(in srgb, var(--eva-boot-accent) 28%, transparent);
+  writing-mode: vertical-rl;
+}
+
+#eva-codex-skin-boot .eva-boot-gate.left .eva-boot-gate-label {
+  right: 32px;
+}
+
+#eva-codex-skin-boot .eva-boot-gate.right .eva-boot-gate-label {
+  left: 32px;
+}
+
+#eva-codex-skin-boot .eva-boot-gate-stripe {
+  position: absolute;
+  right: 20px;
+  bottom: 22px;
+  left: 20px;
+  height: 8px;
+  opacity: 0.58;
+  background:
+    repeating-linear-gradient(
+      135deg,
+      var(--eva-boot-accent) 0 9px,
+      transparent 9px 17px
+    );
+}
+
+#eva-codex-skin-boot .eva-boot-gate-lock {
+  position: absolute;
+  top: 50%;
+  width: 13px;
+  height: 54px;
+  margin-top: -27px;
+  border-block: 1px solid var(--eva-boot-accent);
+  background:
+    linear-gradient(
+      180deg,
+      transparent 0 18%,
+      var(--eva-boot-accent) 18% 22%,
+      transparent 22% 78%,
+      var(--eva-boot-accent) 78% 82%,
+      transparent 82%
+    );
+  opacity: 0.82;
+}
+
+#eva-codex-skin-boot .eva-boot-gate.left .eva-boot-gate-lock {
+  right: 18px;
+  border-left: 1px solid var(--eva-boot-accent);
+}
+
+#eva-codex-skin-boot .eva-boot-gate.right .eva-boot-gate-lock {
+  left: 18px;
+  border-right: 1px solid var(--eva-boot-accent);
+}
+
+#eva-codex-skin-boot .eva-boot-clearance {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  top: 50%;
+  padding: 16px 30px 15px;
+  transform: translate(-50%, -50%);
+  border-block: 1px solid color-mix(in srgb, var(--eva-boot-accent) 72%, transparent);
+  color: var(--eva-boot-accent);
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--eva-boot-accent) 10%, var(--eva-boot-surface)),
+      var(--eva-boot-surface) 18% 82%,
+      color-mix(in srgb, var(--eva-boot-accent) 10%, var(--eva-boot-surface))
+    ),
+    var(--eva-boot-surface);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--eva-boot-accent) 14%, transparent),
+    0 18px 46px color-mix(in srgb, var(--eva-boot-accent) 12%, transparent);
+  text-align: center;
+  white-space: nowrap;
+  animation: eva-boot-clearance 1.6s ease-out both;
+}
+
+#eva-codex-skin-boot .eva-boot-clearance b {
+  display: block;
+  color: var(--eva-boot-accent);
+  font: 600 clamp(20px, 2.2vw, 34px)/1.4 var(--eva-boot-pilot-font);
+  letter-spacing: 0.2em;
+  text-shadow:
+    0 0 12px color-mix(in srgb, var(--eva-boot-accent) 22%, transparent),
+    0 0 28px color-mix(in srgb, var(--eva-boot-accent) 12%, transparent);
+}
+
+#eva-codex-skin-boot .eva-boot-clearance small {
+  color: color-mix(in srgb, var(--eva-boot-accent) 78%, var(--eva-boot-ink));
+  font: 8px/1.7 ui-monospace, "Cascadia Mono", monospace;
+  letter-spacing: 0.18em;
+}
+
+#eva-codex-skin-boot .eva-boot-composer-frame {
+  position: fixed;
+  z-index: 6;
+  border: 1px solid var(--eva-boot-accent);
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--eva-boot-accent) 7%, transparent),
+      transparent 42%,
+      color-mix(in srgb, var(--eva-boot-accent) 5%, transparent)
+    );
+  pointer-events: none;
+  animation: eva-boot-composer-arrival 1.6s ease-out both;
+}
+
+@keyframes eva-boot-gate-left {
+  0%, 14% { transform: translate3d(0, 0, 0); }
+  90%, 100% { transform: translate3d(-102%, 0, 0); }
+}
+
+@keyframes eva-boot-gate-right {
+  0%, 14% { transform: translate3d(0, 0, 0); }
+  90%, 100% { transform: translate3d(102%, 0, 0); }
+}
+
+@keyframes eva-boot-clearance {
+  0% { opacity: 0; }
+  12%, 62% { opacity: 1; }
+  86%, 100% { opacity: 0; }
+}
+
+@keyframes eva-boot-composer-arrival {
+  0%, 58% { opacity: 0; }
+  78% { opacity: 0.86; }
+  100% { opacity: 0; }
 }
 
 @keyframes eva-boot-plug-in {
@@ -2007,6 +2301,12 @@
     gap: 8px;
     padding: 8px;
   }
+  #eva-codex-skin-boot .eva-boot-pilot-meta {
+    inset: 5px 8px auto;
+    gap: 8px;
+    font-size: 5.5px;
+    letter-spacing: 0.1em;
+  }
   #eva-codex-skin-boot .eva-boot-pilot-face {
     width: 58px;
     height: 58px;
@@ -2149,6 +2449,10 @@
   }
   #eva-codex-skin-boot .eva-boot-pilot {
     padding-block: 6px;
+  }
+  #eva-codex-skin-boot .eva-boot-pilot-meta {
+    top: 4px;
+    font-size: 5px;
   }
   #eva-codex-skin-boot .eva-boot-pilot-face {
     width: 56px;
