@@ -1,17 +1,17 @@
 {
   "schema": "eva-codex-skin-selectors/1",
   "verifiedAgainst": {
-    "codexVersion": "26.1111.2228.0",
+    "codexVersion": "26.1117.3838.0",
     "platform": "windows",
-    "renderer": "Chromium 157.0.8103.78",
-    "date": "2026-11-14",
-    "note": "只使用稳定属性、语义标签和 CSS Module 前缀，不匹配完整 hash。"
+    "renderer": "Chromium 158.0.8127.37",
+    "date": "2026-11-20",
+    "note": "已在 26.1117.3838.0 的 app.asar 中核对稳定属性与语义标签；顶部菜单改用 role=menubar 语义锚点，只使用稳定选择器，不匹配完整 hash。"
   },
   "selectors": {
     "shellMain": "main:is(.main-surface, [data-app-shell-main-surface], [class*=\"_MainContentSurface_\"]), main",
     "sidebar": "aside.app-shell-left-panel",
-    "header": "header:is(.app-header-tint, [data-app-shell-header-edge-scroll], [class*=\"_Header_\"])",
-    "applicationMenuBar": "[class*=\"ApplicationMenuTopBar-\"]",
+    "header": "header:is(.app-header-tint, .draggable, [data-app-shell-header-edge-scroll], [class*=\"_Header_\"])",
+    "applicationMenuBar": "[role=\"menubar\"], [class*=\"ApplicationMenuTopBar-\"]",
     "homeIcon": "[data-testid=\"home-icon\"]",
     "homeRoute": "[role=\"main\"]:has([data-testid=\"home-icon\"]), [role=\"main\"]",
     "composer": ":is(.composer-surface-chrome, [class*=\"_ComposerLayoutRoot_\"], [data-composer-surface-variant][data-composer-radius-variant])",

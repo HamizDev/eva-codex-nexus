@@ -1622,9 +1622,15 @@ function installEvaSkinUi(config) {
 
   function refreshSkinMarkers() {
     if (disposed) return;
-    const applicationMenu = document.querySelector(
-      '[class*="ApplicationMenuTopBar-"]',
-    ) || null;
+    const applicationMenuBar = document.querySelector(
+      '[role="menubar"], [class*="ApplicationMenuTopBar-"]',
+    );
+    const applicationMenu = applicationMenuBar?.closest(
+      "header, [class*='h-toolbar-sm']",
+    ) ||
+      applicationMenuBar?.parentElement ||
+      applicationMenuBar ||
+      null;
     if (markedApplicationMenu !== applicationMenu) {
       markedApplicationMenu?.removeAttribute("data-eva-application-menu");
       applicationMenu?.setAttribute("data-eva-application-menu", "");

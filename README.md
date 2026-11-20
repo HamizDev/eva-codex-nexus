@@ -9,18 +9,18 @@
 为**官方 Codex 桌面客户端**打造的 EVA 双角色皮肤，不是另做一个 Codex 工作台。<br />
 明日香的红与黑，绫波丽的白与蓝；侧栏、项目、会话、输入框、审批与快捷键仍保持 Codex 原生。
 
-[![Release](https://img.shields.io/badge/release-v0.4.5-b62026)](https://github.com/HamizDev/eva-codex-nexus/tree/v0.4.5) [![License](https://img.shields.io/badge/code-MIT-176b91)](LICENSE) [![Platform](https://img.shields.io/badge/platform-Windows-236c9d)](#环境要求)
+[![Release](https://img.shields.io/badge/release-v0.4.7-b62026)](https://github.com/HamizDev/eva-codex-nexus/tree/v0.4.7) [![License](https://img.shields.io/badge/code-MIT-176b91)](LICENSE) [![Platform](https://img.shields.io/badge/platform-Windows-236c9d)](#环境要求)
 
-[**下载最新版本**](https://github.com/HamizDev/eva-codex-nexus/archive/refs/tags/v0.4.5.zip) · [安装](#安装) · [使用流程](#使用流程) · [启动动画](#eva-启动素材包) · [更新日志](CHANGELOG.md) · [问题反馈](https://github.com/HamizDev/eva-codex-nexus/issues)
+[**下载最新版本**](https://github.com/HamizDev/eva-codex-nexus/archive/refs/tags/v0.4.7.zip) · [安装](#安装) · [使用流程](#使用流程) · [启动动画](#eva-启动素材包) · [更新日志](CHANGELOG.md) · [问题反馈](https://github.com/HamizDev/eva-codex-nexus/issues)
 
-`eva-codex-nexus` · 当前版本 **v0.4.5（开发预览）**<br />
-构建与验证基线：`OpenAI.Codex 26.1111.2228.0` · Chromium `157.0.8103.78`
+`eva-codex-nexus` · 当前版本 **v0.4.7（开发预览）**<br />
+构建与验证基线：`OpenAI.Codex 26.1117.3838.0` · Chromium `158.0.8127.37`
 
 </div>
 
 > 非官方项目，与 OpenAI、Studio Khara、Gainax 及相关权利方均无关联。
 
-从 v0.1.0 开始，默认入口启动的是**你电脑上已安装的官方 Codex**。侧栏、项目、会话、输入框、审批、菜单和快捷键仍然是 Codex 原生的，只额外叠加 EVA 的配色、线框和装饰层。v0.2.0 增加了无控制台启动、官方 Codex 图标的桌面快捷方式，以及可选的 EVA 主题素材包；v0.2.1 修复了 Windows PowerShell 5.1 下 CDP 目标列表误判、导致启动器拒绝注入的问题；v0.2.2 补齐了侧栏悬浮说明、改动汇总卡片、文件变更提示、用户气泡和发送按钮的面板配色；v0.3.0 增加应用内明日香/绫波丽切换、排队消息导轨适配，并完成真实窗口缩放验证；v0.3.1 修复用户消息气泡对比度，适配内置浏览器的标签、导航、地址栏、导入横幅和工具卡片，并在浏览器打开时自动收起驾驶员切换条；v0.3.2 适配右上角摘要面板的标题、分组线、文件行、缩略图和操作状态；v0.4.0 把角色立绘、选择语音、欢迎语音、审核/完成提醒和打字音接入本地媒体包，新增两类自动提醒开关、`表示設定` 面板、立绘透明度、主题内切换与完整媒体开关；v0.4.1 增加首次启动的驾驶员选择/拖放、修复启动层注入时机与完成音误播，并移除旧独立工作台和相关依赖；v0.4.2 将公开素材命名统一为 EVA Theme；v0.4.3 将设置面板改为可折叠的浮动面板，支持自由拖动、简繁日英四语言即时切换和估算输出速度 HUD；v0.4.5 适配官方 Codex 新版应用菜单栏，并同步验证新的 Appx 与 Chromium 基线。
+从 v0.1.0 开始，默认入口启动的是**你电脑上已安装的官方 Codex**。侧栏、项目、会话、输入框、审批、菜单和快捷键仍然是 Codex 原生的，只额外叠加 EVA 的配色、线框和装饰层。v0.2.0 增加了无控制台启动、官方 Codex 图标的桌面快捷方式，以及可选的 EVA 主题素材包；v0.2.1 修复了 Windows PowerShell 5.1 下 CDP 目标列表误判、导致启动器拒绝注入的问题；v0.2.2 补齐了侧栏悬浮说明、改动汇总卡片、文件变更提示、用户气泡和发送按钮的面板配色；v0.3.0 增加应用内明日香/绫波丽切换、排队消息导轨适配，并完成真实窗口缩放验证；v0.3.1 修复用户消息气泡对比度，适配内置浏览器的标签、导航、地址栏、导入横幅和工具卡片，并在浏览器打开时自动收起驾驶员切换条；v0.3.2 适配右上角摘要面板的标题、分组线、文件行、缩略图和操作状态；v0.4.0 把角色立绘、选择语音、欢迎语音、审核/完成提醒和打字音接入本地媒体包，新增两类自动提醒开关、`表示設定` 面板、立绘透明度、主题内切换与完整媒体开关；v0.4.1 增加首次启动的驾驶员选择/拖放、修复启动层注入时机与完成音误播，并移除旧独立工作台和相关依赖；v0.4.2 将公开素材命名统一为 EVA Theme；v0.4.3 将设置面板改为可折叠的浮动面板，支持自由拖动、简繁日英四语言即时切换和估算输出速度 HUD；v0.4.5 适配官方 Codex 新版应用菜单栏，并同步验证新的 Appx 与 Chromium 基线；v0.4.6 适配 `26.1111.9664.0`，改用 Window Controls Overlay 的动态标题栏区域，修复窗口缩放后右上角原生窗口按钮承托层错位；v0.4.7 适配 `26.1117.3838.0` 的语义化顶部菜单结构，移除对已消失的 `ApplicationMenuTopBar-` 类名的单点依赖。
 
 ## 安装
 
@@ -55,7 +55,7 @@
    node codex-skin\injector.mjs --verify --port 9345
    ```
 
-   返回 `installed: true`、`pass: true`、`version: "0.4.5"` 和 `driver`（当前驾驶员），即表示注入成功。若 `pass: false`，先查看日志，不要继续重启或修改官方客户端文件。
+   返回 `installed: true`、`pass: true`、`version: "0.4.7"` 和 `driver`（当前驾驶员），即表示注入成功。若 `pass: false`，先查看日志，不要继续重启或修改官方客户端文件。
 
 ### 交给 AI 安装
 
@@ -135,12 +135,12 @@ Import-EVA-Theme.cmd
 
 | 项目 | 本机构建/验证值 |
 | --- | --- |
-| 皮肤版本 | `0.4.5` |
-| 构建/验证日期 | `2026-11-14` |
+| 皮肤版本 | `0.4.7` |
+| 构建/验证日期 | `2026-11-20` |
 | EVA 素材快照 | `0.51.2` / `f8b96381ceda724c58e79ec375e0dfe08d244349`，20 个文件、`11,141,369` 字节 |
-| 官方 Codex Appx | `OpenAI.Codex 26.1111.2228.0` |
-| Codex 包全名 | `OpenAI.Codex_26.1111.2228.0_x64__2p2nqsd0c76g0` |
-| Renderer | Chromium `157.0.8103.78`，V8 `15.7.112.43` |
+| 官方 Codex Appx | `OpenAI.Codex 26.1117.3838.0` |
+| Codex 包全名 | `OpenAI.Codex_26.1117.3838.0_x64__2p2nqsd0c76g0` |
+| Renderer | Chromium `158.0.8127.37`，V8 `15.8.62.31` |
 | Windows | Windows 11 `10.0.26300`，x64 |
 | 本机 Node.js | `v24.22.2`（最低要求 22） |
 | 本机 PowerShell | `7.6.9`；启动器同时保留 Windows PowerShell 5.1 兼容写法 |
@@ -171,11 +171,12 @@ Import-EVA-Theme.cmd
 
 ## 验证状态
 
-已在 `OpenAI.Codex 26.1111.2228.0`、Chromium `157.0.8103.78` 的真实 `app://-/index.html` renderer 上做过受控实例冒烟：
+已在 `OpenAI.Codex 26.1117.3838.0`、Chromium `158.0.8127.37` 的真实 `app://-/index.html` renderer 上做过受控实例冒烟：
 
 - 02 明日香与 00 绫波丽两套皮肤均能注入；
-- 新版应用菜单栏、侧栏、主区、输入框和摘要面板均正确套用 EVA 配色，原生菜单按钮仍可点击；
-- 启动 GIF、NERV 警报、驾驶员选择页、拖放插入栓、驾驶员头像和同步进度均正常渲染；启动语音在本机受控实例中可自动播放；
+- 在 `26.1117.3838.0` 独立实例上热注入 `0.4.7`，应用菜单、侧栏、主区、输入框和设置面板探测通过；两套驾驶员可即时切换，WCO 原生按钮区实测 `137px`（`1070px` 视口），承托层计算为 `137.4px`；
+- 新版语义化应用菜单栏（`role="menubar"` 的 36px 顶部条）、侧栏、主区、输入框和摘要面板均正确套用 EVA 配色，原生菜单按钮仍可点击；
+- 启动层在新版 renderer 中仍能注入，GIF/音频资源加载正常；完整可见的 GIF、警报、选择、同步和舱门播放沿用 v0.4.6 的实测路径，建议下次真实冷启动时再完整复核一遍；
 - 在启动页可点击角色卡完成选择，也可把角色卡拖入插入栓；选择后主题、头像、单位编号和语音时长同步更新；
 - 刷新页面不重播启动层，`Esc` 可跳过，完整序列结束后自动清理，“减少动态效果”下不显示；
 - `表示設定 → 开机动画` 关闭后，下一次启动不显示选择页且不播放启动序列；应用内切换驾驶员不会触发启动页；

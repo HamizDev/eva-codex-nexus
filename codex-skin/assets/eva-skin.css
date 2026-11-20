@@ -25,6 +25,13 @@ html[data-eva-skin="asuka"] {
   --eva-user: #d8e0e5;
   --eva-code: #111315;
   --eva-code-border: #37352f;
+  --eva-code-syntax-1: #f0aa63;
+  --eva-code-syntax-2: #7bbce7;
+  --eva-code-comment: #9f978d;
+  --eva-code-keyword: #f07a4a;
+  --eva-code-string: #b9d48d;
+  --eva-code-variable: #d7b5f3;
+  --eva-code-error: #ff8985;
   --eva-selection: #b6202666;
   --eva-shadow: #00000066;
   --eva-frame-alpha: #f06a2244;
@@ -52,6 +59,13 @@ html[data-eva-skin="rei"] {
   --eva-user: #426279;
   --eva-code: #e8f2f9;
   --eva-code-border: #b6cbdc;
+  --eva-code-syntax-1: #9a5a12;
+  --eva-code-syntax-2: #236c9d;
+  --eva-code-comment: #647f94;
+  --eva-code-keyword: #a23b2d;
+  --eva-code-string: #4f7b35;
+  --eva-code-variable: #704ba8;
+  --eva-code-error: #b62026;
   --eva-selection: #347da966;
   --eva-shadow: #7ca5bf2e;
   --eva-frame-alpha: #347da944;
@@ -79,6 +93,9 @@ html[data-eva-skin] {
   --app-color-background-surface: var(--eva-bg);
   --app-color-background-surface-under: var(--eva-bg-soft);
   --app-color-background-elevated-primary: var(--eva-panel);
+  --app-shell-sidebar-popover-background: var(--eva-sidebar-bottom);
+  --app-shell-sidebar-popover-border: var(--eva-border-strong);
+  --app-shell-sidebar-popover-radius: 10px;
   --color-background-execution-output: var(--eva-bg-soft);
   --color-background-page-search: var(--eva-panel);
   --color-background-primary-soft-alpha: var(--eva-panel);
@@ -135,6 +152,32 @@ html[data-eva-skin] aside.app-shell-left-panel {
   box-shadow: inset 3px 0 0 var(--eva-accent-strong);
 }
 
+html[data-eva-skin]
+  aside.app-shell-left-panel[data-slate-sidebar-peeking="true"]
+  [data-slate-sidebar-content] {
+  background:
+    linear-gradient(
+      165deg,
+      var(--eva-sidebar-top) 0,
+      var(--eva-sidebar-bottom) 340px
+    )
+    !important;
+  border: 1px solid var(--eva-border-strong) !important;
+  border-radius: 10px !important;
+  box-shadow:
+    inset 0 2px 0 var(--eva-accent-strong),
+    inset 0 0 0 1px color-mix(in srgb, var(--eva-border) 72%, transparent),
+    0 18px 48px var(--eva-shadow) !important;
+  color: var(--eva-text) !important;
+}
+
+html[data-eva-skin]
+  aside.app-shell-left-panel[data-slate-sidebar-peeking="true"]
+  .sidebar-navigation {
+  background-color: transparent !important;
+  color: var(--eva-text) !important;
+}
+
 html[data-eva-skin] [data-eva-application-menu] {
   background:
     linear-gradient(
@@ -166,6 +209,29 @@ html[data-eva-skin] [data-eva-application-menu] :is(button, [role="menuitem"]):h
 html[data-eva-skin] [data-eva-application-menu] :is(button, [role="menuitem"]):focus-visible {
   background: color-mix(in srgb, var(--eva-accent) 16%, transparent) !important;
   color: var(--eva-text-strong) !important;
+}
+
+html[data-eva-skin][data-eva-platform="win32-wco"]
+  [data-eva-application-menu]::after {
+  content: "";
+  position: fixed;
+  z-index: 2147483200;
+  top: 0;
+  right: 0;
+  width: calc(100vw - env(titlebar-area-width));
+  height: env(titlebar-area-height, 36px);
+  pointer-events: none;
+  border-left: 1px solid var(--eva-border-strong);
+  background: linear-gradient(180deg, #fff9f1 0%, #f1dfcf 100%);
+  box-shadow:
+    inset 0 2px 0 var(--eva-accent-strong),
+    inset 0 -1px 0 var(--eva-border-strong),
+    -18px 0 24px color-mix(in srgb, var(--eva-bg) 16%, transparent);
+}
+
+html[data-eva-skin="rei"][data-eva-platform="win32-wco"]
+  [data-eva-application-menu]::after {
+  background: linear-gradient(180deg, #fcfdff 0%, #e5f0f7 100%);
 }
 
 html[data-eva-skin] [class*="ConversationSidebar"] {
@@ -522,18 +588,19 @@ html[data-eva-skin] [class~="group/summary-panel"] section[role="presentation"]:
   background: linear-gradient(
     90deg,
     transparent,
-    var(--eva-border-strong) 12%,
-    var(--eva-accent-strong) 50%,
-    var(--eva-border-strong) 88%,
+    color-mix(in srgb, var(--eva-border-strong) 72%, transparent) 12%,
+    color-mix(in srgb, var(--eva-accent) 70%, transparent) 50%,
+    color-mix(in srgb, var(--eva-border-strong) 72%, transparent) 88%,
     transparent
   ) !important;
-  box-shadow: 0 0 7px color-mix(in srgb, var(--eva-accent) 24%, transparent);
-  opacity: 0.9 !important;
+  box-shadow: 0 0 5px color-mix(in srgb, var(--eva-accent) 16%, transparent);
+  opacity: 0.68 !important;
 }
 
 html[data-eva-skin] [class~="group/summary-panel"] [data-slot="thread-summary-panel-item-button"] {
   border-radius: 8px !important;
-  color: var(--eva-text) !important;
+  color: var(--eva-text-strong) !important;
+  opacity: 1 !important;
 }
 
 html[data-eva-skin] [class~="group/summary-panel"] [data-slot="thread-summary-panel-item-button"]::before {
@@ -559,7 +626,28 @@ html[data-eva-skin] [class~="group/summary-panel"] [data-slot="thread-summary-pa
 
 html[data-eva-skin] [class~="group/summary-panel"] [data-slot="thread-summary-panel-item-label"],
 html[data-eva-skin] [class~="group/summary-panel"] [data-slot="thread-summary-panel-item-label"] * {
-  color: inherit !important;
+  color: var(--eva-text-strong) !important;
+  opacity: 1 !important;
+  -webkit-text-fill-color: var(--eva-text-strong) !important;
+}
+
+html[data-eva-skin] [data-summary-panel-variant] section > header,
+html[data-eva-skin] [data-summary-panel-variant] section > header * {
+  color: var(--eva-text-strong) !important;
+  opacity: 1 !important;
+  -webkit-text-fill-color: var(--eva-text-strong) !important;
+}
+
+html[data-eva-skin] [data-summary-panel-variant] [data-slot="thread-summary-panel-item-button"],
+html[data-eva-skin] [data-summary-panel-variant] [data-slot="thread-summary-panel-item-label"] {
+  color: var(--eva-text-strong) !important;
+  opacity: 1 !important;
+}
+
+html[data-eva-skin] [data-summary-panel-variant] [class*="text-text/"],
+html[data-eva-skin] [data-summary-panel-variant] :is(.text-secondary, .text-tertiary) {
+  color: color-mix(in srgb, var(--eva-text) 82%, var(--eva-muted)) !important;
+  opacity: 1 !important;
 }
 
 html[data-eva-skin] [class~="group/summary-panel"] [data-slot="thread-summary-panel-item-leading"] {
@@ -639,6 +727,72 @@ html[data-eva-skin] :is(pre, code) {
 html[data-eva-skin] pre {
   background: var(--eva-code) !important;
   color: var(--eva-text) !important;
+}
+
+html[data-eva-skin] [data-code-block="true"] {
+  --codeblock-background-color: var(--eva-code);
+  --codeblock-syntax-1: var(--eva-code-syntax-1);
+  --codeblock-syntax-2: var(--eva-code-syntax-2);
+  --color-background-code-block: var(--eva-code);
+  --color-text-primary-surface: var(--eva-text);
+  --color-text-primary: var(--eva-text);
+  --color-text: var(--eva-text);
+  --color-text-secondary: var(--eva-muted);
+  --color-token-bg-primary: var(--eva-code);
+  --color-surface-tertiary: var(--eva-code);
+  --color-codex-syntax-comment: var(--eva-code-comment);
+  --color-codex-syntax-keyword: var(--eva-code-keyword);
+  --color-codex-syntax-string: var(--eva-code-string);
+  --color-codex-syntax-variable: var(--eva-code-variable);
+  --color-codex-syntax-error: var(--eva-code-error);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--eva-accent-strong) 7%, transparent),
+      transparent 92px
+    ),
+    var(--eva-code) !important;
+  border-color: var(--eva-code-border) !important;
+  color: var(--eva-text) !important;
+  box-shadow:
+    inset 3px 0 0 var(--eva-accent-strong),
+    0 16px 38px color-mix(in srgb, var(--eva-shadow) 82%, transparent) !important;
+}
+
+html[data-eva-skin="asuka"] [data-code-block="true"] {
+  color-scheme: dark !important;
+}
+
+html[data-eva-skin="rei"] [data-code-block="true"] {
+  color-scheme: light !important;
+}
+
+html[data-eva-skin] [data-code-block="true"] > [data-markdown-copy="exclude"] {
+  background: color-mix(in srgb, var(--eva-panel-raised) 72%, var(--eva-code)) !important;
+  border-bottom: 1px solid var(--eva-code-border) !important;
+  color: var(--eva-text-strong) !important;
+}
+
+html[data-eva-skin] [data-code-block="true"] :is(
+  [data-code-block-source],
+  [data-code-block-controls],
+  [data-code-block-controls] button,
+  [data-markdown-copy="exclude"]
+) {
+  color: var(--eva-text-strong) !important;
+  -webkit-text-fill-color: var(--eva-text-strong) !important;
+}
+
+html[data-eva-skin] [data-code-block="true"] [data-code-block-source] {
+  background: transparent !important;
+}
+
+html[data-eva-skin] [data-code-block="true"] code {
+  color: var(--eva-text) !important;
+}
+
+html[data-eva-skin] [data-code-block="true"] :is(code, code *) {
+  -webkit-text-fill-color: currentColor !important;
 }
 
 html[data-eva-skin] :is([class*="_markdown"], .thread-scroll-container) {

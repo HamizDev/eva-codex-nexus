@@ -64,7 +64,7 @@ test("主题与 payload 版本稳定且可切换", () => {
   assert.equal(isDriver("asuka"), true);
   assert.equal(isDriver("rei"), true);
   assert.equal(isDriver("system"), false);
-  assert.equal(SKIN_VERSION, "0.4.5");
+  assert.equal(SKIN_VERSION, "0.4.7");
   const asuka = loadPayload("asuka");
   const rei = loadPayload("rei");
   assert.equal(asuka.driver, "asuka");
@@ -269,15 +269,20 @@ test("EVA 主题素材包按清单校验并生成本地启动序列", () => {
     }
     assert.match(payload.source, /data:image\/png;base64,/);
     assert.match(payload.source, /data:audio\/mpeg;base64,/);
+    assert.match(
+      payload.source,
+      /root\.dataset\.evaPlatform\s*=\s*"windowControlsOverlay" in navigator/,
+    );
     for (const fragment of [
       "eva-boot-layer",
       "dataset.phase",
       "NERV",
       "eva-boot-alert-layer",
       "eva-boot-alert-art",
-      "eva-boot-alert-clock",
+      "data-emergency-clock",
       "eva-boot-select-layer",
       "eva-boot-intro-layer",
+      "eva-boot-contours",
       "eva-boot-intro-typed",
       "data-eva-clock",
       "eva-boot-bgm",
@@ -290,8 +295,15 @@ test("EVA 主题素材包按清单校验并生成本地启动序列", () => {
       "data-eva-sync-name",
       "eva-boot-select-glow",
       "eva-boot-bay-meta",
+      "eva-boot-head-actions",
+      "eva-boot-head-sound",
       "eva-boot-pilot-ghost",
       "eva-boot-pilot-meta",
+      "eva-boot-sync-code",
+      "VOICE LINK",
+      "MELCHIOR·1",
+      "BALTHASAR·2",
+      "CASPER·3",
       "PILOT / FIRST CHILD",
       "NEURAL ID · 00",
       "chooseDriver",
@@ -332,7 +344,6 @@ test("EVA 主题素材包按清单校验并生成本地启动序列", () => {
       "setPhase(\"select\")",
       "syncMsByDriver",
       "EVA BOOT 9.9.9",
-      "GOD'S IN HIS HEAVEN",
       "syncVoiceStarted",
       'NERV 駕駛員啟動序列',
       '駕駛員已裝載 · PILOT LOADED',
@@ -364,6 +375,7 @@ test("EVA 主题素材包按清单校验并生成本地启动序列", () => {
       "hatchLeft",
       "hatchRight",
       "hatchComplete",
+      "onBootClick",
     ]) {
       assert.ok(payload.bootSource.includes(fragment), `missing EVA boot contract: ${fragment}`);
     }
@@ -372,6 +384,7 @@ test("EVA 主题素材包按清单校验并生成本地启动序列", () => {
     assert.doesNotMatch(payload.bootSource, /document\.hasFocus/);
     assert.doesNotMatch(payload.bootSource, /later\(\(\) => setPhase\("emergency"\)/);
     assert.doesNotMatch(payload.bootSource, /phaseTimer/);
+    assert.doesNotMatch(payload.bootSource, /eva-boot-alert-copy/);
     const leaveIndex = payload.bootSource.indexOf("const leave = (config = {}) =>");
     const maybeFinishIndex = payload.bootSource.indexOf("const maybeFinish = () =>");
     const chooseIndex = payload.bootSource.indexOf("const chooseDriver = (pilot) =>");
@@ -455,6 +468,8 @@ test("皮肤 CSS 使用稳定选择器并禁用远程资源", () => {
     "html[data-eva-skin=\"asuka\"]",
     "html[data-eva-skin=\"rei\"]",
     "aside.app-shell-left-panel",
+    "[data-slate-sidebar-peeking=\"true\"]",
+    "[data-slate-sidebar-content]",
     "[class*=\"_ComposerLayoutRoot_\"]",
     "[class*=\"bg-surface-elevated-secondary\"]",
     "[class*=\"bg-background-neutral-soft-alpha\"]",
@@ -464,6 +479,7 @@ test("皮肤 CSS 使用稳定选择器并禁用远程资源", () => {
     ".bg-user-message",
     ".rich-text-user-turn",
     "--color-text-user-message: var(--eva-text-strong)",
+    "--app-shell-sidebar-popover-background: var(--eva-sidebar-bottom)",
     "[data-browser-sidebar-address-input]",
     "[data-testid=\"browser-profile-import-nux-banner\"]",
     ".bg-neutral-soft-alpha",
@@ -472,7 +488,17 @@ test("皮肤 CSS 使用稳定选择器并禁用远程资源", () => {
     "[data-slot=\"thread-summary-panel-item-button\"]",
     "[data-slot=\"thread-summary-panel-item-leading\"]",
     "[data-slot=\"thread-summary-panel-icon-button\"]",
+    "[data-summary-panel-variant]",
+    "-webkit-text-fill-color: var(--eva-text-strong) !important",
     "section[role=\"presentation\"]::after",
+    "[data-code-block=\"true\"]",
+    "--codeblock-background-color: var(--eva-code)",
+    "--codeblock-syntax-1: var(--eva-code-syntax-1)",
+    "--eva-code-syntax-1: #9a5a12",
+    "html[data-eva-skin=\"rei\"] [data-code-block=\"true\"]",
+    "-webkit-text-fill-color: currentColor !important",
+    "[data-code-block-source]",
+    "[data-code-block-controls]",
     ".bg-composer-primary",
     "#eva-codex-skin-overlay",
     "#eva-codex-skin-overlay .eva-settings-button",
@@ -486,6 +512,7 @@ test("皮肤 CSS 使用稳定选择器并禁用远程资源", () => {
     "-webkit-app-region: no-drag",
     "pointer-events: auto !important",
     "html[data-eva-skin][data-eva-browser-active]",
+    "html[data-eva-skin][data-eva-platform=\"win32-wco\"]",
     "@media (max-width: 900px)",
     "@media (max-width: 760px)",
     "pointer-events: none !important",
@@ -497,6 +524,10 @@ test("皮肤 CSS 使用稳定选择器并禁用远程资源", () => {
   assert.ok(!/url\(\s*https?:/i.test(css));
   assert.ok(!/<script/i.test(css));
   assert.ok(!css.includes(":has("), "runtime CSS must not use :has()");
+  assert.match(
+    css,
+    /aside\.app-shell-left-panel\[data-slate-sidebar-peeking="true"\]\s*\[data-slate-sidebar-content\]\s*\{[\s\S]*?linear-gradient\([\s\S]*?var\(--eva-sidebar-top\)[\s\S]*?var\(--eva-sidebar-bottom\)[\s\S]*?box-shadow:/i,
+  );
   for (const fragment of [
     "#eva-codex-skin-boot",
     "@keyframes eva-boot-scan",
@@ -511,7 +542,6 @@ test("皮肤 CSS 使用稳定选择器并禁用远程资源", () => {
     "#eva-codex-skin-boot",
     ".eva-boot-gif",
     ".eva-boot-alert-layer",
-    ".eva-boot-alert-clock",
     ".eva-boot-alert-art > svg",
     ".eva-boot-select-layer",
     ".eva-boot-intro-layer",
@@ -528,6 +558,10 @@ test("皮肤 CSS 使用稳定选择器并禁用远程资源", () => {
     ".eva-boot-pilot-ghost",
     ".eva-boot-bay-meta",
     ".eva-boot-exit",
+    ".eva-boot-head-actions",
+    ".eva-boot-head-sound",
+    ".eva-boot-sync-code",
+    ".eva-boot-sync-description",
     "@keyframes eva-boot-plug-roll",
     "transform: rotate(14deg)",
     ".eva-boot-pilot-face",
@@ -582,11 +616,23 @@ test("皮肤 CSS 使用稳定选择器并禁用远程资源", () => {
   );
   assert.match(
     evaBootCss,
-    /:is\(\[data-phase="select"\], \[data-phase="sync"\]\) \.eva-boot-contour-ring\s*\{[\s\S]*?animation:\s*none\s*!important;/i,
+    /\.eva-boot-contours\s*\{[\s\S]*?width:\s*100%;[\s\S]*?height:\s*100%;/i,
   );
   assert.match(
     evaBootCss,
-    /\.eva-boot-pilot-meta\s*\{[\s\S]*?position:\s*absolute;[\s\S]*?justify-content:\s*space-between;/i,
+    /\.eva-boot-contours path\s*\{[\s\S]*?vector-effect:\s*non-scaling-stroke;/i,
+  );
+  assert.match(
+    evaBootCss,
+    /\[data-phase="intro"\] \.eva-boot-skip\s*\{[\s\S]*?display:\s*none;/i,
+  );
+  assert.match(
+    evaBootCss,
+    /\[data-phase="emergency"\] \.eva-boot-skip\s*\{[\s\S]*?min-width:\s*104px;[\s\S]*?font-size:\s*10px;/i,
+  );
+  assert.match(
+    evaBootCss,
+    /\.eva-boot-pilot-meta\s*\{[\s\S]*?position:\s*static;[\s\S]*?justify-content:\s*space-between;/i,
   );
   assert.match(
     evaBootCss,
@@ -884,6 +930,12 @@ test("启动层四语言文案完成校对并同步更新同步页", () => {
     "A.T. 力場 · 通信通道開啟",
     "NERV / ENTRY SYSTEM · INTERLOCK RELEASED",
     "A.T. FIELD · COMMUNICATION CHANNEL OPEN",
+    'skipAlert: "跳過警報"',
+    'skipAlert: "跳过警报"',
+    'skipAlert: "警報をスキップ"',
+    'skipAlert: "Skip alert"',
+    "const skipEmergency = (event) =>",
+    'event.target?.closest?.(".eva-boot-skip")',
     "boot.setAttribute(\"aria-label\", text(\"bootLabel\"))",
     "name.textContent = text(pilot === \"rei\" ? \"rei\" : \"asuka\")",
   ]) {
@@ -912,10 +964,13 @@ test("主题资源不包含角色图片或远程引用", () => {
 test("选择器合同保留稳定锚点", () => {
   const selectors = JSON.parse(fs.readFileSync(path.join(root, "selectors.json"), "utf8"));
   assert.equal(selectors.schema, "eva-codex-skin-selectors/1");
-  assert.equal(selectors.verifiedAgainst.codexVersion, "26.1111.2228.0");
-  assert.equal(selectors.verifiedAgainst.renderer, "Chromium 157.0.8103.78");
+  assert.equal(selectors.verifiedAgainst.codexVersion, "26.1117.3838.0");
+  assert.equal(selectors.verifiedAgainst.renderer, "Chromium 158.0.8127.37");
   assert.equal(selectors.selectors.sidebar, "aside.app-shell-left-panel");
-  assert.equal(selectors.selectors.applicationMenuBar, "[class*=\"ApplicationMenuTopBar-\"]");
+  assert.equal(
+    selectors.selectors.applicationMenuBar,
+    "[role=\"menubar\"], [class*=\"ApplicationMenuTopBar-\"]",
+  );
   assert.equal(selectors.selectors.homeIcon, "[data-testid=\"home-icon\"]");
   assert.equal(selectors.selectors.tooltip, "[role=\"tooltip\"]");
   assert.equal(selectors.selectors.elevatedSurface, "[class*=\"bg-surface-elevated-secondary\"]");
@@ -964,9 +1019,11 @@ test("选择器合同保留稳定锚点", () => {
   );
 });
 
-test("适配新版 Codex 应用菜单栏", () => {
+test("适配新版 Codex 应用菜单栏语义锚点", () => {
   const css = fs.readFileSync(path.join(root, "assets", "eva-skin.css"), "utf8");
   const ui = fs.readFileSync(path.join(root, "assets", "skin-ui.js"), "utf8");
+  assert.match(ui, /\[role="menubar"\], \[class\*="ApplicationMenuTopBar-"\]/);
+  assert.match(ui, /closest\(\s*"header, \[class\*='h-toolbar-sm'\]",?\s*\)/);
   assert.match(ui, /applicationMenu\?\.setAttribute\("data-eva-application-menu"/);
   assert.match(ui, /markedApplicationMenu\?\.removeAttribute\("data-eva-application-menu"\)/);
   assert.match(
@@ -980,6 +1037,10 @@ test("适配新版 Codex 应用菜单栏", () => {
   assert.match(
     css,
     /\[data-eva-application-menu\][\s\S]*?:hover,[\s\S]*?:focus-visible\s*\{[\s\S]*?var\(--eva-accent\)/i,
+  );
+  assert.match(
+    css,
+    /html\[data-eva-skin\]\[data-eva-platform="win32-wco"\]\s*\[data-eva-application-menu\]::after\s*\{[\s\S]*?width:\s*calc\(100vw\s*-\s*env\(titlebar-area-width\)\);[\s\S]*?height:\s*env\(titlebar-area-height,\s*36px\);[\s\S]*?pointer-events:\s*none;/i,
   );
 });
 
