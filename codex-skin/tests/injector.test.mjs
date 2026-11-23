@@ -64,7 +64,7 @@ test("主题与 payload 版本稳定且可切换", () => {
   assert.equal(isDriver("asuka"), true);
   assert.equal(isDriver("rei"), true);
   assert.equal(isDriver("system"), false);
-  assert.equal(SKIN_VERSION, "0.4.7");
+  assert.equal(SKIN_VERSION, "0.4.8");
   const asuka = loadPayload("asuka");
   const rei = loadPayload("rei");
   assert.equal(asuka.driver, "asuka");
@@ -964,7 +964,7 @@ test("主题资源不包含角色图片或远程引用", () => {
 test("选择器合同保留稳定锚点", () => {
   const selectors = JSON.parse(fs.readFileSync(path.join(root, "selectors.json"), "utf8"));
   assert.equal(selectors.schema, "eva-codex-skin-selectors/1");
-  assert.equal(selectors.verifiedAgainst.codexVersion, "26.1117.3838.0");
+  assert.equal(selectors.verifiedAgainst.codexVersion, "26.1117.4957.0");
   assert.equal(selectors.verifiedAgainst.renderer, "Chromium 158.0.8127.37");
   assert.equal(selectors.selectors.sidebar, "aside.app-shell-left-panel");
   assert.equal(

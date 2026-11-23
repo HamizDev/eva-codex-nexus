@@ -1,11 +1,11 @@
 {
   "schema": "eva-codex-skin-selectors/1",
   "verifiedAgainst": {
-    "codexVersion": "26.1117.3838.0",
+    "codexVersion": "26.1117.4957.0",
     "platform": "windows",
     "renderer": "Chromium 158.0.8127.37",
-    "date": "2026-11-20",
-    "note": "已在 26.1117.3838.0 的 app.asar 中核对稳定属性与语义标签；顶部菜单改用 role=menubar 语义锚点，只使用稳定选择器，不匹配完整 hash。"
+    "date": "2026-11-23",
+    "note": "已在 26.1117.4957.0 的 app.asar 中核对稳定属性与语义标签；顶部菜单改用 role=menubar 语义锚点，只使用稳定选择器，不匹配完整 hash。"
   },
   "selectors": {
     "shellMain": "main:is(.main-surface, [data-app-shell-main-surface], [class*=\"_MainContentSurface_\"]), main",

@@ -1,5 +1,17 @@
 # 更新日志
 
+## v0.4.8 · 2026-11-23
+
+### 兼容
+
+- 复核官方 Codex `26.1117.4957.0` / Chromium `158.0.8127.37`：`role="menubar"`、`data-app-shell-main-surface`、`data-slate-sidebar-content`、`data-composer-surface-variant` 等关键锚点未变化，无需重做皮肤结构适配。
+- `selectors.json` 的验证基线更新到 `OpenAI.Codex 26.1117.4957.0`。
+
+### 修复
+
+- 修复官方 Codex 更新后桌面 `EVA Codex` 快捷方式图标指向旧版本 `ChatGPT.exe`、显示为空白的问题。
+- 启动器现在会在每次正常启动时读取当前已注册 Appx 的 `ChatGPT.exe`，自动刷新 `EVA Codex.lnk` 的 `IconLocation`；使用 `-VerifyOnly` 时不会修改桌面快捷方式。
+
 ## v0.4.7 · 2026-11-20
 
 ### 兼容

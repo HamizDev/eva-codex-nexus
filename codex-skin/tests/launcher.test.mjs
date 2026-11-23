@@ -106,6 +106,18 @@ test("桌面快捷方式使用官方 Codex 图标并指向隐藏启动器", () =
   }
 });
 
+test("启动器会在 Codex 更新后自动刷新桌面快捷方式图标", () => {
+  const source = read("codex-skin/Start-EVA.ps1");
+  for (const fragment of [
+    "function Repair-EvaDesktopShortcutIcon",
+    "Repair-EvaDesktopShortcutIcon -Executable $install.Executable",
+    "$shortcut.IconLocation = $iconLocation",
+    "桌面快捷方式图标已刷新。",
+  ]) {
+    assert.ok(source.includes(fragment), `missing shortcut repair contract: ${fragment}`);
+  }
+});
+
 test("默认启动和桌面安装都会准备内置 EVA 素材包", () => {
   const launcher = read("codex-skin/Start-EVA.ps1");
   for (const fragment of [
@@ -172,9 +184,9 @@ test("package 版本与皮肤版本一致", () => {
   const pkg = JSON.parse(read("package.json"));
   const injector = read("codex-skin/injector.mjs");
   const launcher = read("codex-skin/Start-EVA.ps1");
-  assert.equal(pkg.version, "0.4.7");
-  assert.match(injector, /export const SKIN_VERSION = "0\.4\.7"/);
-  assert.match(launcher, /\$SkinVersion = '0\.4\.7'/);
+  assert.equal(pkg.version, "0.4.8");
+  assert.match(injector, /export const SKIN_VERSION = "0\.4\.8"/);
+  assert.match(launcher, /\$SkinVersion = '0\.4\.8'/);
 });
 
 test("项目版权以 HamizDev 为主且不保留旧上游声明", () => {

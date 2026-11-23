@@ -13,7 +13,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-$SkinVersion = '0.4.7'
+$SkinVersion = '0.4.8'
 $PortExplicit = $PSBoundParameters.ContainsKey('Port')
 $StateRoot = Join-Path $env:LOCALAPPDATA 'EVACodexSkin'
 $StatePath = Join-Path $StateRoot 'state.json'
@@ -182,6 +182,25 @@ function Get-CodexInstall {
     PackageFamilyName = if ($package) { $package.PackageFamilyName } else { $null }
     Version = if ($package) { [string]$package.Version } else { [Diagnostics.FileVersionInfo]::GetVersionInfo($executable).FileVersion }
     AppUserModelId = $appId
+  }
+}
+
+function Repair-EvaDesktopShortcutIcon {
+  param([Parameter(Mandatory)][string]$Executable)
+  try {
+    $desktop = [Environment]::GetFolderPath('Desktop')
+    if (-not $desktop) { return }
+    $shortcutPath = Join-Path $desktop 'EVA Codex.lnk'
+    if (-not (Test-Path -LiteralPath $shortcutPath -PathType Leaf)) { return }
+    $shortcut = (New-Object -ComObject WScript.Shell).CreateShortcut($shortcutPath)
+    $iconLocation = $Executable + ',0'
+    if (-not [string]::Equals($shortcut.IconLocation, $iconLocation, [StringComparison]::OrdinalIgnoreCase)) {
+      $shortcut.IconLocation = $iconLocation
+      $shortcut.Save()
+      Write-Step '桌面快捷方式图标已刷新。'
+    }
+  } catch {
+    Write-Step "桌面快捷方式图标刷新失败，不影响启动：$($_.Exception.Message)"
   }
 }
 
@@ -520,6 +539,9 @@ function Read-Driver {
 try {
   $node = Get-NodeRuntime
   $install = Get-CodexInstall -ExplicitPath $CodexExe
+  if (-not $VerifyOnly) {
+    Repair-EvaDesktopShortcutIcon -Executable $install.Executable
+  }
   $selectedDriver = Read-Driver -Requested $Driver
   New-Item -ItemType Directory -Force -Path $StateRoot | Out-Null
   Set-Content -LiteralPath $DriverPath -Value $selectedDriver -Encoding ASCII
