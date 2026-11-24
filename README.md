@@ -9,12 +9,12 @@
 为**官方 Codex 桌面客户端**打造的 EVA 双角色皮肤，不是另做一个 Codex 工作台。<br />
 明日香的红与黑，绫波丽的白与蓝；侧栏、项目、会话、输入框、审批与快捷键仍保持 Codex 原生。
 
-[![Release](https://img.shields.io/badge/release-v0.4.8-b62026)](https://github.com/HamizDev/eva-codex-nexus/tree/v0.4.8) [![License](https://img.shields.io/badge/code-MIT-176b91)](LICENSE) [![Platform](https://img.shields.io/badge/platform-Windows-236c9d)](#环境要求)
+[![Version](https://img.shields.io/badge/version-v0.4.9-b62026)](CHANGELOG.md) [![License](https://img.shields.io/badge/code-MIT-176b91)](LICENSE) [![Platform](https://img.shields.io/badge/platform-Windows-236c9d)](#环境要求)
 
-[**下载最新版本**](https://github.com/HamizDev/eva-codex-nexus/archive/refs/tags/v0.4.8.zip) · [安装](#安装) · [使用流程](#使用流程) · [启动动画](#eva-启动素材包) · [更新日志](CHANGELOG.md) · [问题反馈](https://github.com/HamizDev/eva-codex-nexus/issues)
+[**下载当前源码**](https://github.com/HamizDev/eva-codex-nexus/archive/refs/heads/main.zip) · [安装](#安装) · [使用流程](#使用流程) · [启动动画](#eva-启动素材包) · [更新日志](CHANGELOG.md) · [问题反馈](https://github.com/HamizDev/eva-codex-nexus/issues)
 
-`eva-codex-nexus` · 当前版本 **v0.4.8（开发预览）**<br />
-构建与验证基线：`OpenAI.Codex 26.1117.4957.0` · Chromium `158.0.8127.37`
+`eva-codex-nexus` · 当前版本 **v0.4.9（开发预览）**<br />
+构建与验证基线：`OpenAI.Codex 26.1120.5083.0` · Chromium `158.0.8127.37`
 
 </div>
 
@@ -48,14 +48,14 @@
    素材只会复制到 `%LOCALAPPDATA%\EVACodexSkin\eva-theme`，不会改变仓库中的源文件。正常使用不需要手动执行这一步；目录、校验规则和媒体许可见 [EVA-THEME.md](EVA-THEME.md)、[eva-theme/MEDIA-LICENSE.md](eva-theme/MEDIA-LICENSE.md)。
 
 5. 在仓库根目录运行 `Install-EVA-DesktopShortcut.cmd`；它会先导入 `eva-theme/` 素材，再创建桌面入口。之后从桌面 `EVA Codex` 启动；也可以直接运行 `Start-EVA.cmd`，启动器同样会自动准备素材。
-6. 如果官方 Codex 已经打开且没有本地 CDP，启动器会提示重启一次。确认后它会重新打开官方 Codex。通常可以复用原本的登录状态；由于使用了独立的 CDP 配置目录，少数环境首次进入时可能需要重新登录一次。
+6. 日常请从桌面的 `EVA Codex` 启动。从开始菜单或任务栏的普通 Codex 入口打开时，客户端会使用原生外观。如果普通 Codex 已经打开，EVA 启动器会提示重启一次。通常可以复用原本的登录状态，独立配置首次进入时可能需要重新登录一次。
 7. 验证安装：
 
    ```powershell
-   node codex-skin\injector.mjs --verify --port 9345
+   powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\codex-skin\Start-EVA.ps1 -VerifyOnly
    ```
 
-   返回 `installed: true`、`pass: true`、`version: "0.4.8"` 和 `driver`（当前驾驶员），即表示注入成功。若 `pass: false`，先查看日志，不要继续重启或修改官方客户端文件。
+   验证会自动找到 EVA 启动器复用的端口。返回 `installed: true`、`pass: true`、`version: "0.4.9"` 和 `driver`（当前驾驶员），即表示注入成功。若 `pass: false`，先查看日志，不要继续重启或修改官方客户端文件。
 
 ### 交给 AI 安装
 
@@ -72,7 +72,7 @@
 4. 运行 Install-EVA-DesktopShortcut.cmd；安装器会自动导入 eva-theme/ 素材，然后创建桌面入口。如果用户只想临时代理，可改用 Start-EVA.cmd，启动器同样会自动导入。
 5. 导入后检查 %LOCALAPPDATA%\EVACodexSkin\eva-theme\manifest.json，确认 assets 数量至少为 20；如果素材导入失败，停止安装并报告错误，不要声称安装成功或悄悄退回无素材版。
 6. 如果 Codex 正在运行且没有 CDP，先询问用户是否允许重启；不要静默关闭窗口。
-7. 最后运行 node codex-skin\injector.mjs --verify --port 9345，并报告 Codex 版本、皮肤版本、素材包状态、installed/pass 结果和日志路径。
+7. 最后运行 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\codex-skin\Start-EVA.ps1 -VerifyOnly，并报告 Codex 版本、皮肤版本、素材包状态、端口、installed/pass 结果和日志路径。
 
 禁止修改 WindowsApps、app.asar、签名、auth.json、API Key、Base URL、模型配置或系统安全设置。
 ```
@@ -135,22 +135,22 @@ Import-EVA-Theme.cmd
 
 | 项目 | 本机构建/验证值 |
 | --- | --- |
-| 皮肤版本 | `0.4.8` |
-| 构建/验证日期 | `2026-11-23` |
+| 皮肤版本 | `0.4.9` |
+| 构建/验证日期 | `2026-11-24` |
 | EVA 素材快照 | `0.51.2` / `f8b96381ceda724c58e79ec375e0dfe08d244349`，20 个文件、`11,141,369` 字节 |
-| 官方 Codex Appx | `OpenAI.Codex 26.1117.4957.0` |
-| Codex 包全名 | `OpenAI.Codex_26.1117.4957.0_x64__2p2nqsd0c76g0` |
+| 官方 Codex Appx | `OpenAI.Codex 26.1120.5083.0` |
+| Codex 包全名 | `OpenAI.Codex_26.1120.5083.0_x64__2p2nqsd0c76g0` |
 | Renderer | Chromium `158.0.8127.37`，V8 `15.8.62.31` |
 | Windows | Windows 11 `10.0.26300`，x64 |
 | 本机 Node.js | `v24.22.2`（最低要求 22） |
 | 本机 PowerShell | `7.6.9`；启动器同时保留 Windows PowerShell 5.1 兼容写法 |
 
-其他 Codex 版本可能仍然可用，但官方客户端更新后 DOM 选择器或 CSS Module 名称可能变化。遇到设置入口、启动层或审批状态失效时，先运行 `--verify`，再把 Codex 版本和日志一起提交到 Issues。上面的版本只是当前实测基线，不代表所有未来版本都已验证。
+其他 Codex 版本也可能可用。更新后若设置入口、启动层或审批状态失效，先运行 `.\codex-skin\Start-EVA.ps1 -VerifyOnly`，再把 Codex 版本和日志一起提交到 Issues。
 
 ## 工作方式
 
 1. 通过 `Get-AppxPackage OpenAI.Codex` 找到已签名、已注册的官方客户端；
-2. 以 `--remote-debugging-address=127.0.0.1 --remote-debugging-port=9345` 启动一个受控实例；
+2. 复用上次保存且可验证的本地调试端口，或以 `--remote-debugging-address=127.0.0.1` 启动。默认端口为 `9345`，被占用时会选择备用端口；
 3. 使用独立的 Chromium 配置目录 `%LOCALAPPDATA%\EVACodexSkin\cdp-profile`，避免污染官方默认配置；
 4. 只连接 URL 为 `app://-/index.html` 的页面，拒绝 `avatar-overlay` 宠物层和非回环 WebSocket；
 5. 从官方 Codex 主进程的启动时间生成一次性启动指纹；若本机存在已校验的 EVA 主题素材包，则注入 `assets/eva-boot.css` 和带驾驶员选择/拖放的启动序列，否则注入抽象启动层；
@@ -171,10 +171,11 @@ Import-EVA-Theme.cmd
 
 ## 验证状态
 
-结合 `26.1117.3838.0` 的独立实例实测，以及 `26.1117.4957.0` 的 `app.asar` 和当前 Chromium `158.0.8127.37` 复核：
+在 Codex `26.1120.5083.0` 的隔离实例中，明日香与绫波丽主题均成功注入，菜单、主区、侧栏和输入框探针均通过。默认端口未监听时，启动器可以复用仍在运行的备用端口，`-VerifyOnly` 自动找到同一个端口并返回 `pass: true`。
+
+以下为之前版本的界面与启动流程验证：
 
 - 02 明日香与 00 绫波丽两套皮肤均能注入；
-- 在 `26.1117.4957.0` 的 `app.asar` 中复核 `role="menubar"`、`data-app-shell-main-surface`、`data-slate-sidebar-content`、`data-composer-surface-variant` 等关键锚点均保留；`26.1117.3838.0` 的独立实例热注入结果继续适用于当前补丁版本；
 - 新版语义化应用菜单栏（`role="menubar"` 的 36px 顶部条）、侧栏、主区、输入框和摘要面板均正确套用 EVA 配色，原生菜单按钮仍可点击；
 - 启动层在新版 renderer 中仍能注入，GIF/音频资源加载正常；完整可见的 GIF、警报、选择、同步和舱门播放沿用 v0.4.6 的实测路径，建议下次真实冷启动时再完整复核一遍；
 - 在启动页可点击角色卡完成选择，也可把角色卡拖入插入栓；选择后主题、头像、单位编号和语音时长同步更新；
@@ -213,8 +214,8 @@ npm run test:skin
 手动检查注入状态：
 
 ```powershell
-node codex-skin\injector.mjs --verify --port 9345
-node codex-skin\injector.mjs --remove --port 9345
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\codex-skin\Start-EVA.ps1 -VerifyOnly
+.\Restore-EVA.cmd
 ```
 
 ## 目录

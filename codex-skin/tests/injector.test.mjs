@@ -64,7 +64,7 @@ test("主题与 payload 版本稳定且可切换", () => {
   assert.equal(isDriver("asuka"), true);
   assert.equal(isDriver("rei"), true);
   assert.equal(isDriver("system"), false);
-  assert.equal(SKIN_VERSION, "0.4.8");
+  assert.equal(SKIN_VERSION, "0.4.9");
   const asuka = loadPayload("asuka");
   const rei = loadPayload("rei");
   assert.equal(asuka.driver, "asuka");
@@ -457,6 +457,15 @@ test("启动器显式主题只覆盖一次，应用内选择继续持久化", ()
       forceDriverToken: "bad token",
     }),
     /Force driver token/,
+  );
+});
+
+test("左侧栏渐变留在容器上，不遮住导航和会话", () => {
+  const css = fs.readFileSync(path.join(root, "assets", "eva-skin.css"), "utf8");
+  assert.doesNotMatch(css, /aside\.app-shell-left-panel\s*>\s*div\b/);
+  assert.match(
+    css,
+    /html\[data-eva-skin\] aside\.app-shell-left-panel\s*\{\s*background:\s*linear-gradient\(/,
   );
 });
 
@@ -964,7 +973,7 @@ test("主题资源不包含角色图片或远程引用", () => {
 test("选择器合同保留稳定锚点", () => {
   const selectors = JSON.parse(fs.readFileSync(path.join(root, "selectors.json"), "utf8"));
   assert.equal(selectors.schema, "eva-codex-skin-selectors/1");
-  assert.equal(selectors.verifiedAgainst.codexVersion, "26.1117.4957.0");
+  assert.equal(selectors.verifiedAgainst.codexVersion, "26.1120.5083.0");
   assert.equal(selectors.verifiedAgainst.renderer, "Chromium 158.0.8127.37");
   assert.equal(selectors.selectors.sidebar, "aside.app-shell-left-panel");
   assert.equal(

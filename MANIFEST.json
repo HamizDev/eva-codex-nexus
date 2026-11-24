@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "project": "eva-codex-nexus",
-  "version": "0.4.8",
+  "version": "0.4.9",
   "files": [
     {
       "path": ".editorconfig",
@@ -30,8 +30,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "bytes": 37653,
-      "sha256": "ff70c4f3e0fb3eb918dffb7b3c055b5b4581bd8ec9ca6037f5d092577c84a2d3"
+      "bytes": 38251,
+      "sha256": "892685e730a08e9aee0b98de0b76ebb8099a8424966caf157ccd5a714bd68c19"
     },
     {
       "path": "CONTRIBUTING.md",
@@ -75,8 +75,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 23512,
-      "sha256": "142040853bd9474164097c7fd54fe71f4aaaafbc8969de428b16dc61e06464aa"
+      "bytes": 23552,
+      "sha256": "c5217dbcdfc7198d04cfb369e597c943ea82302a3c64076f8d0c7d7d14604ad3"
     },
     {
       "path": "Restore-EVA.cmd",
@@ -115,8 +115,8 @@
     },
     {
       "path": "codex-skin/Start-EVA.ps1",
-      "bytes": 27457,
-      "sha256": "66a025080dc4f58a79b471406a3501de51a4f3ec2acc0a694c8c959c1bdf493c"
+      "bytes": 28354,
+      "sha256": "14fc5f840606ac51db30b2da399f352385850c5658234deba6857b2ff495b2fb"
     },
     {
       "path": "codex-skin/assets/README.md",
@@ -140,8 +140,8 @@
     },
     {
       "path": "codex-skin/assets/eva-skin.css",
-      "bytes": 53672,
-      "sha256": "db4a1aa83d9897a6192f95cb2cedd6b5f007b56391a6e674f8e87141808a9077"
+      "bytes": 53566,
+      "sha256": "3aa3b43055f700c6cdbbcc1bdb246b9628b2e8a2ba79993ac42c843e2c0867ed"
     },
     {
       "path": "codex-skin/assets/linework.svg",
@@ -166,12 +166,12 @@
     {
       "path": "codex-skin/injector.mjs",
       "bytes": 126511,
-      "sha256": "2d717204a17debf234b7b746563626c4841a4e018d3971b65527035054216135"
+      "sha256": "6916376204001fca3a0c62a07f7199828e648e6874377ac825b77885bbec2aad"
     },
     {
       "path": "codex-skin/selectors.json",
-      "bytes": 3833,
-      "sha256": "269e29fa6e662a48971f1333b7a4be2e69d224aa8e3e1f846885d0a5b0a58786"
+      "bytes": 3774,
+      "sha256": "3aa557cc6841645d32f44382df3237404e0a965db009360b4358c5840f2e08ac"
     },
     {
       "path": "codex-skin/tests/activity-gate.test.mjs",
@@ -180,13 +180,13 @@
     },
     {
       "path": "codex-skin/tests/injector.test.mjs",
-      "bytes": 43370,
-      "sha256": "9d21b2010bb0057caa5635342732ea82d11d88c92f62d46b2bbda142aec0d170"
+      "bytes": 43728,
+      "sha256": "b2487eabe85eb9ee81870cd79539da6cfaa95ecb2994ceeb944b17652826ad47"
     },
     {
       "path": "codex-skin/tests/launcher.test.mjs",
-      "bytes": 7625,
-      "sha256": "0bac7bcdc7d41c409bd74d4061b961ba69e46fb0e7fc4016de6d9833bc7291b5"
+      "bytes": 9634,
+      "sha256": "85ccf244095a112c808d182256448ab2f9f3ebb38a071d501eab801df47961a3"
     },
     {
       "path": "eva-theme/LICENSE",
@@ -321,7 +321,7 @@
     {
       "path": "package.json",
       "bytes": 470,
-      "sha256": "e74b03816998fd270f5d7c30acf092d8311d71f28084fb58eb64d5e5f221ba95"
+      "sha256": "c2e3b5b186f2af4a41e5ccd6a3b0dd0e1b4c9c1e59d5c4c15fe8658c45349199"
     },
     {
       "path": "scripts/Install-EVA-DesktopShortcut.ps1",

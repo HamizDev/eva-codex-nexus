@@ -13,7 +13,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-$SkinVersion = '0.4.8'
+$SkinVersion = '0.4.9'
 $PortExplicit = $PSBoundParameters.ContainsKey('Port')
 $StateRoot = Join-Path $env:LOCALAPPDATA 'EVACodexSkin'
 $StatePath = Join-Path $StateRoot 'state.json'
@@ -289,7 +289,8 @@ function Test-CdpEndpoint {
     if (-not $listeners.Count) { return $false }
     $rows = Get-ProcessRows
     foreach ($listener in $listeners) {
-      if (-not (Test-ProcessDescendsFrom -ProcessId ([int]$listener.OwningProcess) -Executable $Executable -Rows $rows)) {
+      if ($listener.LocalAddress -notin @('127.0.0.1', '::1') -or
+        -not (Test-ProcessDescendsFrom -ProcessId ([int]$listener.OwningProcess) -Executable $Executable -Rows $rows)) {
         return $false
       }
     }
@@ -308,6 +309,23 @@ function Test-CdpEndpoint {
     }
   } catch {}
   return $false
+}
+
+function Find-ActiveCodexCdpPort {
+  param(
+    [Parameter(Mandatory)][int]$CdpPort,
+    [Parameter(Mandatory)][string]$Executable,
+    [object]$SavedState
+  )
+  $savedPort = 0
+  if ($SavedState.app -eq 'EVA-CODEX-SKIN' -and $SavedState.codexExe -eq $Executable -and
+    [int]::TryParse([string]$SavedState.port, [ref]$savedPort) -and
+    $savedPort -ge 1024 -and $savedPort -le 65535 -and $savedPort -ne $CdpPort -and
+    (Test-CdpEndpoint -CdpPort $savedPort -Executable $Executable)) {
+    return $savedPort
+  }
+  if (Test-CdpEndpoint -CdpPort $CdpPort -Executable $Executable) { return $CdpPort }
+  return $null
 }
 
 function Wait-CdpEndpoint {
@@ -543,15 +561,17 @@ try {
     Repair-EvaDesktopShortcutIcon -Executable $install.Executable
   }
   $selectedDriver = Read-Driver -Requested $Driver
-  New-Item -ItemType Directory -Force -Path $StateRoot | Out-Null
-  Set-Content -LiteralPath $DriverPath -Value $selectedDriver -Encoding ASCII
 
-  if ($Driver -in @('asuka', 'rei')) {
-    Set-Content -LiteralPath $DriverPath -Value $Driver -Encoding ASCII
-    $selectedDriver = $Driver
-  }
+  $saved = Read-SavedState
+  $portState = if (-not $PortExplicit) { $saved } else { $null }
+  $activePort = Find-ActiveCodexCdpPort -CdpPort $Port -Executable $install.Executable -SavedState $portState
+  $cdpReady = $null -ne $activePort
+  if ($cdpReady) { $Port = $activePort }
 
   if ($VerifyOnly) {
+    if (-not $cdpReady) {
+      throw '未检测到可验证的 EVA Codex 实例。请从桌面 EVA Codex 快捷方式或 Start-EVA.cmd 启动后再验证。'
+    }
     $result = Invoke-Injector -NodePath $node.Path -Capture -Arguments @(
       '--verify', '--port', "$Port", '--driver', $selectedDriver,
       '--state-dir', $StateRoot, '--timeout-ms', '15000'
@@ -560,10 +580,10 @@ try {
     exit $result.ExitCode
   }
 
+  New-Item -ItemType Directory -Force -Path $StateRoot | Out-Null
+  Set-Content -LiteralPath $DriverPath -Value $selectedDriver -Encoding ASCII
   Ensure-BundledTheme
 
-  $saved = Read-SavedState
-  $cdpReady = Test-CdpEndpoint -CdpPort $Port -Executable $install.Executable
   if (-not $cdpReady -and -not $PortExplicit) {
     $listeners = @(Get-NetTCPConnection -State Listen -LocalPort $Port -ErrorAction SilentlyContinue)
     if ($listeners.Count) {

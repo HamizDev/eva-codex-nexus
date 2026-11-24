@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import test from "node:test";
@@ -60,6 +61,53 @@ test("CDP 目标列表兼容 Windows PowerShell 5.1 的数组返回", () => {
     source,
     /Invoke-RestMethod -Uri "http:\/\/127\.0\.0\.1:\$CdpPort\/json\/list" -TimeoutSec 2 -MaximumRedirection 0 \| ForEach-Object \{ \$_ \}/,
   );
+});
+
+test("启动器只复用当前 Codex 安装上仍可用的备用端口", {
+  skip: process.platform !== "win32",
+}, () => {
+  const script = String.raw`
+    $ErrorActionPreference = 'Stop'
+    $launcher = Join-Path (Get-Location) 'codex-skin\Start-EVA.ps1'
+    $syntax = [System.Management.Automation.Language.Parser]::ParseFile($launcher, [ref]$null, [ref]$null)
+    $definition = $syntax.Find({
+      param($node)
+      $node -is [System.Management.Automation.Language.FunctionDefinitionAst] -and
+        $node.Name -eq 'Find-ActiveCodexCdpPort'
+    }, $true)
+    . ([scriptblock]::Create($definition.Extent.Text))
+
+    function Test-CdpEndpoint {
+      param([int]$CdpPort, [string]$Executable)
+      return $CdpPort -in $availablePorts
+    }
+
+    $executable = 'C:\Current\ChatGPT.exe'
+    $saved = @{ app = 'EVA-CODEX-SKIN'; codexExe = $executable; port = 9346 }
+    $availablePorts = @(9346)
+    $reused = Find-ActiveCodexCdpPort -CdpPort 9345 -Executable $executable -SavedState $saved
+    $explicit = Find-ActiveCodexCdpPort -CdpPort 9345 -Executable $executable
+    $availablePorts = @(9345)
+    $closed = Find-ActiveCodexCdpPort -CdpPort 9345 -Executable $executable -SavedState $saved
+    $availablePorts = @(9345, 9346)
+    $saved.codexExe = 'C:\Previous\ChatGPT.exe'
+    $previous = Find-ActiveCodexCdpPort -CdpPort 9345 -Executable $executable -SavedState $saved
+
+    [ordered]@{ reused = $reused; explicit = $explicit; closed = $closed; previous = $previous } |
+      ConvertTo-Json -Compress
+  `;
+  const result = spawnSync("powershell.exe", [
+    "-NoProfile", "-NonInteractive", "-EncodedCommand",
+    Buffer.from(script, "utf16le").toString("base64"),
+  ], { cwd: root, encoding: "utf8", windowsHide: true, timeout: 15000 });
+  assert.ifError(result.error);
+  assert.equal(result.status, 0, result.stderr);
+  assert.deepEqual(JSON.parse(result.stdout), {
+    reused: 9346,
+    explicit: null,
+    closed: 9345,
+    previous: 9345,
+  });
 });
 
 test("注入器与 CDP 等待并行启动，避免聊天页先出现", () => {
@@ -184,9 +232,9 @@ test("package 版本与皮肤版本一致", () => {
   const pkg = JSON.parse(read("package.json"));
   const injector = read("codex-skin/injector.mjs");
   const launcher = read("codex-skin/Start-EVA.ps1");
-  assert.equal(pkg.version, "0.4.8");
-  assert.match(injector, /export const SKIN_VERSION = "0\.4\.8"/);
-  assert.match(launcher, /\$SkinVersion = '0\.4\.8'/);
+  assert.equal(pkg.version, "0.4.9");
+  assert.match(injector, /export const SKIN_VERSION = "0\.4\.9"/);
+  assert.match(launcher, /\$SkinVersion = '0\.4\.9'/);
 });
 
 test("项目版权以 HamizDev 为主且不保留旧上游声明", () => {
